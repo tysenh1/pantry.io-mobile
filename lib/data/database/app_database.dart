@@ -4,7 +4,7 @@ import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 // import 'package:pantry_io_mobile/core/data/database/tables/allergens.dart';
-import 'package:pantry_io_mobile/core/data/database/tables/generic_names.dart';
+import 'package:pantry_io_mobile/data/models/generic_names.dart';
 // import 'package:pantry_io_mobile/core/data/database/tables/items.dart';
 // import 'package:pantry_io_mobile/core/data/database/tables/item_allergens.dart';
 // import 'package:pantry_io_mobile/core/data/database/tables/pantry.dart';

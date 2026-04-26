@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/core/providers/app_state.dart';
-import 'package:pantry_io_mobile/features/chatbot/presentation/screens/chatbot_screen.dart';
-import 'package:pantry_io_mobile/features/quickAdd/presentation/screens/quick_add_screen.dart';
-import 'package:pantry_io_mobile/features/recipeAdd/presentation/screens/recipe_add_screen.dart';
-import 'package:pantry_io_mobile/features/scanner/presentation/screens/scanner_screen.dart';
-import 'package:pantry_io_mobile/features/settings/presentation/screens/settings_screen.dart';
+import 'package:pantry_io_mobile/logic/providers/app_state.dart';
+import 'package:pantry_io_mobile/ui/screens/chatbot_screen.dart';
+import 'package:pantry_io_mobile/ui/screens/quick_add_screen.dart';
+import 'package:pantry_io_mobile/ui/screens/recipe_add_screen.dart';
+import 'package:pantry_io_mobile/ui/screens/scanner_screen.dart';
+import 'package:pantry_io_mobile/ui/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
-import '../widgets/bottom_nav.dart'; // Your component
+import 'package:pantry_io_mobile/ui/widgets/bottom_nav.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'core/services/database_service.dart';
-import 'core/providers/app_state.dart';
-import 'shared/screens/main_screen.dart';
+import 'data/services/database_service.dart';
+import 'logic/providers/app_state.dart';
+import 'ui/main_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,4 +29,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

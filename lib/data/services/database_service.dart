@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/database/app_database.dart';
+import '../database/app_database.dart';
 
 class DatabaseService extends ChangeNotifier {
   late final AppDatabase db;
@@ -12,3 +12,4 @@ class DatabaseService extends ChangeNotifier {
     super.dispose();
   }
 }
+
