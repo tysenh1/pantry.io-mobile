@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'data/services/database_service.dart';
 import 'logic/providers/app_state.dart';
-import 'ui/main_screen.dart';
+import 'ui/main_wrapper.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pantry App',
       theme: ThemeData(primarySwatch: Colors.green, useMaterial3: true),
-      home: const MainScreen(),
+      home: const MainWrapper(),
     );
   }
 }
