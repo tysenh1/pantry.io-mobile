@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/models/ui/ingredient_input.dart';
 import 'package:pantry_io_mobile/data/models/ui/pantry_generic_name_response.dart';
 import 'package:pantry_io_mobile/data/models/ui/recipe_add.dart';
+import 'package:provider/provider.dart';
+import 'package:pantry_io_mobile/data/services/database_service.dart';
 
 class RecipeAddWidget extends StatefulWidget {
   const RecipeAddWidget({super.key});
@@ -55,8 +57,11 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
   }
 
   void _handleSubmit() {
-    if (_formModel.isValid()) {
-      _showSuccessModal();
+    if (!_formModel.isValid()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Some fields are missing values.")),
+      );
+      return;
     }
   }
 
@@ -125,7 +130,7 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
 
                         final selectedData = _genericNames[newIndex];
 
-                        ing.pantryId = selectedData.pantryId;
+                        ing.pantryId = int.tryParse(selectedData.pantryId) ?? 0;
                         ing.unitController.text = selectedData.primaryUnit;
                       });
                     },

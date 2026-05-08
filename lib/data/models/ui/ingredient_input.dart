@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 
 class IngredientInput {
-  String pantryId;
+  int pantryId;
   int quantityNeeded;
   String unit;
   int? selectedNameIndex;
@@ -10,11 +10,7 @@ class IngredientInput {
   final qtyController = TextEditingController();
   final unitController = TextEditingController();
 
-  IngredientInput({
-    this.pantryId = '',
-    this.quantityNeeded = 0,
-    this.unit = '',
-  });
+  IngredientInput({this.pantryId = 0, this.quantityNeeded = 0, this.unit = ''});
 
   void dispose() {
     qtyController.dispose();
@@ -32,6 +28,6 @@ class IngredientInput {
       pantryId: pantryId,
       quantityNeeded: int.tryParse(qtyController.text) ?? 0,
       unit: unitController.text,
-    )
+    );
   }
 }

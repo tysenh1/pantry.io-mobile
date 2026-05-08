@@ -8,6 +8,7 @@ import 'package:pantry_io_mobile/ui/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:pantry_io_mobile/ui/widgets/bottom_nav.dart';
 import 'package:pantry_io_mobile/data/models/ui/nav_item.dart';
+import 'package:pantry_io_mobile/data/services/database_service.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({super.key});
@@ -21,8 +22,8 @@ class _MainWrapperState extends State<MainWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppState>(
-      builder: (context, appState, _) {
+    return Consumer2<AppState, DatabaseService>(
+      builder: (context, appState, databaseService, _) {
         final allItems = [
           NavItem(
             id: NavTab.addRecipe,

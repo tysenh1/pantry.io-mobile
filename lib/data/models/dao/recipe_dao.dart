@@ -10,7 +10,28 @@ part 'recipe_dao.g.dart';
 class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   RecipeDao(AppDatabase db) : super(db);
 
-  Future<void> createRecipe(RecipeFormModel recipeData) {
-    final cleanedTags = recipeData.tags.trim().replaceAll(' ', '');
+  Future<void> createRecipe({
+    required String name,
+    required String instructions,
+    String? rawTags,
+    required List<RecipeIngredientsCompanion> ingredientCompanions,
+  }) {
+    return transaction(() async {
+      final cleanedTags = rawTags?.trim().replaceAll(' ', '') ?? '';
+
+      final recipeId = await into(recipes).insert(
+        RecipesCompanion.insert(
+          name: name,
+          instructions: instructions,
+          tags: cleanedTags,
+        ),
+      );
+
+      for (var companion in ingredientCompanions) {
+        await into(
+          recipeIngredients,
+        ).insert(companion.copyWith(recipeId: Value(recipeId)));
+      }
+    });
   }
 }

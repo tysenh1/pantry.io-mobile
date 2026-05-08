@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'ingredient_input.dart';
 
 class RecipeFormModel {
@@ -7,6 +8,17 @@ class RecipeFormModel {
   final tagsController = TextEditingController();
 
   List<IngredientInput> ingredients = [];
+
+  List<RecipeIngredientsCompanion> getIngredientCompanions() {
+    return ingredients.map((ing) {
+      return RecipeIngredientsCompanion.insert(
+        recipeId: -1,
+        pantryId: ing.pantryId,
+        quantityNeeded: int.tryParse(ing.qtyController.text.trim()) ?? 0,
+        unit: ing.unitController.text,
+      );
+    }).toList();
+  }
 
   void addIngredient() {
     ingredients.add(IngredientInput());
@@ -25,7 +37,7 @@ class RecipeFormModel {
     if (ingredients.isEmpty) return false;
 
     for (var ing in ingredients) {
-      if (ing.pantryId.isEmpty || ing.qtyController.text.trim().isEmpty) {
+      if (ing.pantryId == 0 || ing.qtyController.text.trim().isEmpty) {
         return false;
       }
     }
