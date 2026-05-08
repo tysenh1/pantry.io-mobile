@@ -6,9 +6,6 @@ class RecipeAddScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: RecipeAddWidget(),
-      // child: Text("shit"),
-    );
+    return const Center(child: RecipeAddWidget());
   }
 }

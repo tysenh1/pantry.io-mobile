@@ -1,7 +1,7 @@
 import "package:drift/drift.dart";
 
 class Allergens extends Table {
-  TextColumn get id => text()();
+  TextColumn get id => integer()();
   TextColumn get name => text().unique()();
 
   @override

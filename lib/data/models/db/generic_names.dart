@@ -1,7 +1,7 @@
 import "package:drift/drift.dart";
 
 class GenericNames extends Table {
-  TextColumn get id => text()();
+  IntColumn get id => integer()();
   TextColumn get name => text().unique()();
   TextColumn get primaryUnit => text()();
   IntColumn get weightPerPiece => integer()();

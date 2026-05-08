@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/models/ui/ingredient_input.dart';
 import 'package:pantry_io_mobile/data/models/ui/pantry_generic_name_response.dart';
+import 'package:pantry_io_mobile/data/models/ui/recipe_add.dart';
 
 class RecipeAddWidget extends StatefulWidget {
   const RecipeAddWidget({super.key});
@@ -12,11 +13,7 @@ class RecipeAddWidget extends StatefulWidget {
 class _RecipeAddWidgetState extends State<RecipeAddWidget> {
   final _formKey = GlobalKey<FormState>();
 
-  final _nameController = TextEditingController();
-  final _instructionsController = TextEditingController();
-  final _tagsController = TextEditingController();
-
-  List<IngredientInput> _ingredients = [IngredientInput()];
+  final RecipeFormModel _formModel = RecipeFormModel();
 
   // Mocked generic names fetch data
   List<PantryGenericNameResponse> _genericNames = [];
@@ -27,12 +24,17 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
     _fetchGenericNames();
   }
 
+  @override
+  void dispose() {
+    _formModel.dispose();
+    super.dispose();
+  }
+
   // function to call db for generic names, has static data right now
   void _fetchGenericNames() async {
     await Future.delayed(const Duration(milliseconds: 500));
 
     setState(() {
-      _ingredients = [];
       _genericNames = [
         PantryGenericNameResponse(
           pantryId: 'someUUID',
@@ -52,29 +54,9 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
     });
   }
 
-  void _addIngredient() {
-    setState(() => _ingredients.add(IngredientInput()));
-  }
-
   void _handleSubmit() {
-    try {
-      if (_nameController.text.isEmpty ||
-          _instructionsController.text.isEmpty) {
-        throw Exception('Name and Instructions fields cannot be empty.');
-      }
-      for (var ing in _ingredients) {
-        print(ing.toString());
-        if (ing.unit.isEmpty ||
-            ing.quantityNeeded == 0 ||
-            ing.selectedNameIndex != null) {
-          throw Exception('Ingredients must have valid data.');
-        }
-      }
+    if (_formModel.isValid()) {
       _showSuccessModal();
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -83,7 +65,7 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Success!'),
-        content: Text("${_nameController.text} has been added!"),
+        content: Text("${_formModel.nameController.text} has been added!"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -103,16 +85,16 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
         child: Column(
           children: [
             TextField(
-              controller: _nameController,
+              controller: _formModel.nameController,
               decoration: const InputDecoration(labelText: "Name"),
             ),
             TextField(
-              controller: _instructionsController,
+              controller: _formModel.instructionsController,
               decoration: const InputDecoration(labelText: "Instructions"),
               maxLines: 4,
             ),
             TextField(
-              controller: _tagsController,
+              controller: _formModel.tagsController,
               decoration: const InputDecoration(labelText: "Tags"),
             ),
             const Divider(height: 40),
@@ -121,7 +103,7 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
 
-            ..._ingredients.map((ing) {
+            ..._formModel.ingredients.map((ing) {
               return Column(
                 children: [
                   DropdownButton<int>(
@@ -176,7 +158,7 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
             }),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _addIngredient,
+              onPressed: _formModel.addIngredient,
               child: const Text("Add Ingredient"),
             ),
 
