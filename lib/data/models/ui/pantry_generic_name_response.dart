@@ -1,13 +1,13 @@
 class PantryGenericNameResponse {
-  String pantryId;
-  String genericNameId;
+  int pantryId;
+  int genericNameId;
   int weightPerPiece;
   String name;
   String primaryUnit;
 
   PantryGenericNameResponse({
-    this.pantryId = '',
-    this.genericNameId = '',
+    this.pantryId = 0,
+    this.genericNameId = 0,
     this.weightPerPiece = 0,
     this.name = '',
     this.primaryUnit = '',

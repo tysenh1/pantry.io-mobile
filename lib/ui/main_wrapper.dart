@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/logic/providers/app_state.dart';
 import 'package:pantry_io_mobile/ui/screens/chatbot_screen.dart';
+import 'package:pantry_io_mobile/ui/screens/debug_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/quick_add_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/recipe_add_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/scanner_screen.dart';
@@ -25,6 +26,14 @@ class _MainWrapperState extends State<MainWrapper> {
     return Consumer2<AppState, DatabaseService>(
       builder: (context, appState, databaseService, _) {
         final allItems = [
+          NavItem(
+            id: NavTab.debug,
+            screen: const DatabaseDebugScreen(),
+            item: const BottomNavigationBarItem(
+              icon: Icon(Icons.bed),
+              label: 'Debug',
+            ),
+          ),
           NavItem(
             id: NavTab.addRecipe,
             screen: const RecipeAddScreen(),

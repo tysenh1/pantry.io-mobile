@@ -10,13 +10,14 @@ import 'package:pantry_io_mobile/data/models/db/item_allergens.dart';
 import 'package:pantry_io_mobile/data/models/db/pantry.dart';
 import 'package:pantry_io_mobile/data/models/db/recipe_ingredients.dart';
 import 'package:pantry_io_mobile/data/models/db/recipes.dart';
+import 'package:pantry_io_mobile/data/models/dao/recipe_dao.dart';
 
 part "app_database.g.dart";
 
 LazyDatabase _openConnection() => LazyDatabase(() async {
   final dbFolder = await getApplicationDocumentsDirectory();
   final file = File(path.join(dbFolder.path, 'pantry_app.db'));
-  return NativeDatabase.createInBackground(file);
+  return NativeDatabase.createInBackground(file, logStatements: true);
 });
 
 @DriftDatabase(
@@ -29,6 +30,7 @@ LazyDatabase _openConnection() => LazyDatabase(() async {
     RecipeIngredients,
     Recipes,
   ],
+  daos: [RecipeDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -40,6 +42,28 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async {
       await m.createAll();
+
+      await transaction(() async {
+        await batch((batch) {
+          batch.insertAll(genericNames, [
+            GenericNamesCompanion.insert(
+              name: 'First Generic Name',
+              primaryUnit: 'g',
+              weightPerPiece: 20,
+            ),
+            GenericNamesCompanion.insert(
+              name: 'Second Generic Name',
+              primaryUnit: 'g',
+              weightPerPiece: 400,
+            ),
+            GenericNamesCompanion.insert(
+              name: 'Third Generic Name',
+              primaryUnit: 'g',
+              weightPerPiece: 300,
+            ),
+          ]);
+        });
+      });
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/data/models/ui/ingredient_input.dart';
 import 'package:pantry_io_mobile/data/models/ui/pantry_generic_name_response.dart';
 import 'package:pantry_io_mobile/data/models/ui/recipe_add.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +31,12 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
     super.dispose();
   }
 
+  void _addIngredient() {
+    setState(() {
+      _formModel.addIngredient();
+    });
+  }
+
   // function to call db for generic names, has static data right now
   void _fetchGenericNames() async {
     await Future.delayed(const Duration(milliseconds: 500));
@@ -39,15 +44,15 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
     setState(() {
       _genericNames = [
         PantryGenericNameResponse(
-          pantryId: 'someUUID',
-          genericNameId: 'someUUID',
+          pantryId: 1,
+          genericNameId: 4,
           weightPerPiece: 5,
           name: 'First Generic Name',
           primaryUnit: 'g',
         ),
         PantryGenericNameResponse(
-          pantryId: 'someOtherUUID',
-          genericNameId: 'someOtherUUID',
+          pantryId: 2,
+          genericNameId: 5,
           weightPerPiece: 10,
           name: 'Second Generic Name',
           primaryUnit: 'g',
@@ -63,6 +68,16 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
       );
       return;
     }
+
+    final dbService = context.read<DatabaseService>();
+    dbService.db.recipeDao.createRecipe(
+      name: _formModel.nameController.text.trim(),
+      instructions: _formModel.instructionsController.text.trim(),
+      rawTags: _formModel.tagsController.text.trim(),
+      ingredientCompanions: _formModel.getIngredientCompanions(),
+    );
+
+    _showSuccessModal();
   }
 
   void _showSuccessModal() {
@@ -130,7 +145,8 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
 
                         final selectedData = _genericNames[newIndex];
 
-                        ing.pantryId = int.tryParse(selectedData.pantryId) ?? 0;
+                        // ing.pantryId = int.tryParse(selectedData.pantryId ?? 0) as int;
+                        ing.pantryId = selectedData.pantryId;
                         ing.unitController.text = selectedData.primaryUnit;
                       });
                     },
@@ -141,6 +157,7 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
                         flex: 1,
                         child: TextField(
                           controller: ing.qtyController,
+                          keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             labelText: "Quantity",
                           ),
@@ -163,7 +180,7 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
             }),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _formModel.addIngredient,
+              onPressed: _addIngredient,
               child: const Text("Add Ingredient"),
             ),
 

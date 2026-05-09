@@ -3,14 +3,18 @@ import 'package:pantry_io_mobile/data/database/app_database.dart';
 
 class IngredientInput {
   int pantryId;
-  int quantityNeeded;
+  String quantityNeeded;
   String unit;
   int? selectedNameIndex;
 
   final qtyController = TextEditingController();
   final unitController = TextEditingController();
 
-  IngredientInput({this.pantryId = 0, this.quantityNeeded = 0, this.unit = ''});
+  IngredientInput({
+    this.pantryId = 0,
+    this.quantityNeeded = '',
+    this.unit = '',
+  });
 
   void dispose() {
     qtyController.dispose();

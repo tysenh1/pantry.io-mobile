@@ -2,7 +2,6 @@ import 'package:drift/drift.dart';
 import '../../database/app_database.dart';
 import '../db/recipes.dart';
 import '../db/recipe_ingredients.dart';
-import '../ui/recipe_add.dart';
 
 part 'recipe_dao.g.dart';
 

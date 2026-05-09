@@ -7,7 +7,7 @@ class RecipeFormModel {
   final instructionsController = TextEditingController();
   final tagsController = TextEditingController();
 
-  List<IngredientInput> ingredients = [];
+  List<IngredientInput> ingredients = [IngredientInput()];
 
   List<RecipeIngredientsCompanion> getIngredientCompanions() {
     return ingredients.map((ing) {
