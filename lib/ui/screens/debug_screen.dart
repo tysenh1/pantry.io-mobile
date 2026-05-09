@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/services/database_service.dart';
 import 'package:provider/provider.dart';
-import '../../data/database/app_database.dart';
 
-class DatabaseDebugScreen extends StatelessWidget {
+class DatabaseDebugScreen extends StatefulWidget {
   const DatabaseDebugScreen({super.key});
+
+  @override
+  State<DatabaseDebugScreen> createState() => _DatabaseDebugScreenState();
+}
+
+class _DatabaseDebugScreenState extends State<DatabaseDebugScreen> {
+  // A simple key to force the FutureBuilders to reset
+  int _refreshKey = 0;
+
+  void _refresh() {
+    setState(() {
+      _refreshKey++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +28,12 @@ class DatabaseDebugScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('DB Debugger'),
         actions: [
+          // THE REFRESH BUTTON
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Re-run Queries',
+            onPressed: _refresh,
+          ),
           IconButton(
             icon: const Icon(Icons.delete_forever, color: Colors.red),
             onPressed: () => _confirmNuke(context, db),
@@ -21,6 +41,7 @@ class DatabaseDebugScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
+        key: ValueKey(_refreshKey), // Forces the whole list to rebuild
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,12 +50,14 @@ class DatabaseDebugScreen extends StatelessWidget {
               '--- RECIPES TABLE ---',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            const Divider(),
             _buildRecipeList(db),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             const Text(
               '--- INGREDIENTS TABLE ---',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            const Divider(),
             _buildIngredientList(db),
           ],
         ),
@@ -44,17 +67,22 @@ class DatabaseDebugScreen extends StatelessWidget {
 
   Widget _buildRecipeList(AppDatabase db) {
     return FutureBuilder(
+      // The key change: FutureBuilder runs whenever the 'future' changes
       future: db.select(db.recipes).get(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const CircularProgressIndicator();
-        final items = snapshot.data!;
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return const LinearProgressIndicator();
+        if (!snapshot.hasData || snapshot.data!.isEmpty)
+          return const Text("No recipes found.");
+
         return Column(
-          children: items
+          children: snapshot.data!
               .map(
-                (r) => ListTile(
-                  title: Text(r.name),
-                  subtitle: Text('ID: ${r.id} | Tags: ${r.tags}'),
-                  isThreeLine: true,
+                (r) => Card(
+                  child: ListTile(
+                    title: Text(r.name),
+                    subtitle: Text('ID: ${r.id} | Tags: ${r.tags ?? "None"}'),
+                  ),
                 ),
               )
               .toList(),
@@ -67,15 +95,21 @@ class DatabaseDebugScreen extends StatelessWidget {
     return FutureBuilder(
       future: db.select(db.recipeIngredients).get(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const CircularProgressIndicator();
-        final items = snapshot.data!;
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return const LinearProgressIndicator();
+        if (!snapshot.hasData || snapshot.data!.isEmpty)
+          return const Text("No ingredients found.");
+
         return Column(
-          children: items
+          children: snapshot.data!
               .map(
-                (i) => ListTile(
-                  title: Text('RecipeID: ${i.recipeId}'),
-                  subtitle: Text(
-                    'PantryID: ${i.pantryId} | Qty: ${i.quantityNeeded} ${i.unit}',
+                (i) => Card(
+                  color: Colors.grey[100],
+                  child: ListTile(
+                    title: Text('Recipe ID: ${i.recipeId}'),
+                    subtitle: Text(
+                      'Pantry ID: ${i.pantryId} | Qty: ${i.quantityNeeded} ${i.unit}',
+                    ),
                   ),
                 ),
               )
@@ -90,7 +124,7 @@ class DatabaseDebugScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Nuke DB?'),
-        content: const Text('This will delete everything from all tables.'),
+        content: const Text('This will delete everything from the tables.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -98,9 +132,9 @@ class DatabaseDebugScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              // Drift provides a simple way to delete all rows
               await db.delete(db.recipeIngredients).go();
               await db.delete(db.recipes).go();
+              _refresh(); // Refresh UI after delete
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text(
@@ -113,3 +147,4 @@ class DatabaseDebugScreen extends StatelessWidget {
     );
   }
 }
+
