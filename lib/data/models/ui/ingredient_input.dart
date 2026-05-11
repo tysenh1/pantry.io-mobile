@@ -30,7 +30,7 @@ class IngredientInput {
     return RecipeIngredientsCompanion.insert(
       recipeId: recipeId,
       pantryId: pantryId,
-      quantityNeeded: int.tryParse(qtyController.text) ?? 0,
+      quantityNeeded: double.tryParse(qtyController.text) ?? 0.0,
       unit: unitController.text,
     );
   }

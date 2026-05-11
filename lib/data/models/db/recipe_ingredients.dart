@@ -7,7 +7,7 @@ class RecipeIngredients extends Table {
       integer().references(Recipes, #id, onDelete: KeyAction.cascade)();
   IntColumn get pantryId =>
       integer().references(Pantry, #id, onDelete: KeyAction.cascade)();
-  IntColumn get quantityNeeded => integer()();
+  RealColumn get quantityNeeded => real()();
   TextColumn get unit => text()();
 
   @override

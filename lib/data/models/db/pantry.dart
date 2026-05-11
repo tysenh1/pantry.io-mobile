@@ -2,7 +2,7 @@ import "package:drift/drift.dart";
 import "package:pantry_io_mobile/data/models/db/generic_names.dart";
 
 class Pantry extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  IntColumn get id => integer()();
   IntColumn get genericNameId => integer().unique().references(
     GenericNames,
     #id,

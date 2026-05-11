@@ -14,7 +14,7 @@ class RecipeFormModel {
       return RecipeIngredientsCompanion.insert(
         recipeId: -1,
         pantryId: ing.pantryId,
-        quantityNeeded: int.tryParse(ing.qtyController.text.trim()) ?? 0,
+        quantityNeeded: double.tryParse(ing.qtyController.text.trim()) ?? 0.0,
         unit: ing.unitController.text,
       );
     }).toList();

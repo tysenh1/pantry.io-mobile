@@ -15,12 +15,8 @@ class $GenericNamesTable extends GenericNames
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
@@ -47,11 +43,11 @@ class $GenericNamesTable extends GenericNames
     'weightPerPiece',
   );
   @override
-  late final GeneratedColumn<int> weightPerPiece = GeneratedColumn<int>(
+  late final GeneratedColumn<double> weightPerPiece = GeneratedColumn<double>(
     'weight_per_piece',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
   @override
@@ -123,7 +119,7 @@ class $GenericNamesTable extends GenericNames
         data['${effectivePrefix}primary_unit'],
       )!,
       weightPerPiece: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.double,
         data['${effectivePrefix}weight_per_piece'],
       )!,
     );
@@ -139,7 +135,7 @@ class GenericName extends DataClass implements Insertable<GenericName> {
   final int id;
   final String name;
   final String primaryUnit;
-  final int weightPerPiece;
+  final double weightPerPiece;
   const GenericName({
     required this.id,
     required this.name,
@@ -152,7 +148,7 @@ class GenericName extends DataClass implements Insertable<GenericName> {
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['primary_unit'] = Variable<String>(primaryUnit);
-    map['weight_per_piece'] = Variable<int>(weightPerPiece);
+    map['weight_per_piece'] = Variable<double>(weightPerPiece);
     return map;
   }
 
@@ -174,7 +170,7 @@ class GenericName extends DataClass implements Insertable<GenericName> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       primaryUnit: serializer.fromJson<String>(json['primaryUnit']),
-      weightPerPiece: serializer.fromJson<int>(json['weightPerPiece']),
+      weightPerPiece: serializer.fromJson<double>(json['weightPerPiece']),
     );
   }
   @override
@@ -184,7 +180,7 @@ class GenericName extends DataClass implements Insertable<GenericName> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'primaryUnit': serializer.toJson<String>(primaryUnit),
-      'weightPerPiece': serializer.toJson<int>(weightPerPiece),
+      'weightPerPiece': serializer.toJson<double>(weightPerPiece),
     };
   }
 
@@ -192,7 +188,7 @@ class GenericName extends DataClass implements Insertable<GenericName> {
     int? id,
     String? name,
     String? primaryUnit,
-    int? weightPerPiece,
+    double? weightPerPiece,
   }) => GenericName(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -239,7 +235,7 @@ class GenericNamesCompanion extends UpdateCompanion<GenericName> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> primaryUnit;
-  final Value<int> weightPerPiece;
+  final Value<double> weightPerPiece;
   const GenericNamesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -250,7 +246,7 @@ class GenericNamesCompanion extends UpdateCompanion<GenericName> {
     this.id = const Value.absent(),
     required String name,
     required String primaryUnit,
-    required int weightPerPiece,
+    required double weightPerPiece,
   }) : name = Value(name),
        primaryUnit = Value(primaryUnit),
        weightPerPiece = Value(weightPerPiece);
@@ -258,7 +254,7 @@ class GenericNamesCompanion extends UpdateCompanion<GenericName> {
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? primaryUnit,
-    Expression<int>? weightPerPiece,
+    Expression<double>? weightPerPiece,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -272,7 +268,7 @@ class GenericNamesCompanion extends UpdateCompanion<GenericName> {
     Value<int>? id,
     Value<String>? name,
     Value<String>? primaryUnit,
-    Value<int>? weightPerPiece,
+    Value<double>? weightPerPiece,
   }) {
     return GenericNamesCompanion(
       id: id ?? this.id,
@@ -295,7 +291,7 @@ class GenericNamesCompanion extends UpdateCompanion<GenericName> {
       map['primary_unit'] = Variable<String>(primaryUnit.value);
     }
     if (weightPerPiece.present) {
-      map['weight_per_piece'] = Variable<int>(weightPerPiece.value);
+      map['weight_per_piece'] = Variable<double>(weightPerPiece.value);
     }
     return map;
   }
@@ -1147,12 +1143,8 @@ class $PantryTable extends Pantry with TableInfo<$PantryTable, PantryData> {
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
   );
   static const VerificationMeta _genericNameIdMeta = const VerificationMeta(
     'genericNameId',
@@ -1780,11 +1772,11 @@ class $RecipeIngredientsTable extends RecipeIngredients
     'quantityNeeded',
   );
   @override
-  late final GeneratedColumn<int> quantityNeeded = GeneratedColumn<int>(
+  late final GeneratedColumn<double> quantityNeeded = GeneratedColumn<double>(
     'quantity_needed',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.double,
     requiredDuringInsert: true,
   );
   static const VerificationMeta _unitMeta = const VerificationMeta('unit');
@@ -1868,7 +1860,7 @@ class $RecipeIngredientsTable extends RecipeIngredients
         data['${effectivePrefix}pantry_id'],
       )!,
       quantityNeeded: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.double,
         data['${effectivePrefix}quantity_needed'],
       )!,
       unit: attachedDatabase.typeMapping.read(
@@ -1888,7 +1880,7 @@ class RecipeIngredient extends DataClass
     implements Insertable<RecipeIngredient> {
   final int recipeId;
   final int pantryId;
-  final int quantityNeeded;
+  final double quantityNeeded;
   final String unit;
   const RecipeIngredient({
     required this.recipeId,
@@ -1901,7 +1893,7 @@ class RecipeIngredient extends DataClass
     final map = <String, Expression>{};
     map['recipe_id'] = Variable<int>(recipeId);
     map['pantry_id'] = Variable<int>(pantryId);
-    map['quantity_needed'] = Variable<int>(quantityNeeded);
+    map['quantity_needed'] = Variable<double>(quantityNeeded);
     map['unit'] = Variable<String>(unit);
     return map;
   }
@@ -1923,7 +1915,7 @@ class RecipeIngredient extends DataClass
     return RecipeIngredient(
       recipeId: serializer.fromJson<int>(json['recipeId']),
       pantryId: serializer.fromJson<int>(json['pantryId']),
-      quantityNeeded: serializer.fromJson<int>(json['quantityNeeded']),
+      quantityNeeded: serializer.fromJson<double>(json['quantityNeeded']),
       unit: serializer.fromJson<String>(json['unit']),
     );
   }
@@ -1933,7 +1925,7 @@ class RecipeIngredient extends DataClass
     return <String, dynamic>{
       'recipeId': serializer.toJson<int>(recipeId),
       'pantryId': serializer.toJson<int>(pantryId),
-      'quantityNeeded': serializer.toJson<int>(quantityNeeded),
+      'quantityNeeded': serializer.toJson<double>(quantityNeeded),
       'unit': serializer.toJson<String>(unit),
     };
   }
@@ -1941,7 +1933,7 @@ class RecipeIngredient extends DataClass
   RecipeIngredient copyWith({
     int? recipeId,
     int? pantryId,
-    int? quantityNeeded,
+    double? quantityNeeded,
     String? unit,
   }) => RecipeIngredient(
     recipeId: recipeId ?? this.recipeId,
@@ -1986,7 +1978,7 @@ class RecipeIngredient extends DataClass
 class RecipeIngredientsCompanion extends UpdateCompanion<RecipeIngredient> {
   final Value<int> recipeId;
   final Value<int> pantryId;
-  final Value<int> quantityNeeded;
+  final Value<double> quantityNeeded;
   final Value<String> unit;
   final Value<int> rowid;
   const RecipeIngredientsCompanion({
@@ -1999,7 +1991,7 @@ class RecipeIngredientsCompanion extends UpdateCompanion<RecipeIngredient> {
   RecipeIngredientsCompanion.insert({
     required int recipeId,
     required int pantryId,
-    required int quantityNeeded,
+    required double quantityNeeded,
     required String unit,
     this.rowid = const Value.absent(),
   }) : recipeId = Value(recipeId),
@@ -2009,7 +2001,7 @@ class RecipeIngredientsCompanion extends UpdateCompanion<RecipeIngredient> {
   static Insertable<RecipeIngredient> custom({
     Expression<int>? recipeId,
     Expression<int>? pantryId,
-    Expression<int>? quantityNeeded,
+    Expression<double>? quantityNeeded,
     Expression<String>? unit,
     Expression<int>? rowid,
   }) {
@@ -2025,7 +2017,7 @@ class RecipeIngredientsCompanion extends UpdateCompanion<RecipeIngredient> {
   RecipeIngredientsCompanion copyWith({
     Value<int>? recipeId,
     Value<int>? pantryId,
-    Value<int>? quantityNeeded,
+    Value<double>? quantityNeeded,
     Value<String>? unit,
     Value<int>? rowid,
   }) {
@@ -2048,7 +2040,7 @@ class RecipeIngredientsCompanion extends UpdateCompanion<RecipeIngredient> {
       map['pantry_id'] = Variable<int>(pantryId.value);
     }
     if (quantityNeeded.present) {
-      map['quantity_needed'] = Variable<int>(quantityNeeded.value);
+      map['quantity_needed'] = Variable<double>(quantityNeeded.value);
     }
     if (unit.present) {
       map['unit'] = Variable<String>(unit.value);
@@ -2149,14 +2141,14 @@ typedef $$GenericNamesTableCreateCompanionBuilder =
       Value<int> id,
       required String name,
       required String primaryUnit,
-      required int weightPerPiece,
+      required double weightPerPiece,
     });
 typedef $$GenericNamesTableUpdateCompanionBuilder =
     GenericNamesCompanion Function({
       Value<int> id,
       Value<String> name,
       Value<String> primaryUnit,
-      Value<int> weightPerPiece,
+      Value<double> weightPerPiece,
     });
 
 final class $$GenericNamesTableReferences
@@ -2229,7 +2221,7 @@ class $$GenericNamesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get weightPerPiece => $composableBuilder(
+  ColumnFilters<double> get weightPerPiece => $composableBuilder(
     column: $table.weightPerPiece,
     builder: (column) => ColumnFilters(column),
   );
@@ -2309,7 +2301,7 @@ class $$GenericNamesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get weightPerPiece => $composableBuilder(
+  ColumnOrderings<double> get weightPerPiece => $composableBuilder(
     column: $table.weightPerPiece,
     builder: (column) => ColumnOrderings(column),
   );
@@ -2335,7 +2327,7 @@ class $$GenericNamesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<int> get weightPerPiece => $composableBuilder(
+  GeneratedColumn<double> get weightPerPiece => $composableBuilder(
     column: $table.weightPerPiece,
     builder: (column) => column,
   );
@@ -2422,7 +2414,7 @@ class $$GenericNamesTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String> primaryUnit = const Value.absent(),
-                Value<int> weightPerPiece = const Value.absent(),
+                Value<double> weightPerPiece = const Value.absent(),
               }) => GenericNamesCompanion(
                 id: id,
                 name: name,
@@ -2434,7 +2426,7 @@ class $$GenericNamesTableTableManager
                 Value<int> id = const Value.absent(),
                 required String name,
                 required String primaryUnit,
-                required int weightPerPiece,
+                required double weightPerPiece,
               }) => GenericNamesCompanion.insert(
                 id: id,
                 name: name,
@@ -4214,7 +4206,7 @@ typedef $$RecipeIngredientsTableCreateCompanionBuilder =
     RecipeIngredientsCompanion Function({
       required int recipeId,
       required int pantryId,
-      required int quantityNeeded,
+      required double quantityNeeded,
       required String unit,
       Value<int> rowid,
     });
@@ -4222,7 +4214,7 @@ typedef $$RecipeIngredientsTableUpdateCompanionBuilder =
     RecipeIngredientsCompanion Function({
       Value<int> recipeId,
       Value<int> pantryId,
-      Value<int> quantityNeeded,
+      Value<double> quantityNeeded,
       Value<String> unit,
       Value<int> rowid,
     });
@@ -4287,7 +4279,7 @@ class $$RecipeIngredientsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get quantityNeeded => $composableBuilder(
+  ColumnFilters<double> get quantityNeeded => $composableBuilder(
     column: $table.quantityNeeded,
     builder: (column) => ColumnFilters(column),
   );
@@ -4353,7 +4345,7 @@ class $$RecipeIngredientsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get quantityNeeded => $composableBuilder(
+  ColumnOrderings<double> get quantityNeeded => $composableBuilder(
     column: $table.quantityNeeded,
     builder: (column) => ColumnOrderings(column),
   );
@@ -4419,7 +4411,7 @@ class $$RecipeIngredientsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get quantityNeeded => $composableBuilder(
+  GeneratedColumn<double> get quantityNeeded => $composableBuilder(
     column: $table.quantityNeeded,
     builder: (column) => column,
   );
@@ -4509,7 +4501,7 @@ class $$RecipeIngredientsTableTableManager
               ({
                 Value<int> recipeId = const Value.absent(),
                 Value<int> pantryId = const Value.absent(),
-                Value<int> quantityNeeded = const Value.absent(),
+                Value<double> quantityNeeded = const Value.absent(),
                 Value<String> unit = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => RecipeIngredientsCompanion(
@@ -4523,7 +4515,7 @@ class $$RecipeIngredientsTableTableManager
               ({
                 required int recipeId,
                 required int pantryId,
-                required int quantityNeeded,
+                required double quantityNeeded,
                 required String unit,
                 Value<int> rowid = const Value.absent(),
               }) => RecipeIngredientsCompanion.insert(
