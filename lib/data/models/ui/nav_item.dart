@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
-enum NavTab { addRecipe, quickAdd, chatbot, scanner, settings, debug }
+enum NavTab {
+  addRecipe,
+  quickAdd,
+  chatbot,
+  scanner,
+  settings,
+  debug,
+  receipGetter,
+}
 
 class NavItem {
   final NavTab id;

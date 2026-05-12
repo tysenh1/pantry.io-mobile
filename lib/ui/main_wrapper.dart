@@ -4,6 +4,7 @@ import 'package:pantry_io_mobile/ui/screens/chatbot_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/debug_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/quick_add_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/recipe_add_screen.dart';
+import 'package:pantry_io_mobile/ui/screens/recipe_get_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/scanner_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +59,14 @@ class _MainWrapperState extends State<MainWrapper> {
               label: 'Chatbot',
             ),
             showIf: appState.isLLMConnected,
+          ),
+          NavItem(
+            id: NavTab.receipGetter,
+            screen: const RecipeGetScreen(),
+            item: const BottomNavigationBarItem(
+              icon: Icon(Icons.get_app),
+              label: 'Recipes',
+            ),
           ),
           NavItem(
             id: NavTab.scanner,
