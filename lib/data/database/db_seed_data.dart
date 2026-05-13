@@ -296,7 +296,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'name': 'Garlic',
         'qty': 5,
-        'unit': 'cloves',
+        'unit': 'pcs',
         'staple': true,
         'gen': 'Garlic',
       },
@@ -317,7 +317,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'name': 'Broccoli',
         'qty': 1,
-        'unit': 'head',
+        'unit': 'pcs',
         'staple': false,
         'gen': 'Broccoli',
       },
@@ -443,7 +443,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'name': 'Baking Powder',
         'qty': 0,
-        'unit': 'tsp',
+        'unit': 'ml',
         'staple': false,
         'gen': 'Baking Powder',
       },
@@ -481,9 +481,9 @@ Future<void> seedAllData(AppDatabase db) async {
             '1. Dice chicken. 2. Sauté garlic in butter/oil. 3. Cook chicken until golden.',
         'ings': [
           {'name': 'Chicken Breast', 'qty': 500.0, 'unit': 'g'},
-          {'name': 'Garlic', 'qty': 3.0, 'unit': 'cloves'},
+          {'name': 'Garlic', 'qty': 3.0, 'unit': 'pcs'},
           {'name': 'Butter', 'qty': 30.0, 'unit': 'g'},
-          {'name': 'Olive Oil', 'qty': 2.0, 'unit': 'tbsp'},
+          {'name': 'Olive Oil', 'qty': 35.5, 'unit': 'ml'},
         ],
       },
       {
@@ -505,7 +505,7 @@ Future<void> seedAllData(AppDatabase db) async {
             '1. Slice chicken and broccoli. 2. Stir fry. 3. Add soy sauce.',
         'ings': [
           {'name': 'Chicken Breast', 'qty': 400.0, 'unit': 'g'},
-          {'name': 'Broccoli', 'qty': 1.0, 'unit': 'head'},
+          {'name': 'Broccoli', 'qty': 1.0, 'unit': 'pcs'},
           {'name': 'Soy Sauce', 'qty': 50.0, 'unit': 'ml'},
           {'name': 'White Rice', 'qty': 200.0, 'unit': 'g'},
         ],
@@ -527,7 +527,7 @@ Future<void> seedAllData(AppDatabase db) async {
         'instr': '1. Boil spaghetti. 2. Sauté garlic in oil. 3. Toss pasta.',
         'ings': [
           {'name': 'Spaghetti', 'qty': 250.0, 'unit': 'g'},
-          {'name': 'Garlic', 'qty': 4.0, 'unit': 'cloves'},
+          {'name': 'Garlic', 'qty': 4.0, 'unit': 'pcs'},
           {'name': 'Olive Oil', 'qty': 60.0, 'unit': 'ml'},
         ],
       },
@@ -550,7 +550,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Tomato Sauce', 'qty': 200.0, 'unit': 'g'},
           {'name': 'Mozzarella Cheese', 'qty': 200.0, 'unit': 'g'},
           {'name': 'Flour', 'qty': 300.0, 'unit': 'g'},
-          {'name': 'Olive Oil', 'qty': 2.0, 'unit': 'tbsp'},
+          {'name': 'Olive Oil', 'qty': 35.5, 'unit': 'ml'},
         ],
       },
       {
@@ -561,8 +561,8 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Flour', 'qty': 200.0, 'unit': 'g'},
           {'name': 'Eggs', 'qty': 2.0, 'unit': 'pcs'},
           {'name': 'Milk', 'qty': 250.0, 'unit': 'ml'},
-          {'name': 'Baking Powder', 'qty': 2.0, 'unit': 'tsp'},
-          {'name': 'Sugar', 'qty': 2.0, 'unit': 'tbsp'},
+          {'name': 'Baking Powder', 'qty': 20.0, 'unit': 'g'},
+          {'name': 'Sugar', 'qty': 12.0, 'unit': 'g'},
         ],
       },
       {
@@ -603,7 +603,7 @@ Future<void> seedAllData(AppDatabase db) async {
         'tags': 'Vegan, Quick, Healthy',
         'instr': '1. Chop veggies. 2. High heat stir fry. 3. Add soy sauce.',
         'ings': [
-          {'name': 'Broccoli', 'qty': 1.0, 'unit': 'head'},
+          {'name': 'Broccoli', 'qty': 1.0, 'unit': 'pcs'},
           {'name': 'Bell Peppers', 'qty': 2.0, 'unit': 'pcs'},
           {'name': 'Soy Sauce', 'qty': 30.0, 'unit': 'ml'},
           {'name': 'Zucchini', 'qty': 2.0, 'unit': 'pcs'},

@@ -40,10 +40,10 @@ class IngredientItem {
 
   factory IngredientItem.fromJson(Map<String, dynamic> json) {
     return IngredientItem(
-      quantityNeeded: (json['needed'] as num).toDouble(),
-      ingredientUnit: json['unit'] as String,
-      pantryQuantity: json['pantry_quantity'] as int,
-      primaryUnit: json['primary_unit'] as String,
+      quantityNeeded: (json['quantityNeeded'] as num).toDouble(),
+      ingredientUnit: json['ingredientUnit'] as String,
+      pantryQuantity: json['pantryQuantity'] as int,
+      primaryUnit: json['primaryUnit'] as String,
     );
   }
 }
