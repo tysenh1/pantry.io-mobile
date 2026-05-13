@@ -63,13 +63,17 @@ class AppDatabase extends _$AppDatabase {
       ''',
       readsFrom: {recipes, recipeIngredients, pantry, genericNames},
     ).watch().map((rows) {
-      print(rows);
       final recipesList = rows
           .map((row) => RecipeBrowseItem.fromRow(row))
           .toList();
 
       return filterCookableRecipes(recipesList);
     });
+  }
+
+  Future<void> cookRecipe(int recipeId) async {
+    print("do something");
+    return;
   }
 
   @override
@@ -91,19 +95,6 @@ class AppDatabase extends _$AppDatabase {
   List<RecipeBrowseItem> filterCookableRecipes<T>(
     List<RecipeBrowseItem> recipes,
   ) {
-    // return recipes.where((recipe) {
-    //   final pantryQty = normalizeQuantity(
-    //     (recipe. as num).toDouble(),
-    //     recipe.primaryUnit,
-    //   );
-    //
-    //   final neededQty = normalizeQuantity(
-    //     (recipe.quantityNeeded as num).toDouble(),
-    //     recipe.ingredientUnit,
-    //   );
-    //
-    //   return pantryQty >= neededQty;
-    // }).toList();
     return recipes.where((recipe) {
       return recipe.ingredients.every((ing) {
         return normalizeQuantity(

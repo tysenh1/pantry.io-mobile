@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/models/db/browse_recipes_item.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe_detail_widget.dart';
+import 'package:pantry_io_mobile/data/database/app_database.dart';
 
 class RecipeCard extends StatelessWidget {
   final RecipeBrowseItem recipe;
@@ -17,7 +19,13 @@ class RecipeCard extends StatelessWidget {
         ),
         subtitle: Text(recipe.tags ?? 'No tags'),
         trailing: const Icon(Icons.chevron_right),
-        onTap: () {},
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) =>
+                RecipeDetailWidget(recipe: recipe, db: AppDatabase.instance),
+          );
+        },
       ),
     );
   }
