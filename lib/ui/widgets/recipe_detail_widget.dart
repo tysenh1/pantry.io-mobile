@@ -43,6 +43,12 @@ class RecipeDetailWidget extends StatelessWidget {
             ...recipe.ingredients.map(
               (ing) => Text("• ${ing.quantityNeeded} ${ing.ingredientUnit}"),
             ),
+            const Divider(),
+            const Text(
+              "Instructions",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(recipe.instructions),
           ],
         ),
       ),

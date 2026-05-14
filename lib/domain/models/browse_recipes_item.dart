@@ -4,22 +4,26 @@ class RecipeBrowseItem {
   final int id;
   final String name;
   final String? tags;
+  final String instructions;
   final List<IngredientItem> ingredients;
 
   RecipeBrowseItem({
     required this.id,
     required this.name,
     this.tags,
+    required this.instructions,
     required this.ingredients,
   });
 
   factory RecipeBrowseItem.fromRow(dynamic row) {
     final List<dynamic> jsonList = jsonDecode(row.read<String>('ingredients'));
+    print(row.read<String>('instructions'));
 
     return RecipeBrowseItem(
       id: row.read<int>('id'),
       name: row.read<String>('name'),
       tags: row.read<String?>('tags'),
+      instructions: row.read<String>('instructions'),
       ingredients: jsonList.map((i) => IngredientItem.fromJson(i)).toList(),
     );
   }
