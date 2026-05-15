@@ -320,12 +320,8 @@ class $AllergensTable extends Allergens
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
@@ -507,12 +503,8 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, Item> {
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _barcodeMeta = const VerificationMeta(
     'barcode',
@@ -596,6 +588,8 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, Item> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('barcode')) {
       context.handle(
@@ -647,7 +641,7 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, Item> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   Item map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -815,6 +809,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
   final Value<int> genericNameId;
   final Value<int> unitSize;
   final Value<String> unitType;
+  final Value<int> rowid;
   const ItemsCompanion({
     this.id = const Value.absent(),
     this.barcode = const Value.absent(),
@@ -822,15 +817,18 @@ class ItemsCompanion extends UpdateCompanion<Item> {
     this.genericNameId = const Value.absent(),
     this.unitSize = const Value.absent(),
     this.unitType = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ItemsCompanion.insert({
-    this.id = const Value.absent(),
+    required int id,
     required String barcode,
     required String productName,
     required int genericNameId,
     required int unitSize,
     required String unitType,
-  }) : barcode = Value(barcode),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       barcode = Value(barcode),
        productName = Value(productName),
        genericNameId = Value(genericNameId),
        unitSize = Value(unitSize),
@@ -842,6 +840,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
     Expression<int>? genericNameId,
     Expression<int>? unitSize,
     Expression<String>? unitType,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -850,6 +849,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
       if (genericNameId != null) 'generic_name_id': genericNameId,
       if (unitSize != null) 'unit_size': unitSize,
       if (unitType != null) 'unit_type': unitType,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -860,6 +860,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
     Value<int>? genericNameId,
     Value<int>? unitSize,
     Value<String>? unitType,
+    Value<int>? rowid,
   }) {
     return ItemsCompanion(
       id: id ?? this.id,
@@ -868,6 +869,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
       genericNameId: genericNameId ?? this.genericNameId,
       unitSize: unitSize ?? this.unitSize,
       unitType: unitType ?? this.unitType,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -892,6 +894,9 @@ class ItemsCompanion extends UpdateCompanion<Item> {
     if (unitType.present) {
       map['unit_type'] = Variable<String>(unitType.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -903,7 +908,8 @@ class ItemsCompanion extends UpdateCompanion<Item> {
           ..write('productName: $productName, ')
           ..write('genericNameId: $genericNameId, ')
           ..write('unitSize: $unitSize, ')
-          ..write('unitType: $unitType')
+          ..write('unitType: $unitType, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1445,12 +1451,8 @@ class $RecipesTable extends Recipes with TableInfo<$RecipesTable, Recipe> {
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
@@ -2746,12 +2748,13 @@ typedef $$AllergensTableProcessedTableManager =
     >;
 typedef $$ItemsTableCreateCompanionBuilder =
     ItemsCompanion Function({
-      Value<int> id,
+      required int id,
       required String barcode,
       required String productName,
       required int genericNameId,
       required int unitSize,
       required String unitType,
+      Value<int> rowid,
     });
 typedef $$ItemsTableUpdateCompanionBuilder =
     ItemsCompanion Function({
@@ -2761,6 +2764,7 @@ typedef $$ItemsTableUpdateCompanionBuilder =
       Value<int> genericNameId,
       Value<int> unitSize,
       Value<String> unitType,
+      Value<int> rowid,
     });
 
 final class $$ItemsTableReferences
@@ -3054,6 +3058,7 @@ class $$ItemsTableTableManager
                 Value<int> genericNameId = const Value.absent(),
                 Value<int> unitSize = const Value.absent(),
                 Value<String> unitType = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => ItemsCompanion(
                 id: id,
                 barcode: barcode,
@@ -3061,15 +3066,17 @@ class $$ItemsTableTableManager
                 genericNameId: genericNameId,
                 unitSize: unitSize,
                 unitType: unitType,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                required int id,
                 required String barcode,
                 required String productName,
                 required int genericNameId,
                 required int unitSize,
                 required String unitType,
+                Value<int> rowid = const Value.absent(),
               }) => ItemsCompanion.insert(
                 id: id,
                 barcode: barcode,
@@ -3077,6 +3084,7 @@ class $$ItemsTableTableManager
                 genericNameId: genericNameId,
                 unitSize: unitSize,
                 unitType: unitType,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(

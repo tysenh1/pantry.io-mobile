@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
-import 'package:pantry_io_mobile/data/services/database_service.dart';
 import 'package:provider/provider.dart';
 
 class DatabaseDebugScreen extends StatefulWidget {
@@ -22,7 +21,7 @@ class _DatabaseDebugScreenState extends State<DatabaseDebugScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final db = context.read<DatabaseService>().db;
+    final db = context.read<AppDatabase>();
 
     return Scaffold(
       appBar: AppBar(
@@ -147,4 +146,3 @@ class _DatabaseDebugScreenState extends State<DatabaseDebugScreen> {
     );
   }
 }
-

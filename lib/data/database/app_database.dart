@@ -1,19 +1,19 @@
 import "dart:io";
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:pantry_io_mobile/data/database/db_seed_data.dart';
-import 'package:pantry_io_mobile/data/models/db/browse_recipes_item.dart';
+import 'package:pantry_io_mobile/data/db_seed_data.dart';
+import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:pantry_io_mobile/data/models/db/allergens.dart';
-import 'package:pantry_io_mobile/data/models/db/generic_names.dart';
-import 'package:pantry_io_mobile/data/models/db/items.dart';
-import 'package:pantry_io_mobile/data/models/db/item_allergens.dart';
-import 'package:pantry_io_mobile/data/models/db/pantry.dart';
-import 'package:pantry_io_mobile/data/models/db/recipe_ingredients.dart';
-import 'package:pantry_io_mobile/data/models/db/recipes.dart';
-import 'package:pantry_io_mobile/data/models/dao/recipe_dao.dart';
-import 'package:pantry_io_mobile/logic/utils/unit_converter.dart';
+import 'package:pantry_io_mobile/data/database/tables/allergens_table.dart';
+import 'package:pantry_io_mobile/data/database/tables/generic_names_table.dart';
+import 'package:pantry_io_mobile/data/database/tables/items_table.dart';
+import 'package:pantry_io_mobile/data/database/tables/item_allergens_table.dart';
+import 'package:pantry_io_mobile/data/database/tables/pantry_table.dart';
+import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
+import 'package:pantry_io_mobile/data/database/tables/recipes_table.dart';
+import 'package:pantry_io_mobile/data/database/daos/recipe_dao.dart';
+import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 
 part "app_database.g.dart";
 

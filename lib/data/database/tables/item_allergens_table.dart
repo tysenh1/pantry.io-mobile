@@ -1,6 +1,6 @@
 import "package:drift/drift.dart";
-import "package:pantry_io_mobile/data/models/db/allergens.dart";
-import "package:pantry_io_mobile/data/models/db/items.dart";
+import "package:pantry_io_mobile/data/database/tables/allergens_table.dart";
+import "package:pantry_io_mobile/data/database/tables/items_table.dart";
 
 class ItemAllergens extends Table {
   IntColumn get itemId =>

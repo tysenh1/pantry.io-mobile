@@ -1,6 +1,6 @@
 import "package:drift/drift.dart";
-import "package:pantry_io_mobile/data/models/db/pantry.dart";
-import "package:pantry_io_mobile/data/models/db/recipes.dart";
+import "package:pantry_io_mobile/data/database/tables/pantry_table.dart";
+import "package:pantry_io_mobile/data/database/tables/recipes_table.dart";
 
 class RecipeIngredients extends Table {
   IntColumn get recipeId =>

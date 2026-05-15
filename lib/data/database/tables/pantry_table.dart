@@ -1,5 +1,5 @@
 import "package:drift/drift.dart";
-import "package:pantry_io_mobile/data/models/db/generic_names.dart";
+import "package:pantry_io_mobile/data/database/tables/generic_names_table.dart";
 
 class Pantry extends Table {
   IntColumn get id => integer()();

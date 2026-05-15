@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'app_database.dart'; // Ensure this matches your actual filename
+import 'package:pantry_io_mobile/data/database/app_database.dart';
 
 Future<void> seedAllData(AppDatabase db) async {
   await db.transaction(() async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/logic/providers/app_state.dart';
+import 'package:pantry_io_mobile/data/database/app_database.dart';
+import 'package:pantry_io_mobile/data/repositories/app_state.dart';
 import 'package:pantry_io_mobile/ui/screens/chatbot_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/debug_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/quick_add_screen.dart';
@@ -9,8 +10,7 @@ import 'package:pantry_io_mobile/ui/screens/scanner_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:pantry_io_mobile/ui/widgets/bottom_nav.dart';
-import 'package:pantry_io_mobile/data/models/ui/nav_item.dart';
-import 'package:pantry_io_mobile/data/services/database_service.dart';
+import 'package:pantry_io_mobile/domain/models/nav_item.dart';
 
 class MainWrapper extends StatefulWidget {
   const MainWrapper({super.key});
@@ -24,7 +24,7 @@ class _MainWrapperState extends State<MainWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<AppState, DatabaseService>(
+    return Consumer2<AppState, AppDatabase>(
       builder: (context, appState, databaseService, _) {
         final allItems = [
           NavItem(

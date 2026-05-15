@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/data/models/ui/pantry_generic_name_response.dart';
-import 'package:pantry_io_mobile/data/models/ui/recipe_add.dart';
+import 'package:pantry_io_mobile/data/database/app_database.dart';
+import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_add.dart';
 import 'package:provider/provider.dart';
-import 'package:pantry_io_mobile/data/services/database_service.dart';
 
 class RecipeAddWidget extends StatefulWidget {
   const RecipeAddWidget({super.key});
@@ -69,8 +69,8 @@ class _RecipeAddWidgetState extends State<RecipeAddWidget> {
       return;
     }
 
-    final dbService = context.read<DatabaseService>();
-    dbService.db.recipeDao.createRecipe(
+    final db = context.read<AppDatabase>();
+    db.recipeDao.createRecipe(
       name: _formModel.nameController.text.trim(),
       instructions: _formModel.instructionsController.text.trim(),
       rawTags: _formModel.tagsController.text.trim(),

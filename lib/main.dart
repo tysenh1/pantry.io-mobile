@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:provider/provider.dart';
-import 'data/services/database_service.dart';
-import 'logic/providers/app_state.dart';
+import 'package:pantry_io_mobile/data/repositories/app_state.dart';
 import 'ui/main_wrapper.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final db = AppDatabase();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => DatabaseService()),
+        Provider<AppDatabase>.value(value: db),
         ChangeNotifierProvider(create: (_) => AppState()),
       ],
       child: const MyApp(),

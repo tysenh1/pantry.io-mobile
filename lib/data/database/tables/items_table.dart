@@ -1,8 +1,8 @@
 import "package:drift/drift.dart";
-import "package:pantry_io_mobile/data/models/db/generic_names.dart";
+import "package:pantry_io_mobile/data/database/tables/generic_names_table.dart";
 
 class Items extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  IntColumn get id => integer()();
   TextColumn get barcode => text().unique()();
   TextColumn get productName => text()();
   IntColumn get genericNameId =>
