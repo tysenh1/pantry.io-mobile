@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
+import 'package:pantry_io_mobile/data/repositories/app_state.dart';
+import 'package:provider/provider.dart';
 
 class RecipeDetailWidget extends StatelessWidget {
   final RecipeBrowseItem recipe;
-  final AppDatabase db;
+  final appState = Provider.of<AppState>(context, listen: false);
 
   const RecipeDetailWidget({super.key, required this.recipe, required this.db});
 
@@ -77,7 +79,7 @@ class RecipeDetailWidget extends StatelessWidget {
           TextButton(
             style: TextButton.styleFrom(backgroundColor: Colors.green),
             onPressed: () async {
-              await db.cookRecipe(recipe.id);
+              await .cookRecipe(recipe.id);
 
               if (context.mounted) Navigator.pop(ctx);
               if (context.mounted) Navigator.pop(context);

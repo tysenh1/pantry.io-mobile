@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:pantry_io_mobile/core/utils/pantry_utils.dart';
+import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/data/database/tables/pantry_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/generic_names_table.dart';
@@ -30,6 +31,15 @@ class PantryDao extends DatabaseAccessor<AppDatabase> with _$PantryDaoMixin {
         generic.weightPerPiece,
         recipeIngredient.quantityNeeded,
         recipeIngredient.unit,
+      );
+
+      final newQuantityWithOldUnit = normalizeQuantity(
+        newQuantity.toDouble(),
+        recipeIngredient.unit,
+      );
+
+      await (update(pantry)..where((t) => t.id.equals(pantryItem.id))).write(
+        PantryCompanion(quantity: Value(newQuantityWithOldUnit.floor())),
       );
     }
   }
