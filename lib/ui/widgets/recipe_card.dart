@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe_detail_widget.dart';
-import 'package:pantry_io_mobile/data/database/app_database.dart';
 
 class RecipeCard extends StatelessWidget {
   final RecipeBrowseItem recipe;
@@ -23,7 +22,7 @@ class RecipeCard extends StatelessWidget {
           showDialog(
             context: context,
             builder: (context) =>
-                RecipeDetailWidget(recipe: recipe, db: AppDatabase.instance),
+                RecipeDetailWidget(recipe: recipe),
           );
         },
       ),

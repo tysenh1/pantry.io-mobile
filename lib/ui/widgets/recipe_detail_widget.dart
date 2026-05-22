@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
-import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/repositories/app_state.dart';
 import 'package:provider/provider.dart';
 
 class RecipeDetailWidget extends StatelessWidget {
   final RecipeBrowseItem recipe;
-  final appState = Provider.of<AppState>(context, listen: false);
 
-  const RecipeDetailWidget({super.key, required this.recipe, required this.db});
+  const RecipeDetailWidget({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context) {
+
     return AlertDialog(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -64,6 +63,7 @@ class RecipeDetailWidget extends StatelessWidget {
   }
 
   void _confirmCook(BuildContext context) {
+    final appState = Provider.of<AppState>(context, listen: false);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -79,7 +79,7 @@ class RecipeDetailWidget extends StatelessWidget {
           TextButton(
             style: TextButton.styleFrom(backgroundColor: Colors.green),
             onPressed: () async {
-              await .cookRecipe(recipe.id);
+              await appState.cookRecipe(recipe.id);
 
               if (context.mounted) Navigator.pop(ctx);
               if (context.mounted) Navigator.pop(context);

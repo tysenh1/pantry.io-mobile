@@ -70,7 +70,7 @@ class _MainWrapperState extends State<MainWrapper> {
           ),
           NavItem(
             id: NavTab.scanner,
-            screen: const ScannerScreen(),
+            screen: ScannerScreen(isActiveTab: _currentTab == NavTab.scanner),
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.scanner),
               label: 'Barcode',

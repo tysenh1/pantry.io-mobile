@@ -7,13 +7,9 @@ import 'ui/main_wrapper.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final db = AppDatabase.instance;
-
   runApp(
     MultiProvider(
       providers: [
-  //       Provider<AppDatabase>.value(value: db),
-  //       ChangeNotifierProvider(create: (_) => AppState()),
         Provider<AppDatabase>(
           create: (context) => AppDatabase.instance,
           dispose: (context, db) => db.close(),

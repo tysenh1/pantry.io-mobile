@@ -3,6 +3,7 @@ import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe_card.dart';
+import 'package:provider/provider.dart';
 
 class RecipeGetWidget extends StatefulWidget {
   const RecipeGetWidget({super.key});
@@ -17,7 +18,7 @@ class _RecipeGetWidgetState extends State<RecipeGetWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final db = AppDatabase.instance;
+    final db = Provider.of<AppDatabase>(context, listen: true);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +57,7 @@ class _RecipeGetWidgetState extends State<RecipeGetWidget> {
       ),
 
       body: StreamBuilder<List<RecipeBrowseItem>>(
-        stream: db.watchAllRecipes(),
+        stream: db.recipeDao.watchAllRecipes(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const CircularProgressIndicator();
 

@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:provider/provider.dart';
@@ -45,6 +46,9 @@ class _DatabaseDebugScreenState extends State<DatabaseDebugScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text('--- PANTRY TABLE ---'),
+            _buildPantryList(db),
+            const Divider(),
             const Text(
               '--- RECIPES TABLE ---',
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -64,6 +68,36 @@ class _DatabaseDebugScreenState extends State<DatabaseDebugScreen> {
     );
   }
 
+  Widget _buildPantryList(AppDatabase db) {
+    return FutureBuilder(
+      future: db.select(db.pantry).join([
+        innerJoin(db.genericNames, db.pantry.genericNameId.equalsExp(db.genericNames.id)),
+      ]).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const LinearProgressIndicator();
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Text("No pantry items found");
+        }
+
+        return Column(
+          children: snapshot.data!.map((row) {
+            final pantryItem = row.readTable(db.pantry);
+            final genericName = row.readTable(db.genericNames);
+
+            return Card(
+              child: ListTile(
+                title: Text(genericName.name),
+                subtitle: Text('ID: ${pantryItem.id} | Quantity: ${pantryItem.quantity}'),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
   Widget _buildRecipeList(AppDatabase db) {
     return FutureBuilder(
       // The key change: FutureBuilder runs whenever the 'future' changes
@@ -80,7 +114,7 @@ class _DatabaseDebugScreenState extends State<DatabaseDebugScreen> {
                 (r) => Card(
                   child: ListTile(
                     title: Text(r.name),
-                    subtitle: Text('ID: ${r.id} | Tags: ${r.tags ?? "None"}'),
+                    subtitle: Text('ID: ${r.id} | Tags: ${r.tags}'),
                   ),
                 ),
               )
@@ -133,6 +167,7 @@ class _DatabaseDebugScreenState extends State<DatabaseDebugScreen> {
             onPressed: () async {
               await db.delete(db.recipeIngredients).go();
               await db.delete(db.recipes).go();
+              await db.delete(db.pantry).go();
               _refresh(); // Refresh UI after delete
               if (ctx.mounted) Navigator.pop(ctx);
             },
