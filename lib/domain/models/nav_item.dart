@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 enum NavTab {
   addRecipe,
-  quickAdd,
   chatbot,
   scanner,
   settings,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/ui/widgets/barcode_permissions_widget.dart';
 import 'package:pantry_io_mobile/ui/widgets/lazy_widget_wrapper.dart';
+import 'package:pantry_io_mobile/ui/widgets/pantry_add_item_widget.dart';
 
 class ScannerScreen extends StatelessWidget {
   final bool isActiveTab;
@@ -8,6 +8,6 @@ class ScannerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: LazyWidgetWrapper(isVisible: isActiveTab, child: BarcodePermissionsWidget()));
+    return Center(child: LazyWidgetWrapper(isVisible: isActiveTab, child: PantryAddItemWidget()));
   }
 }

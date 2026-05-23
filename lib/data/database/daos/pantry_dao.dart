@@ -43,4 +43,6 @@ class PantryDao extends DatabaseAccessor<AppDatabase> with _$PantryDaoMixin {
       );
     }
   }
+
+
 }

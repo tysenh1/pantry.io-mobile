@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:pantry_io_mobile/ui/widgets/barcode_scanner_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
-class BarcodePermissionsWidget extends StatefulWidget {
-  const BarcodePermissionsWidget({super.key});
+class BarcodeScannerWidget extends StatefulWidget {
+  final Function(String) onBarcodeScanned;
+
+  const BarcodeScannerWidget({super.key, required this.onBarcodeScanned});
 
   @override
-  State<BarcodePermissionsWidget> createState() => _BarcodePermissionsWidgetState();
+  State<BarcodeScannerWidget> createState() => _BarcodeScannerWidgetState();
 }
 
-class _BarcodePermissionsWidgetState extends State<BarcodePermissionsWidget> {
-
+class _BarcodeScannerWidgetState extends State<BarcodeScannerWidget> {
+  final MobileScannerController _controller = MobileScannerController(
+    autoStart: false,
+  );
   PermissionStatus _permissionStatus = PermissionStatus.denied;
   bool _isChecking = true;
 
@@ -19,6 +22,12 @@ class _BarcodePermissionsWidgetState extends State<BarcodePermissionsWidget> {
   void initState() {
     super.initState();
     _checkAndRequestPermission();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> _checkAndRequestPermission() async {
@@ -36,17 +45,11 @@ class _BarcodePermissionsWidgetState extends State<BarcodePermissionsWidget> {
         _isChecking = false;
       });
 
-      // if (status.isGranted) {
-      //   _controller.start();
-      // }
+      if (status.isGranted) {
+        _controller.start();
+      }
     }
   }
-
-  // @override
-  // void dispose() {
-  //   _controller.dispose();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,16 @@ class _BarcodePermissionsWidgetState extends State<BarcodePermissionsWidget> {
     }
 
     if (_permissionStatus.isGranted) {
-      return BarcodeScannerWidget(isAccessGranted: _permissionStatus);
+      return MobileScanner(
+        controller: _controller,
+        onDetect: (capture) async {
+          final barcode = capture.barcodes.firstOrNull;
+          if (barcode?.rawValue != null) {
+            await _controller.stop();
+            widget.onBarcodeScanned(barcode!.rawValue as String);
+          }
+        },
+      );
     }
 
     return _buildPermissionDeniedUI();
@@ -86,26 +98,28 @@ class _BarcodePermissionsWidgetState extends State<BarcodePermissionsWidget> {
             const SizedBox(height: 8),
             Text(
               isPermanent
-                ? 'You have disabled camera permissions. Please enable them in your device settings.'
-                : 'We need camera permissions to scan your pantry product barcodes.',
+                  ? 'You have disabled camera permissions. Please enable them in your device settings.'
+                  : 'We need camera permissions to scan your pantry product barcodes.',
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               icon: Icon(isPermanent ? Icons.settings : Icons.refresh),
-              label: Text(isPermanent ? 'Open App Settings' : 'Grant Permission'),
+              label: Text(
+                isPermanent ? 'Open App Settings' : 'Grant Permission',
+              ),
               onPressed: () {
                 if (isPermanent) {
                   openAppSettings();
                 } else {
                   _checkAndRequestPermission();
                 }
-              }
-            )
-          ]
-        )
-      )
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:provider/provider.dart';
 import 'package:pantry_io_mobile/data/repositories/app_state.dart';
@@ -6,6 +7,12 @@ import 'ui/main_wrapper.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  OpenFoodAPIConfiguration.userAgent = UserAgent(
+    name: 'PantryIOMobile',
+    version: '1.0.0',
+    system: 'Flutter'
+  );
 
   runApp(
     MultiProvider(

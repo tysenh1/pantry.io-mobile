@@ -44,14 +44,6 @@ class _MainWrapperState extends State<MainWrapper> {
             ),
           ),
           NavItem(
-            id: NavTab.quickAdd,
-            screen: const QuickAddScreen(),
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.cookie),
-              label: 'Quick Add',
-            ),
-          ),
-          NavItem(
             id: NavTab.chatbot,
             screen: const ChatbotScreen(),
             item: const BottomNavigationBarItem(
