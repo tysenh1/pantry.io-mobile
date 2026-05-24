@@ -3,7 +3,6 @@ import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/repositories/app_state.dart';
 import 'package:pantry_io_mobile/ui/screens/chatbot_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/debug_screen.dart';
-import 'package:pantry_io_mobile/ui/screens/quick_add_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/recipe_add_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/recipe_get_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/scanner_screen.dart';

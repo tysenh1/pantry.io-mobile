@@ -17,7 +17,6 @@ class RecipeBrowseItem {
 
   factory RecipeBrowseItem.fromRow(dynamic row) {
     final List<dynamic> jsonList = jsonDecode(row.read<String>('ingredients'));
-    print(row.read<String>('instructions'));
 
     return RecipeBrowseItem(
       id: row.read<int>('id'),
