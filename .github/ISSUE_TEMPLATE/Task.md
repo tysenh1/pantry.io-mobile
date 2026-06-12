@@ -1,7 +1,7 @@
 ---
 name: Task
 about: A single implementable unit of work - one function, one widget, one file
-title: "[TASK]"
+title: "[TASK] "
 labels: task
 ---
 

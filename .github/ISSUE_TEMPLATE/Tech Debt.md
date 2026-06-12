@@ -1,7 +1,7 @@
 ---
 name: Tech Debt
 about: Something hacked together that needs to be done properly later
-title: "[DEBT]"
+title: "[DEBT] "
 labels: debt
 ---
 

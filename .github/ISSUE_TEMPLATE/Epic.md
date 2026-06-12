@@ -1,7 +1,7 @@
 ---
 name: Epic
 about: A full screen or major feature area
-title: "[EPIC]"
+title: "[EPIC] "
 labels: epic
 ---
 

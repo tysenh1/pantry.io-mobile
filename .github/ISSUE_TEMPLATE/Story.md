@@ -1,7 +1,7 @@
 ---
 name: Story
 about: A user-facing feature within a page
-title: "[STORY]"
+title: "[STORY] "
 labels: story
 ---
 

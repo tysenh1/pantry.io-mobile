@@ -1,7 +1,7 @@
 ---
 name: Quick Win
 about: Under ~20 minutes - for low energy nights
-title: "[QUICK WIN]"
+title: "[QUICK WIN] "
 labels: quick-win, task
 ---
 
