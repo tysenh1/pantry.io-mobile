@@ -59,45 +59,6 @@ class _BarcodeScannerWidgetState extends State<BarcodeScannerWidget> {
     );
   }
 
-  // Widget _buildBody() {
-  //   if (_isChecking) {
-  //     return const Center(child: CircularProgressIndicator());
-  //   }
-  //
-  //   if (_permissionStatus.isGranted) {
-  //     return LayoutBuilder(
-  //       builder: (context, constraints) {
-  //         final double availableWidth = constraints.maxWidth;
-  //         final double maxHeightCeiling = availableWidth;
-  //
-  //         return ConstrainedBox(
-  //           constraints: BoxConstraints(
-  //             minWidth: availableWidth,
-  //             maxWidth: availableWidth,
-  //             minHeight: 0,
-  //             maxHeight: maxHeightCeiling,
-  //           ),
-  //           child: ClipRRect(
-  //             borderRadius: BorderRadius.circular(12),
-  //             child: MobileScanner(
-  //               controller: _controller,
-  //               fit: BoxFit.cover,
-  //               onDetect: (capture) async {
-  //                 final barcode = capture.barcodes.firstOrNull;
-  //                 if (barcode?.rawValue != null) {
-  //                   await _controller.stop();
-  //                   widget.onBarcodeScanned(barcode!.rawValue!);
-  //                 }
-  //               }
-  //             )
-  //           )
-  //         );
-  //       }
-  //     );
-  //   }
-  //   return _buildPermissionDeniedUI();
-  // }
-
   Widget _buildBody() {
     if (_isChecking) {
       return const Center(child: CircularProgressIndicator());

@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/tables/items_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/generic_names_table.dart';
+import 'package:pantry_io_mobile/domain/models/item_info.dart';
 
 part 'items_dao.g.dart';
 
@@ -24,5 +25,9 @@ class ItemsDao extends DatabaseAccessor<AppDatabase> with _$ItemsDaoMixin {
     }
 
     return null;
+  }
+
+  Future<int> insertItem(ItemInfo item) async {
+    return await into(items).insert(item.toCompanion());
   }
 }

@@ -44,5 +44,12 @@ class PantryDao extends DatabaseAccessor<AppDatabase> with _$PantryDaoMixin {
     }
   }
 
+  Future<PantryData> getPantryItemByGenericNameId(int genericNameId) async {
+    final query = select(pantry)..where((tbl) => tbl.genericNameId.equals(genericNameId));
+
+    return await query.getSingle();
+  }
+
+  Future<int> insertPantryItem()
 
 }

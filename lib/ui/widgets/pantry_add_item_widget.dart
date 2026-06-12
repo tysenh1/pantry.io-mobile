@@ -108,22 +108,11 @@ class _PantryAddItemWidgetState extends State<PantryAddItemWidget> {
             .take(5)
             .map((result) => result.item)
             .toList();
-
-        // setState(() {
-        //   _dropdownItems = filteredGenericNames;
-        // });
-
         String productName = result.product?.productName ?? '';
         double quantity = parseQuantity(result);
         String unit = parseUnit(result);
         setState(() {
-          // itemInfo = ItemInfo(
-          //   barcode: barcode,
-          //   productName: productName,
-          //   genericName: genericName,
-          //   unitSize: quantity,
-          //   unitType: unit
-          // );
+
 
           if (filteredGenericNames.isNotEmpty) {
             _selectedGenericId = filteredGenericNames.first.id;
@@ -138,11 +127,6 @@ class _PantryAddItemWidgetState extends State<PantryAddItemWidget> {
               ),
             );
           }
-
-          // if (filteredGenericNames.isNotEmpty) {
-          //   _dropdownItems = filteredGenericNames;
-          // }
-
           _barcodeController.text = barcode;
           _nameController.text = productName;
           _unitSizeController.text = quantity.toString();
@@ -206,32 +190,30 @@ class _PantryAddItemWidgetState extends State<PantryAddItemWidget> {
             }
           )
         );
-        // return Dialog(
-        //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        //   elevation: 16,
-        //   child: LayoutBuilder(
-        //     builder: (context, constraints) {
-        //       final dynamicHeight = MediaQuery.of(context).size.height * 0.50;
-        //
-        //       return Container(
-        //         width: double.infinity,
-        //         height: dynamicHeight,
-        //         // padding: const EdgeInsets.all(8.0),
-        //         child: ClipRRect(
-        //           borderRadius: BorderRadius.circular(12),
-        //           child: BarcodeScannerWidget(
-        //             onBarcodeScanned: (barcode) {
-        //               _fetchProductData(barcode);
-        //               Navigator.of(context).pop();
-        //             }
-        //           )
-        //         )
-        //       );
-        //     }
-        //   )
-        // );
+
       }
     );
+  }
+
+  void createItem(ItemInfo item) async {
+    if (
+      _nameController.text == ''
+      || _unitSizeController.text == ''
+      || _unitTypeController.text == ''
+      || _selectedGenericId == null
+    ) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Make sure all required fields have information before submitting');
+        )
+      );
+      return;
+    }
+    final db = Provider.of<AppDatabase>(context, listen: false);
+
+    if (_barcodeController.text == '') {
+      await db.pantryDao.in
+    }
   }
 
   @override
@@ -268,6 +250,7 @@ class _PantryAddItemWidgetState extends State<PantryAddItemWidget> {
                     labelText: 'Barcode',
                     border: OutlineInputBorder(),
                   ),
+                  readOnly: true,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -343,28 +326,6 @@ class _PantryAddItemWidgetState extends State<PantryAddItemWidget> {
               ],
             ),
           ),
-          // if (_showScanner)
-          //   Positioned(
-          //     top: 80,
-          //     left: 16,
-          //     right: 16,
-          //     child: Material(
-          //       elevation: 8,
-          //       borderRadius: BorderRadius.circular(14),
-          //       child: Container(
-          //         height: 250,
-          //         margin: const EdgeInsets.only(bottom: 24),
-          //         decoration: BoxDecoration(
-          //           border: Border.all(color: Colors.grey.shade300, width: 2),
-          //           borderRadius: BorderRadius.circular(14),
-          //         ),
-          //         child: BarcodeScannerWidget(
-          //           onBarcodeScanned: (barcode) => _fetchProductData(barcode),
-          //         ),
-          //       ),
-          //     )
-          //   )
-
     );
   }
 }
