@@ -1,5 +1,5 @@
 ---
-name: Chore,
+name: Chore
 about: Meta task that doesn't belong to a screen or feature
 title: "[CHORE] "
 labels: chore
