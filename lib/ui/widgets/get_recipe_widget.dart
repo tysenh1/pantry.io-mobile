@@ -5,14 +5,14 @@ import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe_card.dart';
 import 'package:provider/provider.dart';
 
-class RecipeGetWidget extends StatefulWidget {
-  const RecipeGetWidget({super.key});
+class GetRecipeWidget extends StatefulWidget {
+  const GetRecipeWidget({super.key});
 
   @override
-  State<RecipeGetWidget> createState() => _RecipeGetWidgetState();
+  State<GetRecipeWidget> createState() => _GetRecipeWidgetState();
 }
 
-class _RecipeGetWidgetState extends State<RecipeGetWidget> {
+class _GetRecipeWidgetState extends State<GetRecipeWidget> {
   String _searchQuery = "";
   String? _selectedTag;
 

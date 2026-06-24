@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
-import 'package:pantry_io_mobile/domain/models/recipe_add.dart';
+import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
 import 'package:provider/provider.dart';
 
-class RecipeAddWidget extends StatefulWidget {
-  const RecipeAddWidget({super.key});
+class AddRecipeWidget extends StatefulWidget {
+  const AddRecipeWidget({super.key});
 
   @override
-  State<RecipeAddWidget> createState() => _RecipeAddWidgetState();
+  State<AddRecipeWidget> createState() => _AddRecipeWidgetState();
 }
 
-class _RecipeAddWidgetState extends State<RecipeAddWidget> {
+class _AddRecipeWidgetState extends State<AddRecipeWidget> {
   final _formKey = GlobalKey<FormState>();
 
   final RecipeFormModel _formModel = RecipeFormModel();

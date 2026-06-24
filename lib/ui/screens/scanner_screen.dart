@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/ui/widgets/lazy_widget_wrapper.dart';
-import 'package:pantry_io_mobile/ui/widgets/pantry_add_item_widget.dart';
+import 'package:pantry_io_mobile/ui/widgets/add_pantry_item_widget.dart';
 
 class ScannerScreen extends StatelessWidget {
   final bool isActiveTab;
