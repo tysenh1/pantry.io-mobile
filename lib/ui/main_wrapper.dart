@@ -3,8 +3,8 @@ import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/repositories/app_state.dart';
 import 'package:pantry_io_mobile/ui/screens/chatbot_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/debug_screen.dart';
-import 'package:pantry_io_mobile/ui/screens/recipe_add_screen.dart';
-import 'package:pantry_io_mobile/ui/screens/recipe_get_screen.dart';
+import 'package:pantry_io_mobile/ui/screens/add_recipe_screen.dart';
+import 'package:pantry_io_mobile/ui/screens/get_recipe_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/scanner_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/settings_screen.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +36,7 @@ class _MainWrapperState extends State<MainWrapper> {
           ),
           NavItem(
             id: NavTab.addRecipe,
-            screen: const RecipeAddScreen(),
+            screen: const AddRecipeScreen(),
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.add),
               label: 'Add Recipe',
@@ -53,7 +53,7 @@ class _MainWrapperState extends State<MainWrapper> {
           ),
           NavItem(
             id: NavTab.receipGetter,
-            screen: const RecipeGetScreen(),
+            screen: const GetRecipeScreen(),
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.get_app),
               label: 'Recipes',
