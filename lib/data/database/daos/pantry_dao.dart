@@ -50,6 +50,6 @@ class PantryDao extends DatabaseAccessor<AppDatabase> with _$PantryDaoMixin {
     return await query.getSingle();
   }
 
-  Future<int> insertPantryItem()
+  // Future<int> insertPantryItem()
 
 }
