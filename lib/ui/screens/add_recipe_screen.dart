@@ -3,6 +3,7 @@ import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
@@ -116,6 +117,18 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 children: [
                   AppTextField(placeholder: 'This is a single line'),
                   AppTextField(placeholder: 'this is a multiline', isMultiLine: true),
+                  AppDropdown(
+                    items: _genericNames.asMap().entries.map((entry) {
+                      int idx = entry.key;
+                      var data = entry.value;
+                      return DropdownMenuItem<int>(
+                        value: idx,
+                        child: Text(data.name)
+                      );
+                    }).toList(),
+                    onChanged: (_) {},
+                    placeholder: 'Generic Names'
+                  ),
                   AppButton(label: "Add Ingredient", onPressed: () {}, type: AppButtonType.secondary),
                 ]
               )
