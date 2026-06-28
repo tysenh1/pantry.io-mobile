@@ -18,7 +18,9 @@ class StyledAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(
         title,
-        style: Theme.of(context).textTheme.titleLarge,
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          fontSize: 24
+        ),
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
       shape: Border(

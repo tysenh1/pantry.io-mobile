@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
-import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
-import 'package:pantry_io_mobile/domain/models/item_info.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
-import 'package:pantry_io_mobile/ui/widgets/add_recipe_widget.dart';
-import 'package:pantry_io_mobile/ui/widgets/common/container.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/styled_app_bar.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/styled_app_card.dart';
 import 'package:provider/provider.dart';
 
 class AddRecipeScreen extends StatefulWidget {
@@ -109,13 +106,15 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         padding: EdgeInsets.all(20),
         child: Column(
           children: [
-            StyledContainer(
+            StyledAppCard(
+              title: "Ingredients",
+              action: Text("BUTTON"),
               child: Text(
                 "This is a test",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Color.fromARGB(255,0,0,0)
                 )
-              )
+              ),
             )
           ]
         )
