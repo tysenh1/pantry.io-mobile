@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
@@ -114,10 +115,12 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 spacing: 16,
                 children: [
                   AppTextField(placeholder: 'This is a single line'),
-                  AppTextField(placeholder: 'this is a multiline', isMultiLine: true,)
+                  AppTextField(placeholder: 'this is a multiline', isMultiLine: true),
+                  AppButton(label: "Add Ingredient", onPressed: () {}, type: AppButtonType.secondary),
                 ]
               )
-            )
+            ),
+            AppButton(label: "Add Pantry Item", onPressed: () {}, type: AppButtonType.primary)
           ]
         )
       )

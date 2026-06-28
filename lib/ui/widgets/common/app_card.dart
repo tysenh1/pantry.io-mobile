@@ -35,7 +35,7 @@ class AppCard extends StatelessWidget {
                     Text(
                       title!,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Color.fromARGB(255, 0, 0, 0),
+                        color: Colors.black,
                         fontSize: 20
                       ),
                     ),
