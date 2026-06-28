@@ -195,26 +195,26 @@ class _PantryAddItemWidgetState extends State<PantryAddItemWidget> {
     );
   }
 
-  void createItem(ItemInfo item) async {
-    if (
-      _nameController.text == ''
-      || _unitSizeController.text == ''
-      || _unitTypeController.text == ''
-      || _selectedGenericId == null
-    ) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Make sure all required fields have information before submitting');
-        )
-      );
-      return;
-    }
-    final db = Provider.of<AppDatabase>(context, listen: false);
-
-    if (_barcodeController.text == '') {
-      await db.pantryDao.in
-    }
-  }
+  // void createItem(ItemInfo item) async {
+  //   if (
+  //     _nameController.text == ''
+  //     || _unitSizeController.text == ''
+  //     || _unitTypeController.text == ''
+  //     || _selectedGenericId == null
+  //   ) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text('Make sure all required fields have information before submitting');
+  //       )
+  //     );
+  //     return;
+  //   }
+  //   final db = Provider.of<AppDatabase>(context, listen: false);
+  //
+  //   if (_barcodeController.text == '') {
+  //     await db.pantryDao.in
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
