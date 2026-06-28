@@ -5,6 +5,7 @@ import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
 import 'package:pantry_io_mobile/domain/models/item_info.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
 import 'package:pantry_io_mobile/ui/widgets/add_recipe_widget.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/container.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/styled_app_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -104,6 +105,21 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: StyledAppBar(title: 'Add Recipe'),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          children: [
+            StyledContainer(
+              child: Text(
+                "This is a test",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Color.fromARGB(255,0,0,0)
+                )
+              )
+            )
+          ]
+        )
+      )
     );
   }
 }
