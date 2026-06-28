@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pantry App',
       theme: theme.light(),
-      darkTheme: theme.dark(),
+      // darkTheme: theme.dark(),
       themeMode: ThemeMode.system,
       home: const MainWrapper(),
     );

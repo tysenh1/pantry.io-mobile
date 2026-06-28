@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
-import 'package:pantry_io_mobile/ui/widgets/common/styled_app_bar.dart';
-import 'package:pantry_io_mobile/ui/widgets/common/styled_app_card.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:provider/provider.dart';
 
 class AddRecipeScreen extends StatefulWidget {
@@ -101,20 +102,21 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: StyledAppBar(title: 'Add Recipe'),
+      appBar: AppHeader(title: 'Add Recipe'),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
         child: Column(
           children: [
-            StyledAppCard(
+            AppCard(
               title: "Ingredients",
               action: Text("BUTTON"),
-              child: Text(
-                "This is a test",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Color.fromARGB(255,0,0,0)
-                )
-              ),
+              child: Column(
+                spacing: 16,
+                children: [
+                  AppTextField(placeholder: 'This is a single line'),
+                  AppTextField(placeholder: 'this is a multiline', isMultiLine: true,)
+                ]
+              )
             )
           ]
         )

@@ -3,9 +3,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class StyledAppBar extends StatelessWidget implements PreferredSizeWidget {
+class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  const StyledAppBar({
+  const AppHeader({
     super.key,
     required this.title,
   });

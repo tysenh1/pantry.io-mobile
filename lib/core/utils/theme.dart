@@ -346,6 +346,23 @@ class MaterialTheme {
     ),
     scaffoldBackgroundColor: colorScheme.background,
     canvasColor: colorScheme.surface,
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: colorScheme.surfaceContainerLow,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(24),
+        borderSide: BorderSide.none
+      ),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 10
+      ),
+      hintStyle: TextStyle(
+        color: colorScheme.secondary,
+        fontFamily: 'Inter',
+        fontSize: 16,
+      )
+    )
   );
 
 
