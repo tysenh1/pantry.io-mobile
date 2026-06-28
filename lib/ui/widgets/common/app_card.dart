@@ -2,12 +2,12 @@
 
 import 'package:flutter/material.dart';
 
-class StyledAppCard extends StatelessWidget {
+class AppCard extends StatelessWidget {
   final Widget child;
   final String? title;
   final Widget? action;
   final Color? color;
-  const StyledAppCard({
+  const AppCard({
     super.key,
     required this.child,
     this.action,
@@ -18,7 +18,7 @@ class StyledAppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.only(top: 16, right: 20, bottom: 24, left: 20),
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
