@@ -8,8 +8,6 @@ class AppTagCarousel extends StatelessWidget {
   final AppChipMode mode;
   final ValueChanged<String>? onSelect;
   final ValueChanged<String>? onRemoved;
-  // final VoidCallback? onSelect;
-  // final VoidCallback? onRemoved;
   final Set<String>? selectedTags;
   final Alignment? alignment;
 
@@ -17,8 +15,6 @@ class AppTagCarousel extends StatelessWidget {
     super.key,
     required this.tags,
     this.mode = AppChipMode.display,
-    // this.onTagRemoved,
-    // this.onTagSelected,
     this.onSelect,
     this.onRemoved,
     this.selectedTags,
@@ -35,8 +31,6 @@ class AppTagCarousel extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          // spacing: 8,
-          // runSpacing: 8,
           child: Row(
             spacing: 8,
 
