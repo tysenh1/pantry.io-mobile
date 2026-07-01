@@ -7,21 +7,25 @@ class AppCard extends StatelessWidget {
   final String? title;
   final Widget? action;
   final Color? color;
+  final EdgeInsets? padding;
+  final BorderRadius? borderRadius;
   const AppCard({
     super.key,
     required this.child,
     this.action,
     this.title,
-    this.color
+    this.color,
+    this.padding = const EdgeInsets.only(top: 16, right: 20, bottom: 24, left: 20),
+    this.borderRadius = const BorderRadius.all(Radius.circular(16))
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 16, right: 20, bottom: 24, left: 20),
+      padding: padding,
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: borderRadius,
         color: color ?? Theme.of(context).colorScheme.primaryContainer
       ),
       child: Column(

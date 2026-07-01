@@ -3,9 +3,11 @@ import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +18,7 @@ class AddRecipeScreen extends StatefulWidget {
   State<AddRecipeScreen> createState() => _AddRecipeScreenState();
 }
 
+typedef Tag = ({String label});
 class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final _formKey = GlobalKey<FormState>();
 
@@ -23,6 +26,10 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   // Mocked generic names fetch data
   List<PantryGenericNameResponse> _genericNames = [];
+
+  List<Tag> tags = [];
+
+  final Set<String> selectedTags = {};
 
   @override
   void initState() {
@@ -63,6 +70,13 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
           primaryUnit: 'g',
         ),
       ];
+
+      tags = [
+        (label: 'Tag 1'),
+        (label: 'Tag 2'),
+        (label: 'Tag 3')
+      ];
+
     });
   }
 
@@ -101,6 +115,22 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     );
   }
 
+  void handleTap(String tag) {
+    setState(() {
+      if (selectedTags.contains(tag)) {
+        selectedTags.remove(tag);
+      } else {
+        selectedTags.add(tag);
+      }
+    });
+  }
+
+  void handleRemove(String tagToDelete) {
+    setState(() {
+      tags.removeWhere((tag) => tag.label == tagToDelete);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,6 +158,33 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                     }).toList(),
                     onChanged: (_) {},
                     placeholder: 'Generic Names'
+                  ),
+                  // if (tags.isNotEmpty)
+                  AppCard(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    padding: const EdgeInsets.all(8),
+                    borderRadius: BorderRadius.circular(999),
+                    child: AppTagCarousel(
+                      tags: tags.map((tag) {return tag.label;}).toList(),
+                      mode: AppChipMode.selectable,
+                      onSelect: handleTap,
+                      selectedTags: selectedTags,
+                      alignment: Alignment.centerLeft
+                    ),
+                  ),
+                  if (tags.isNotEmpty)
+                  AppTagCarousel(
+                    tags: tags.map((tag) {return tag.label;}).toList(),
+                    mode: AppChipMode.selectable,
+                    onSelect: handleTap,
+                    selectedTags: selectedTags,
+                  ),
+                  if (tags.isNotEmpty)
+                  AppTagCarousel(
+                    tags: tags.map((tag) {return tag.label;}).toList(),
+                    mode: AppChipMode.removable,
+                    onRemoved: handleRemove,
+                    selectedTags: selectedTags,
                   ),
                   AppButton(label: "Add Ingredient", onPressed: () {}, type: AppButtonType.secondary),
                 ]
