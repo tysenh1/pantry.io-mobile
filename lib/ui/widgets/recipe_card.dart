@@ -3,7 +3,7 @@ import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe_detail_widget.dart';
 
 class RecipeCard extends StatelessWidget {
-  final RecipeBrowseItem recipe;
+  final BrowseRecipeItem recipe;
 
   const RecipeCard({super.key, required this.recipe});
 

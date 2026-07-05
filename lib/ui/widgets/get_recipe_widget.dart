@@ -56,15 +56,15 @@ class _GetRecipeWidgetState extends State<GetRecipeWidget> {
         ),
       ),
 
-      body: StreamBuilder<List<RecipeBrowseItem>>(
+      body: StreamBuilder<List<BrowseRecipeItem>>(
         stream: db.recipeDao.watchAllRecipes(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const CircularProgressIndicator();
 
-          List<RecipeBrowseItem> displayedRecipes = snapshot.data!;
+          List<BrowseRecipeItem> displayedRecipes = snapshot.data!;
 
           if (_searchQuery.isNotEmpty) {
-            final fuse = Fuzzy<RecipeBrowseItem>(
+            final fuse = Fuzzy<BrowseRecipeItem>(
               displayedRecipes,
               options: FuzzyOptions(
                 keys: [

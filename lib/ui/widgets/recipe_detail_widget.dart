@@ -4,7 +4,7 @@ import 'package:pantry_io_mobile/data/repositories/app_state.dart';
 import 'package:provider/provider.dart';
 
 class RecipeDetailWidget extends StatelessWidget {
-  final RecipeBrowseItem recipe;
+  final BrowseRecipeItem recipe;
 
   const RecipeDetailWidget({super.key, required this.recipe});
 
