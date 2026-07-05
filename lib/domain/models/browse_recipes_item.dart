@@ -15,6 +15,14 @@ class BrowseRecipeItem {
     required this.ingredients,
   });
 
+  List<String> get tagList => tags == null
+    ? []
+    : tags!
+      .split(',')
+      .map((t) => t.trim())
+      .where((t) => t.isNotEmpty)
+      .toList();
+
   factory BrowseRecipeItem.fromRow(dynamic row) {
     final List<dynamic> jsonList = jsonDecode(row.read<String>('ingredients'));
 
