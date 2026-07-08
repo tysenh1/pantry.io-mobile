@@ -50,7 +50,7 @@ class AppButton extends StatelessWidget {
     };
 
     final fontSize = switch (size) {
-      AppButtonSize.small => 12.0,
+      AppButtonSize.small => 14.0,
       AppButtonSize.medium => 16.0,
       AppButtonSize.large => 20.0,
     };
