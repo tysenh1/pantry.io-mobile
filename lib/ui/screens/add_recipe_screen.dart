@@ -178,6 +178,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                     return AppCard(
                       color: Theme.of(context).colorScheme.secondaryContainer,
                       borderRadius: BorderRadius.all(Radius.circular(24)),
+                      padding: EdgeInsets.all(16),
                       child: Column(
                         spacing: 16,
                         children: [
