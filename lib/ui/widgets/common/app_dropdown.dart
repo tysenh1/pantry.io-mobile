@@ -23,7 +23,10 @@ class AppDropdown<T> extends StatelessWidget {
       initialValue: value,
       onChanged: onChanged,
       decoration: InputDecoration(
-        hintText: placeholder
+        hintText: placeholder,
+        hintStyle: const TextStyle(
+          fontFamily: 'Inter'
+        )
       ),
       items: items
     );
