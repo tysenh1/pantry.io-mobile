@@ -7,6 +7,7 @@ enum NavTab {
   settings,
   debug,
   receipGetter,
+  widgetShowcase,
 }
 
 class NavItem {

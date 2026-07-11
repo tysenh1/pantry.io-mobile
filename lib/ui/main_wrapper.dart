@@ -7,6 +7,7 @@ import 'package:pantry_io_mobile/ui/screens/add_recipe_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/get_recipe_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/scanner_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/settings_screen.dart';
+import 'package:pantry_io_mobile/ui/screens/widget_showcase_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:pantry_io_mobile/ui/widgets/bottom_nav.dart';
 import 'package:pantry_io_mobile/domain/models/nav_item.dart';
@@ -32,6 +33,14 @@ class _MainWrapperState extends State<MainWrapper> {
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.bed),
               label: 'Debug',
+            ),
+          ),
+          NavItem(
+            id: NavTab.widgetShowcase,
+            screen: const WidgetShowcaseScreen(),
+            item: const BottomNavigationBarItem(
+              icon: Icon(Icons.wallet),
+              label: 'Widgets',
             ),
           ),
           NavItem(
