@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
+import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
@@ -9,6 +10,8 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_dialog.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe_detail_widget.dart';
 import 'package:provider/provider.dart';
 
 class AddRecipeScreen extends StatefulWidget {
@@ -187,6 +190,35 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                     selectedTags: selectedTags,
                   ),
                   AppButton(label: "Add Ingredient", onPressed: () {}, type: AppButtonType.secondary),
+                  AppButton(
+                    label: "Open Recipe Dialog",
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            clipBehavior: Clip.hardEdge,
+                            insetPadding: const EdgeInsets.all(32),
+                            child: RecipeDialog(
+                              recipe: BrowseRecipeItem(
+                                id: 1,
+                                name: "Recipe",
+                                instructions: "THESE ARE THE INSTRUCTIONS",
+                                ingredients: [
+                                  IngredientItem(quantityNeeded: 5, ingredientUnit: 'g', pantryQuantity: 500, primaryUnit: 'g')
+                                ],
+                                tags: 'Tag 1,Tag 2,Tag 3,Tag 4, Tag 5'
+                              ),
+                              onCook: () {},
+                              onClose: () => Navigator.pop(context)
+                            )
+                          )
+                        );
+                      },
+                    type: AppButtonType.secondary
+                  ),
                 ]
               )
             ),

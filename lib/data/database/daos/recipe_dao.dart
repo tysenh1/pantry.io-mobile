@@ -36,7 +36,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
     });
   }
 
-  Stream<List<RecipeBrowseItem>> watchAllRecipes() {
+  Stream<List<BrowseRecipeItem>> watchAllRecipes() {
     return customSelect(
       '''
       SELECT r.*,
@@ -57,15 +57,15 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       readsFrom: {recipes, recipeIngredients, pantry, genericNames},
     ).watch().map((rows) {
       final recipesList = rows
-          .map((row) => RecipeBrowseItem.fromRow(row))
+          .map((row) => BrowseRecipeItem.fromRow(row))
           .toList();
 
       return filterCookableRecipes(recipesList);
     });
   }
 
-  List<RecipeBrowseItem> filterCookableRecipes<T>(
-    List<RecipeBrowseItem> recipes,
+  List<BrowseRecipeItem> filterCookableRecipes<T>(
+    List<BrowseRecipeItem> recipes,
   ) {
     return recipes.where((recipe) {
       return recipe.ingredients.every((ing) {

@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-class RecipeBrowseItem {
+class BrowseRecipeItem {
   final int id;
   final String name;
   final String? tags;
   final String instructions;
   final List<IngredientItem> ingredients;
 
-  RecipeBrowseItem({
+  BrowseRecipeItem({
     required this.id,
     required this.name,
     this.tags,
@@ -15,10 +15,18 @@ class RecipeBrowseItem {
     required this.ingredients,
   });
 
-  factory RecipeBrowseItem.fromRow(dynamic row) {
+  List<String> get tagList => tags == null
+    ? []
+    : tags!
+      .split(',')
+      .map((t) => t.trim())
+      .where((t) => t.isNotEmpty)
+      .toList();
+
+  factory BrowseRecipeItem.fromRow(dynamic row) {
     final List<dynamic> jsonList = jsonDecode(row.read<String>('ingredients'));
 
-    return RecipeBrowseItem(
+    return BrowseRecipeItem(
       id: row.read<int>('id'),
       name: row.read<String>('name'),
       tags: row.read<String?>('tags'),
