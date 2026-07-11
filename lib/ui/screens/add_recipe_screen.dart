@@ -143,26 +143,13 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         child: Column(
           children: [
             AppCard(
-              title: "Ingredients",
-              action: Text("BUTTON"),
+              title: "Recipe Information",
               child: Column(
                 spacing: 16,
                 children: [
-                  AppTextField(placeholder: 'This is a single line'),
-                  AppTextField(placeholder: 'this is a multiline', isMultiLine: true),
-                  AppDropdown(
-                    items: _genericNames.asMap().entries.map((entry) {
-                      int idx = entry.key;
-                      var data = entry.value;
-                      return DropdownMenuItem<int>(
-                        value: idx,
-                        child: Text(data.name)
-                      );
-                    }).toList(),
-                    onChanged: (_) {},
-                    placeholder: 'Generic Names'
-                  ),
-                  // if (tags.isNotEmpty)
+                  AppTextField(placeholder: 'Recipe Name', controller: _formModel.nameController),
+                  AppTextField(placeholder: 'Instructions', controller: _formModel.instructionsController, isMultiLine: true),
+                  if (tags.isNotEmpty)
                   AppCard(
                     color: Theme.of(context).colorScheme.secondaryContainer,
                     padding: const EdgeInsets.all(8),
@@ -175,53 +162,64 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                       alignment: Alignment.centerLeft
                     ),
                   ),
-                  if (tags.isNotEmpty)
-                  AppTagCarousel(
-                    tags: tags.map((tag) {return tag.label;}).toList(),
-                    mode: AppChipMode.selectable,
-                    onSelect: handleTap,
-                    selectedTags: selectedTags,
-                  ),
-                  if (tags.isNotEmpty)
-                  AppTagCarousel(
-                    tags: tags.map((tag) {return tag.label;}).toList(),
-                    mode: AppChipMode.removable,
-                    onRemoved: handleRemove,
-                    selectedTags: selectedTags,
-                  ),
-                  AppButton(label: "Add Ingredient", onPressed: () {}, type: AppButtonType.secondary),
-                  AppButton(
-                    label: "Open Recipe Dialog",
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            clipBehavior: Clip.hardEdge,
-                            insetPadding: const EdgeInsets.all(32),
-                            child: RecipeDialog(
-                              recipe: BrowseRecipeItem(
-                                id: 1,
-                                name: "Recipe",
-                                instructions: "THESE ARE THE INSTRUCTIONS",
-                                ingredients: [
-                                  IngredientItem(quantityNeeded: 5, ingredientUnit: 'g', pantryQuantity: 500, primaryUnit: 'g')
-                                ],
-                                tags: 'Tag 1,Tag 2,Tag 3,Tag 4, Tag 5'
-                              ),
-                              onCook: () {},
-                              onClose: () => Navigator.pop(context)
-                            )
-                          )
-                        );
-                      },
-                    type: AppButtonType.secondary
-                  ),
+                  AppTextField(
+                    placeholder: 'Tags', controller: _formModel.tagsController
+                  )
                 ]
               )
             ),
+            SizedBox(height: 20),
+            AppCard(
+              title: 'Ingredients',
+              child: Column(
+                spacing: 16,
+                children: [
+                  ..._formModel.ingredients.map((ing) {
+                    return AppCard(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                      child: Column(
+                        spacing: 16,
+                        children: [
+                          AppDropdown(
+                            items: _genericNames.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              var data = entry.value;
+                              return DropdownMenuItem<int>(
+                                value: index,
+                                child: Text(data.name)
+                              );
+                            }).toList(),
+                            onChanged: (_) {},
+                            placeholder: 'Generic Name',
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: AppTextField(placeholder: 'Quantity', controller: ing.qtyController, keyboardType: TextInputType.numberWithOptions(decimal: true))
+                              ),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: AppTextField(placeholder: 'Unit', controller: ing.unitController)
+                              ),
+                            ]
+                          )
+                        ]
+                      )
+                    );
+                  }),
+                  AppButton(
+                    label: 'Add Ingredient',
+                    type: AppButtonType.secondary,
+                    onPressed: _addIngredient,
+                  ),
+                ],
+              )
+            ),
+
+            SizedBox(height: 20),
             AppButton(label: "Add Pantry Item", onPressed: () {}, type: AppButtonType.primary)
           ]
         )
