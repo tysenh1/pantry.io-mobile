@@ -12,7 +12,7 @@ class AppSwitchTileButton extends StatelessWidget {
     this.label,
     required this.value,
     required this.onChanged,
-    this.padding = const EdgeInsets.all(8)
+    this.padding = EdgeInsets.zero
   });
 
   @override
@@ -40,7 +40,8 @@ class AppSwitchTileButton extends StatelessWidget {
               value: value,
               onChanged: onChanged,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              activeThumbColor: Theme.of(context).colorScheme.primary,
+              // activeThumbColor: Theme.of(context).colorScheme.primary,
+              activeTrackColor: Theme.of(context).colorScheme.primary,
             )
           ]
         )

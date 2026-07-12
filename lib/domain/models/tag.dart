@@ -1,0 +1,2 @@
+
+typedef Tag = ({String label});
