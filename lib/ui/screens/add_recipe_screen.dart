@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
-import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
+import 'package:pantry_io_mobile/domain/models/tag.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
@@ -10,8 +10,6 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
-import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_dialog.dart';
-import 'package:pantry_io_mobile/ui/widgets/recipe_detail_widget.dart';
 import 'package:provider/provider.dart';
 
 class AddRecipeScreen extends StatefulWidget {
@@ -21,7 +19,6 @@ class AddRecipeScreen extends StatefulWidget {
   State<AddRecipeScreen> createState() => _AddRecipeScreenState();
 }
 
-typedef Tag = ({String label});
 class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final _formKey = GlobalKey<FormState>();
 
