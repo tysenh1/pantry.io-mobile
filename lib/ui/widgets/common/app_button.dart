@@ -62,10 +62,9 @@ class AppButton extends StatelessWidget {
           padding: padding,
           minimumSize: Size(0, height),
           backgroundColor: Theme.of(context).primaryColor,
-          textStyle: Theme.of(context).textTheme.displayLarge?.copyWith(
+          textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontSize: fontSize,
             color: Colors.white,
-            fontFamily: 'Nunito'
           )
         ),
         child: content
@@ -77,7 +76,7 @@ class AppButton extends StatelessWidget {
           minimumSize: Size(0, height),
           side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 3),
           backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-          textStyle: Theme.of(context).textTheme.displayLarge?.copyWith(
+          textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontSize: fontSize,
             color: Theme.of(context).colorScheme.primary,
             fontFamily: 'Nunito',
