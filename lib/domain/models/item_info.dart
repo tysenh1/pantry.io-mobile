@@ -3,7 +3,7 @@
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
 
-class ItemInfo {
+class ProductInfo {
   final int? id;
   final String barcode;
   final String productName;
@@ -11,7 +11,7 @@ class ItemInfo {
   final double unitSize;
   final String unitType;
 
-  const ItemInfo({
+  const ProductInfo({
     this.id,
     required this.barcode,
     required this.productName,
@@ -20,8 +20,8 @@ class ItemInfo {
     required this.unitType
   });
 
-  ItemsCompanion toCompanion() {
-    return ItemsCompanion.insert(
+  ProductsCompanion toCompanion() {
+    return ProductsCompanion.insert(
       barcode: barcode,
       productName: productName,
       genericNameId: genericName!.id,

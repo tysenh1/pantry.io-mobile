@@ -141,7 +141,7 @@ class _DatabaseDebugScreenState extends State<DatabaseDebugScreen> {
                   child: ListTile(
                     title: Text('Recipe ID: ${i.recipeId}'),
                     subtitle: Text(
-                      'Pantry ID: ${i.pantryId} | Qty: ${i.quantityNeeded} ${i.unit}',
+                      'Pantry ID: ${i.pantryId} | Qty: ${i.quantityNeeded} ${i.unit} | Optional: ${i.optional}',
                     ),
                   ),
                 ),

@@ -1,7 +1,7 @@
 import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 
 int subtractQuantity(
-  int itemQuantity,
+  double itemQuantity,
   String itemPrimaryUnit,
   double itemWeightPerPiece,
   double recipeQuantityNeeded,

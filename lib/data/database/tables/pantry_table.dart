@@ -8,7 +8,7 @@ class Pantry extends Table {
     #id,
     onDelete: KeyAction.cascade,
   )();
-  IntColumn get quantity => integer().withDefault(const Constant(0))();
+  RealColumn get quantity => real().withDefault(const Constant(0.0))();
   BoolColumn get isStaple => boolean().withDefault(const Constant(false))();
 
   @override
