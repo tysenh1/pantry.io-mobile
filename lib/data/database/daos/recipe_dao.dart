@@ -9,7 +9,7 @@ part 'recipe_dao.g.dart';
 
 @DriftAccessor(tables: [Recipes, RecipeIngredients])
 class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
-  RecipeDao(AppDatabase db) : super(db);
+  RecipeDao(super.db);
 
   Future<void> createRecipe({
     required String name,
@@ -55,7 +55,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   Stream<List<RecipeWithIngredients>> watchAllRecipes({bool filter = false}) {
     final query = select(recipes).join([
       innerJoin(recipeIngredients, recipeIngredients.recipeId.equalsExp(recipes.id)),
-      innerJoin(pantry, pantry.id.equalsExp(recipeIngredients.recipeId)),
+      innerJoin(pantry, pantry.id.equalsExp(recipeIngredients.pantryId)),
       innerJoin(genericNames, genericNames.id.equalsExp(pantry.genericNameId)),
     ]);
 
@@ -69,12 +69,14 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
         final genericName = row.readTable(genericNames);
 
         final recipeIngredient = IngredientItem(
+          pantryId: ingredient.pantryId,
           quantityNeeded: ingredient.quantityNeeded,
           ingredientUnit: ingredient.unit,
           pantryQuantity: pantryRow.quantity,
           primaryUnit: genericName.primaryUnit,
           isOptional: ingredient.optional,
-          isStaple: pantryRow.isStaple
+          isStaple: pantryRow.isStaple,
+          name: genericName.name,
         );
 
         if (recipeMap.containsKey(recipe.id)) {
@@ -91,7 +93,10 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       }
 
       final allRecipes = recipeMap.values.toList();
-      return _filterCookableRecipes(allRecipes);
+      if (filter) {
+        return _filterCookableRecipes(allRecipes);
+      }
+      return allRecipes;
     });
   }
 }

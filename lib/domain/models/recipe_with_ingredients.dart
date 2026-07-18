@@ -26,19 +26,23 @@ class RecipeWithIngredients {
 }
 
 class IngredientItem {
+  final int pantryId;
   final double quantityNeeded;
   final String ingredientUnit;
   final double pantryQuantity;
   final String primaryUnit;
   final bool isOptional;
   final bool isStaple;
+  final String name;
 
   IngredientItem({
+    required this.pantryId,
     required this.quantityNeeded,
     required this.ingredientUnit,
     required this.pantryQuantity,
     required this.primaryUnit,
     this.isOptional = false,
     this.isStaple = false,
+    required this.name,
   });
 }

@@ -11,6 +11,7 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe/confirm_cook_sheet.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_dialog.dart';
 
 class WidgetShowcaseScreen extends StatefulWidget {
@@ -97,6 +98,17 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
     });
   }
 
+  RecipeWithIngredients recipe = RecipeWithIngredients(
+      id: 1,
+      name: "Recipe",
+      instructions: "THESE ARE THE INSTRUCTIONS",
+      ingredients: [
+        IngredientItem(pantryId: 1, quantityNeeded: 5, ingredientUnit: 'g', pantryQuantity: 500, primaryUnit: 'g', name: 'INGREDIETN NAME'),
+        IngredientItem(pantryId: 2, quantityNeeded: 200, ingredientUnit: 'g', pantryQuantity: 200, primaryUnit: 'g', name: 'optional ingredient', isOptional: true)
+      ],
+      tags: 'Tag 1,Tag 2,Tag 3,Tag 4, Tag 5'
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,17 +177,7 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
                             clipBehavior: Clip.hardEdge,
                             insetPadding: const EdgeInsets.all(32),
                             child: RecipeDialog(
-                              recipe: RecipeWithIngredients(
-                                id: 1,
-                                name: "Recipe",
-                                instructions: "THESE ARE THE INSTRUCTIONS",
-                                ingredients: [
-                                  IngredientItem(quantityNeeded: 5, ingredientUnit: 'g', pantryQuantity: 500, primaryUnit: 'g')
-                                ],
-                                tags: 'Tag 1,Tag 2,Tag 3,Tag 4, Tag 5'
-                              ),
-                              onCook: () {},
-                              onClose: () => Navigator.pop(context)
+                              recipe: recipe,
                             )
                           )
                         );

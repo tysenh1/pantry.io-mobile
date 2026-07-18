@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe/confirm_cook_sheet.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_dialog.dart';
 
 class RecipeCard extends StatelessWidget {
   final RecipeWithIngredients recipe;
   final Color? color;
-  final VoidCallback onCook;
 
   const RecipeCard({
     super.key,
     required this.recipe,
     this.color,
-    required this.onCook,
   });
 
   @override
@@ -37,8 +36,6 @@ class RecipeCard extends StatelessWidget {
               insetPadding: const EdgeInsets.all(32),
               child: RecipeDialog(
                 recipe: recipe,
-                onCook: onCook,
-                onClose: () => Navigator.pop(context)
               )
             )
           );
