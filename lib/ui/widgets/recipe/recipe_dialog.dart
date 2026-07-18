@@ -5,16 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe/confirm_cook_sheet.dart';
 
 class RecipeDialog extends StatelessWidget {
   final RecipeWithIngredients recipe;
-  final VoidCallback onCook;
-  final VoidCallback onClose;
   const RecipeDialog({
     super.key,
     required this.recipe,
-    required this.onCook,
-    required this.onClose,
   });
 
   @override
@@ -44,7 +41,13 @@ class RecipeDialog extends StatelessWidget {
                       ),
                       AppButton(
                           label: 'Cook',
-                          onPressed: onCook,
+                          // onPressed: () => showDialog(context: context, builder: (context) => ConfirmCookDialog(recipe: recipe)),
+                          onPressed: () => showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.white,
+                            builder: (context) => ConfirmCookSheet(recipe: recipe)
+                          ),
                           size: AppButtonSize.small
                       ),
                     ],
@@ -101,7 +104,7 @@ class RecipeDialog extends StatelessWidget {
               children: [
                 AppButton(
                   label: 'Close',
-                  onPressed: onClose,
+                  onPressed: Navigator.of(context).pop,
                   size: AppButtonSize.medium,
                   type: AppButtonType.secondary
                 )

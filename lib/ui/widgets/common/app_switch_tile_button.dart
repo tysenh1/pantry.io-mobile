@@ -6,19 +6,21 @@ class AppSwitchTileButton extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
   final EdgeInsetsGeometry padding;
+  final bool isDisabled;
 
   const AppSwitchTileButton({
     super.key,
     this.label,
     required this.value,
     required this.onChanged,
-    this.padding = EdgeInsets.zero
+    this.padding = EdgeInsets.zero,
+    this.isDisabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => onChanged(!value),
+      // onTap: () => onChanged(!value),
       child: Padding(
         padding: padding,
         child: Row(
@@ -38,10 +40,10 @@ class AppSwitchTileButton extends StatelessWidget {
             const SizedBox(width: 16),
             Switch(
               value: value,
-              onChanged: onChanged,
+              onChanged: isDisabled ? null : onChanged,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               // activeThumbColor: Theme.of(context).colorScheme.primary,
-              activeTrackColor: Theme.of(context).colorScheme.primary,
+              activeTrackColor: isDisabled ? null : Theme.of(context).colorScheme.primary,
             )
           ]
         )

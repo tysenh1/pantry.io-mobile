@@ -41,7 +41,7 @@ class _DatabaseDebugScreenState extends State<DatabaseDebugScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        key: ValueKey(_refreshKey), // Forces the whole list to rebuild
+        key: ValueKey(_refreshKey),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

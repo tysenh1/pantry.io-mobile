@@ -10,6 +10,7 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/recipe_card.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe/confirm_cook_sheet.dart';
 import 'package:provider/provider.dart';
 
 class GetRecipeScreen extends StatefulWidget {
@@ -125,7 +126,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
-                    (context, i) => RecipeCard(recipe: displayedRecipes[i], onCook: () {}),
+                    (context, i) => RecipeCard(recipe: displayedRecipes[i]),
                     childCount: displayedRecipes.length,
                 ),
               );

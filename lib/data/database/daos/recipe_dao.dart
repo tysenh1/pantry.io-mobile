@@ -69,12 +69,14 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
         final genericName = row.readTable(genericNames);
 
         final recipeIngredient = IngredientItem(
+          pantryId: ingredient.pantryId,
           quantityNeeded: ingredient.quantityNeeded,
           ingredientUnit: ingredient.unit,
           pantryQuantity: pantryRow.quantity,
           primaryUnit: genericName.primaryUnit,
           isOptional: ingredient.optional,
-          isStaple: pantryRow.isStaple
+          isStaple: pantryRow.isStaple,
+          name: genericName.name,
         );
 
         if (recipeMap.containsKey(recipe.id)) {
