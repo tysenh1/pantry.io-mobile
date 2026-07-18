@@ -55,7 +55,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   Stream<List<RecipeWithIngredients>> watchAllRecipes({bool filter = false}) {
     final query = select(recipes).join([
       innerJoin(recipeIngredients, recipeIngredients.recipeId.equalsExp(recipes.id)),
-      innerJoin(pantry, pantry.id.equalsExp(recipeIngredients.recipeId)),
+      innerJoin(pantry, pantry.id.equalsExp(recipeIngredients.pantryId)),
       innerJoin(genericNames, genericNames.id.equalsExp(pantry.genericNameId)),
     ]);
 

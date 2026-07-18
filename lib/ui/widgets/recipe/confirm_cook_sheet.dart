@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
 
 class ConfirmCookSheet extends StatefulWidget {
@@ -23,6 +24,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
   double _multiplier = 1.0;
   Set<int> usedIngredients = {};
   Set<int> optionalIngredients = {};
+  bool canRecipeBeDoubled = true;
 
   @override
   void initState() {
@@ -32,6 +34,9 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
         optionalIngredients.add(ing.pantryId);
       } else {
         usedIngredients.add(ing.pantryId);
+        if ((ing.quantityNeeded * 2) > ing.pantryQuantity) {
+          canRecipeBeDoubled = false;
+        }
       }
     }
   }
@@ -55,12 +60,15 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: Text(
+                  Text(
                       'Cook ${widget.recipe.name}?',
                       style: Theme.of(context).textTheme.titleLarge
                     ),
-                  ),
+
+                  IconButton(
+                      icon: Icon(Icons.close, size: 28),
+                      onPressed: Navigator.of(context).pop,
+                    )
                 ],
               ),
             ]
@@ -91,12 +99,16 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                         backgroundColor: WidgetStateProperty.resolveWith((states) {
                           if (states.contains(WidgetState.selected)) {
                             return Theme.of(context).colorScheme.primary;
+                          } else if (states.contains(WidgetState.disabled)) {
+                            return Colors.grey.shade300;
                           }
                           return Theme.of(context).colorScheme.surface;
                         }),
                         foregroundColor: WidgetStateProperty.resolveWith((states) {
                           if (states.contains(WidgetState.selected)) {
                             return Colors.white;
+                          } else if (states.contains(WidgetState.disabled)) {
+                            return Colors.grey.shade600;
                           }
                           return Colors.black;
                         }),
@@ -116,7 +128,8 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                         ),
                         ButtonSegment(
                             value: 2.0,
-                            label: Text('2x')
+                            label: Text('2x'),
+                          enabled: canRecipeBeDoubled,
                         )
                       ],
                     )
@@ -163,17 +176,23 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Text(
-                              '${ing.quantityNeeded} ${ing.ingredientUnit} - ${ing.name}',
-                              style: Theme.of(context).textTheme.bodyMedium
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              child: Icon(
-                                Icons.arrow_forward,
-                                size: 14,
-                                color: Colors.black
-                              ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                    '${ing.quantityNeeded * _multiplier} ${ing.ingredientUnit} - ${ing.name}',
+                                    style: Theme.of(context).textTheme.bodyMedium
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Icon(
+                                      Icons.arrow_forward,
+                                      size: 14,
+                                      color: Colors.black
+                                  ),
+                                )
+                              ]
                             ),
 
                             Text(
@@ -215,7 +234,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Text(
-                              '${ing.quantityNeeded} ${ing.ingredientUnit} - ${ing.name}',
+                              '${ing.quantityNeeded * _multiplier} ${ing.ingredientUnit} - ${ing.name}',
                               style: Theme.of(context).textTheme.bodyMedium
                             ),
 
@@ -237,7 +256,23 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                       }).toList()
                     )
                   ]
-                )
+                ),
+
+                SizedBox(height: 2),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    AppButton(
+                      label: 'Cook',
+                      fontWeight: FontWeight.bold,
+                      onPressed: () {},
+                      size: AppButtonSize.medium
+                    )
+                  ]
+                ),
+
+                SizedBox(height: 8),
 
               ]
             )

@@ -39,17 +39,17 @@ class RecipeDialog extends StatelessWidget {
                             style: Theme.of(context).textTheme.titleLarge
                         ),
                       ),
-                      AppButton(
-                          label: 'Cook',
-                          // onPressed: () => showDialog(context: context, builder: (context) => ConfirmCookDialog(recipe: recipe)),
-                          onPressed: () => showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.white,
-                            builder: (context) => ConfirmCookSheet(recipe: recipe)
-                          ),
-                          size: AppButtonSize.small
-                      ),
+                      // AppButton(
+                      //   label: 'Close',
+                      //   onPressed: Navigator.of(context).pop,
+                      //   size: AppButtonSize.small,
+                      //   type: AppButtonType.secondary,
+                      //   fontWeight: FontWeight.bold,
+                      // )
+                      IconButton(
+                        onPressed: Navigator.of(context).pop,
+                        icon: Icon(Icons.close, size: 28)
+                      )
                     ],
                   ),
                   if (recipe.tagList.isNotEmpty) ...[
@@ -103,11 +103,16 @@ class RecipeDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 AppButton(
-                  label: 'Close',
-                  onPressed: Navigator.of(context).pop,
-                  size: AppButtonSize.medium,
-                  type: AppButtonType.secondary
-                )
+                    label: 'Cook',
+                    fontWeight: FontWeight.bold,
+                    onPressed: () => showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.white,
+                        builder: (context) => ConfirmCookSheet(recipe: recipe)
+                    ),
+                    size: AppButtonSize.medium
+                ),
               ]
             )
           )

@@ -14,6 +14,7 @@ class AppButton extends StatelessWidget {
   final AppButtonType type;
   final AppButtonSize size;
   final Widget? icon;
+  final FontWeight fontWeight;
 
   const AppButton({
     super.key,
@@ -21,7 +22,8 @@ class AppButton extends StatelessWidget {
     this.onPressed,
     this.type = AppButtonType.primary,
     this.size = AppButtonSize.large,
-    this.icon
+    this.icon,
+    this.fontWeight = FontWeight.normal,
   });
 
   @override
@@ -55,6 +57,12 @@ class AppButton extends StatelessWidget {
       AppButtonSize.large => 20.0,
     };
 
+    final borderWidth = switch (size) {
+      AppButtonSize.small => 2.0,
+      AppButtonSize.medium => 3.0,
+      AppButtonSize.large => 3.0,
+    };
+
     return switch (type) {
       AppButtonType.primary => FilledButton(
         onPressed: onPressed,
@@ -65,6 +73,7 @@ class AppButton extends StatelessWidget {
           textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontSize: fontSize,
             color: Colors.white,
+            fontWeight: fontWeight,
           )
         ),
         child: content
@@ -74,7 +83,7 @@ class AppButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           padding: padding,
           minimumSize: Size(0, height),
-          side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 3),
+          side: BorderSide(color: Theme.of(context).colorScheme.primary, width: borderWidth),
           backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
           textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontSize: fontSize,
