@@ -21,7 +21,6 @@ class GetRecipeScreen extends StatefulWidget {
 }
 
 class _GetRecipeScreenState extends State<GetRecipeScreen> {
-  late Stream<List<RecipeWithIngredients>> _recipesStream;
 
   bool _areIncompleteRecipesShown = false;
   List<Tag> tags = [(label: 'Tag 1'), (label: 'Tag 2'), (label: 'Tag 3')];
@@ -43,9 +42,6 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
   @override
   void initState() {
     super.initState();
-
-    final db = context.read<AppDatabase>();
-    _recipesStream = db.recipeDao.watchAllRecipes();
   }
 
   @override
@@ -55,6 +51,8 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final db = context.read<AppDatabase>();
+    Stream<List<RecipeWithIngredients>> recipesStream = db.recipeDao.watchAllRecipes();
     return Scaffold(
       appBar: AppHeader(title: 'Get Recipe'),
       body: CustomScrollView(
@@ -93,7 +91,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
             )
           ),
           StreamBuilder<List<RecipeWithIngredients>>(
-            stream: _recipesStream,
+            stream: recipesStream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return

@@ -9,7 +9,7 @@ part 'recipe_dao.g.dart';
 
 @DriftAccessor(tables: [Recipes, RecipeIngredients])
 class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
-  RecipeDao(AppDatabase db) : super(db);
+  RecipeDao(super.db);
 
   Future<void> createRecipe({
     required String name,
@@ -93,7 +93,10 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       }
 
       final allRecipes = recipeMap.values.toList();
-      return _filterCookableRecipes(allRecipes);
+      if (filter) {
+        return _filterCookableRecipes(allRecipes);
+      }
+      return allRecipes;
     });
   }
 }

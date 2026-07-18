@@ -181,15 +181,15 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                    '${ing.quantityNeeded * _multiplier} ${ing.ingredientUnit} - ${ing.name}',
-                                    style: Theme.of(context).textTheme.bodyMedium
+                                  '${ing.quantityNeeded * _multiplier} ${ing.ingredientUnit} - ${ing.name}',
+                                  style: Theme.of(context).textTheme.bodyMedium
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: Icon(
-                                      Icons.arrow_forward,
-                                      size: 14,
-                                      color: Colors.black
+                                    Icons.arrow_forward,
+                                    size: 14,
+                                    color: Colors.black
                                   ),
                                 )
                               ]
