@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
-import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/models/tag.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
@@ -165,7 +165,7 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
                             clipBehavior: Clip.hardEdge,
                             insetPadding: const EdgeInsets.all(32),
                             child: RecipeDialog(
-                              recipe: BrowseRecipeItem(
+                              recipe: RecipeWithIngredients(
                                 id: 1,
                                 name: "Recipe",
                                 instructions: "THESE ARE THE INSTRUCTIONS",

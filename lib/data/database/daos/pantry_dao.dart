@@ -39,7 +39,7 @@ class PantryDao extends DatabaseAccessor<AppDatabase> with _$PantryDaoMixin {
       );
 
       await (update(pantry)..where((t) => t.id.equals(pantryItem.id))).write(
-        PantryCompanion(quantity: Value(newQuantityWithOldUnit.floor())),
+        PantryCompanion(quantity: Value(newQuantityWithOldUnit.floor().toDouble())),
       );
     }
   }

@@ -3,16 +3,14 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:pantry_io_mobile/data/database/daos/pantry_dao.dart';
 import 'package:pantry_io_mobile/data/database/daos/recipe_dao.dart';
-import 'package:pantry_io_mobile/data/database/daos/items_dao.dart';
+import 'package:pantry_io_mobile/data/database/daos/products_dao.dart';
 import 'package:pantry_io_mobile/data/database/daos/generic_names_dao.dart';
 import 'package:pantry_io_mobile/data/db_seed_data.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 import 'tables/generic_names_table.dart';
-import 'tables/allergens_table.dart';
-import 'tables/items_table.dart';
-import 'tables/item_allergens_table.dart';
+import 'tables/products_table.dart';
 import 'tables/pantry_table.dart';
 import 'tables/recipe_ingredients_table.dart';
 import 'tables/recipes_table.dart';
@@ -28,14 +26,12 @@ LazyDatabase _openConnection() => LazyDatabase(() async {
 @DriftDatabase(
   tables: [
     GenericNames,
-    Allergens,
-    Items,
-    ItemAllergens,
+    Products,
     Pantry,
     RecipeIngredients,
     Recipes,
   ],
-  daos: [PantryDao, RecipeDao, ItemsDao, GenericNamesDao]
+  daos: [PantryDao, RecipeDao, ProductsDao, GenericNamesDao]
 )
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._internal();
@@ -46,7 +42,7 @@ class AppDatabase extends _$AppDatabase {
 
   PantryDao get pantryDao => PantryDao(this);
   RecipeDao get recipeDao => RecipeDao(this);
-  ItemsDao get itemsDao => ItemsDao(this);
+  ProductsDao get productsDao => ProductsDao(this);
   GenericNamesDao get genericNamesDao => GenericNamesDao(this);
 
   @override

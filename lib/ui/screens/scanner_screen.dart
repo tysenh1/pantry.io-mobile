@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
-import 'package:pantry_io_mobile/core/utils/item_utils.dart';
+import 'package:pantry_io_mobile/core/utils/product_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
-import 'package:pantry_io_mobile/domain/models/item_info.dart';
+import 'package:pantry_io_mobile/domain/models/product_info.dart';
 import 'package:pantry_io_mobile/ui/widgets/barcode/barcode_scanner_widget.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
@@ -26,7 +26,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   final TextEditingController _unitTypeController = TextEditingController();
 
   bool _isLoadingProduct = false;
-  ItemInfo? itemInfo;
+  ProductInfo? productInfo;
   List<GenericNameInfo> _dropdownItems = [];
   List<GenericNameInfo> _allGenericNames = [];
   int? _selectedGenericId;
@@ -62,11 +62,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
     final db = Provider.of<AppDatabase>(context, listen: false);
 
-    final localItem = await db.itemsDao.getLocalItemByBarcode(barcode);
+    final localItem = await db.productsDao.getLocalItemByBarcode(barcode);
 
     if (localItem != null) {
       setState(() {
-        itemInfo = ItemInfo(
+        productInfo = ProductInfo(
           barcode: localItem.$1.barcode,
           productName: localItem.$1.productName,
           genericName: GenericNameInfo(

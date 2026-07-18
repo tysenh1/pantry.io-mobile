@@ -9,6 +9,7 @@ class RecipeIngredients extends Table {
       integer().references(Pantry, #id, onDelete: KeyAction.cascade)();
   RealColumn get quantityNeeded => real()();
   TextColumn get unit => text()();
+  BoolColumn get optional => boolean().withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {recipeId, pantryId};

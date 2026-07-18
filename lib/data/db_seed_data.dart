@@ -483,7 +483,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Chicken Breast', 'qty': 500.0, 'unit': 'g'},
           {'name': 'Garlic', 'qty': 3.0, 'unit': 'pcs'},
           {'name': 'Butter', 'qty': 30.0, 'unit': 'g'},
-          {'name': 'Olive Oil', 'qty': 35.5, 'unit': 'ml'},
+          {'name': 'Olive Oil', 'qty': 35.5, 'unit': 'ml', 'optional': true},
         ],
       },
       {
@@ -495,7 +495,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Ground Beef', 'qty': 500.0, 'unit': 'g'},
           {'name': 'Tortillas', 'qty': 4.0, 'unit': 'pcs'},
           {'name': 'Onion', 'qty': 0.5, 'unit': 'pcs'},
-          {'name': 'Cheddar Cheese', 'qty': 100.0, 'unit': 'g'},
+          {'name': 'Cheddar Cheese', 'qty': 100.0, 'unit': 'g', 'optional': true},
         ],
       },
       {
@@ -507,7 +507,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Chicken Breast', 'qty': 400.0, 'unit': 'g'},
           {'name': 'Broccoli', 'qty': 1.0, 'unit': 'pcs'},
           {'name': 'Soy Sauce', 'qty': 50.0, 'unit': 'ml'},
-          {'name': 'White Rice', 'qty': 200.0, 'unit': 'g'},
+          {'name': 'White Rice', 'qty': 200.0, 'unit': 'g', 'optional': true},
         ],
       },
       {
@@ -518,7 +518,7 @@ Future<void> seedAllData(AppDatabase db) async {
         'ings': [
           {'name': 'Chicken Breast', 'qty': 500.0, 'unit': 'g'},
           {'name': 'Coconut Milk', 'qty': 400.0, 'unit': 'ml'},
-          {'name': 'Bell Peppers', 'qty': 2.0, 'unit': 'pcs'},
+          {'name': 'Bell Peppers', 'qty': 2.0, 'unit': 'pcs', 'optional': true},
         ],
       },
       {
@@ -528,7 +528,7 @@ Future<void> seedAllData(AppDatabase db) async {
         'ings': [
           {'name': 'Spaghetti', 'qty': 250.0, 'unit': 'g'},
           {'name': 'Garlic', 'qty': 4.0, 'unit': 'pcs'},
-          {'name': 'Olive Oil', 'qty': 60.0, 'unit': 'ml'},
+          {'name': 'Olive Oil', 'qty': 60.0, 'unit': 'ml', 'optional': true},
         ],
       },
       {
@@ -539,7 +539,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Beef Steak', 'qty': 400.0, 'unit': 'g'},
           {'name': 'Bell Peppers', 'qty': 2.0, 'unit': 'pcs'},
           {'name': 'Onion', 'qty': 1.0, 'unit': 'pcs'},
-          {'name': 'Butter', 'qty': 30.0, 'unit': 'g'},
+          {'name': 'Butter', 'qty': 30.0, 'unit': 'g', 'optional': true},
         ],
       },
       {
@@ -550,7 +550,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Tomato Sauce', 'qty': 200.0, 'unit': 'g'},
           {'name': 'Mozzarella Cheese', 'qty': 200.0, 'unit': 'g'},
           {'name': 'Flour', 'qty': 300.0, 'unit': 'g'},
-          {'name': 'Olive Oil', 'qty': 35.5, 'unit': 'ml'},
+          {'name': 'Olive Oil', 'qty': 35.5, 'unit': 'ml', 'optional': true},
         ],
       },
       {
@@ -562,7 +562,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Eggs', 'qty': 2.0, 'unit': 'pcs'},
           {'name': 'Milk', 'qty': 250.0, 'unit': 'ml'},
           {'name': 'Baking Powder', 'qty': 20.0, 'unit': 'g'},
-          {'name': 'Sugar', 'qty': 12.0, 'unit': 'g'},
+          {'name': 'Sugar', 'qty': 12.0, 'unit': 'g', 'optional': true},
         ],
       },
       {
@@ -574,7 +574,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Ground Beef', 'qty': 500.0, 'unit': 'g'},
           {'name': 'Tomatoes', 'qty': 4.0, 'unit': 'pcs'},
           {'name': 'Onion', 'qty': 1.0, 'unit': 'pcs'},
-          {'name': 'Bell Peppers', 'qty': 2.0, 'unit': 'pcs'},
+          {'name': 'Bell Peppers', 'qty': 2.0, 'unit': 'pcs', 'optional': true},
         ],
       },
       {
@@ -584,7 +584,7 @@ Future<void> seedAllData(AppDatabase db) async {
         'ings': [
           {'name': 'White Rice', 'qty': 200.0, 'unit': 'g'},
           {'name': 'Avocado', 'qty': 1.0, 'unit': 'pcs'},
-          {'name': 'Shrimp', 'qty': 100.0, 'unit': 'g'},
+          {'name': 'Shrimp', 'qty': 100.0, 'unit': 'g', 'optional': true},
         ],
       },
       {
@@ -595,7 +595,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Ground Beef', 'qty': 600.0, 'unit': 'g'},
           {'name': 'Lasagna Noodles', 'qty': 12.0, 'unit': 'pcs'},
           {'name': 'Tomato Sauce', 'qty': 500.0, 'unit': 'g'},
-          {'name': 'Cheddar Cheese', 'qty': 300.0, 'unit': 'g'},
+          {'name': 'Cheddar Cheese', 'qty': 300.0, 'unit': 'g', 'optional': true},
         ],
       },
       {
@@ -606,7 +606,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Broccoli', 'qty': 1.0, 'unit': 'pcs'},
           {'name': 'Bell Peppers', 'qty': 2.0, 'unit': 'pcs'},
           {'name': 'Soy Sauce', 'qty': 30.0, 'unit': 'ml'},
-          {'name': 'Zucchini', 'qty': 2.0, 'unit': 'pcs'},
+          {'name': 'Zucchini', 'qty': 2.0, 'unit': 'pcs', 'optional': true},
         ],
       },
       {
@@ -617,7 +617,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Chicken Breast', 'qty': 200.0, 'unit': 'g'},
           {'name': 'Cheddar Cheese', 'qty': 100.0, 'unit': 'g'},
           {'name': 'Tortillas', 'qty': 2.0, 'unit': 'pcs'},
-          {'name': 'Onion', 'qty': 0.25, 'unit': 'pcs'},
+          {'name': 'Onion', 'qty': 0.25, 'unit': 'pcs', 'optional': true},
         ],
       },
       {
@@ -628,7 +628,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'White Rice', 'qty': 300.0, 'unit': 'g'},
           {'name': 'Eggs', 'qty': 2.0, 'unit': 'pcs'},
           {'name': 'Chicken Breast', 'qty': 200.0, 'unit': 'g'},
-          {'name': 'Soy Sauce', 'qty': 40.0, 'unit': 'ml'},
+          {'name': 'Soy Sauce', 'qty': 40.0, 'unit': 'ml', 'optional': true},
         ],
       },
       {
@@ -639,7 +639,7 @@ Future<void> seedAllData(AppDatabase db) async {
           {'name': 'Eggs', 'qty': 3.0, 'unit': 'pcs'},
           {'name': 'Spinach', 'qty': 50.0, 'unit': 'g'},
           {'name': 'Onion', 'qty': 0.25, 'unit': 'pcs'},
-          {'name': 'Cheddar Cheese', 'qty': 30.0, 'unit': 'g'},
+          {'name': 'Cheddar Cheese', 'qty': 30.0, 'unit': 'g', 'optional': true},
         ],
       },
     ];
@@ -662,7 +662,7 @@ Future<void> seedAllData(AppDatabase db) async {
           .into(db.pantry)
           .insert(
             PantryCompanion.insert(
-              quantity: Value(item['qty'] as int),
+              quantity: Value(item['qty'] as double),
               isStaple: Value(item['staple'] as bool),
               genericNameId: genericNameToId[item['gen']] as int,
             ),
@@ -684,6 +684,12 @@ Future<void> seedAllData(AppDatabase db) async {
       final ingredients = r['ings'] as List<Map<String, dynamic>>;
       for (var ing in ingredients) {
         final pantryId = pantryItemNameToId[ing['name']];
+        final bool optional;
+        if (ing['optional'] != null) {
+          optional = ing['optional'];
+        } else {
+          optional = false;
+        }
         if (pantryId != null) {
           await db
               .into(db.recipeIngredients)
@@ -693,6 +699,7 @@ Future<void> seedAllData(AppDatabase db) async {
                   pantryId: pantryId,
                   quantityNeeded: ing['qty'] as double,
                   unit: ing['unit'] as String,
+                  optional: Value(optional)
                 ),
               );
         }

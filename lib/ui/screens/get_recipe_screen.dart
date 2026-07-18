@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
-import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/models/tag.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
@@ -20,7 +20,7 @@ class GetRecipeScreen extends StatefulWidget {
 }
 
 class _GetRecipeScreenState extends State<GetRecipeScreen> {
-  late Stream<List<BrowseRecipeItem>> _recipesStream;
+  late Stream<List<RecipeWithIngredients>> _recipesStream;
 
   bool _areIncompleteRecipesShown = false;
   List<Tag> tags = [(label: 'Tag 1'), (label: 'Tag 2'), (label: 'Tag 3')];
@@ -91,7 +91,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
               )
             )
           ),
-          StreamBuilder<List<BrowseRecipeItem>>(
+          StreamBuilder<List<RecipeWithIngredients>>(
             stream: _recipesStream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -101,10 +101,10 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                   );
               }
 
-              List<BrowseRecipeItem> displayedRecipes = snapshot.data!;
+              List<RecipeWithIngredients> displayedRecipes = snapshot.data!;
 
               if (_searchQuery.isNotEmpty) {
-                final fuse = Fuzzy<BrowseRecipeItem>(
+                final fuse = Fuzzy<RecipeWithIngredients>(
                   displayedRecipes,
                   options: FuzzyOptions(
                     keys: [
