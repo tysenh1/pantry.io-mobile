@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
-import 'package:pantry_io_mobile/core/utils/item_utils.dart';
+import 'package:pantry_io_mobile/core/utils/product_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/daos/products_dao.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
-import 'package:pantry_io_mobile/domain/models/item_info.dart';
+import 'package:pantry_io_mobile/domain/models/product_info.dart';
 import 'package:pantry_io_mobile/ui/widgets/barcode/barcode_scanner_widget.dart';
 import 'package:provider/provider.dart';
 

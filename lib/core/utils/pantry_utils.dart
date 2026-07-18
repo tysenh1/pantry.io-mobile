@@ -1,29 +1,29 @@
 import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 
 int subtractQuantity(
-  double itemQuantity,
-  String itemPrimaryUnit,
+  double productQuantity,
+  String productPrimaryUnit,
   double itemWeightPerPiece,
   double recipeQuantityNeeded,
   String recipeUnit,
 ) {
-  if (itemPrimaryUnit == recipeUnit) {
-    return (itemQuantity - recipeQuantityNeeded).floor();
+  if (productPrimaryUnit == recipeUnit) {
+    return (productQuantity - recipeQuantityNeeded).floor();
   }
 
-  if (recipeUnit == 'pcs' && itemPrimaryUnit != 'pcs') {
+  if (recipeUnit == 'pcs' && productPrimaryUnit != 'pcs') {
     double amountGrams = recipeQuantityNeeded * (itemWeightPerPiece);
     double subtractInPrimary = normalizeQuantity(
       amountGrams,
       'g',
-      toUnit: itemPrimaryUnit,
+      toUnit: productPrimaryUnit,
     );
 
-    return (itemQuantity - subtractInPrimary).floor();
+    return (productQuantity - subtractInPrimary).floor();
   }
 
-  if (recipeUnit != 'pcs' && itemPrimaryUnit == 'pcs') {
-    double amountGrams = itemQuantity * itemWeightPerPiece;
+  if (recipeUnit != 'pcs' && productPrimaryUnit == 'pcs') {
+    double amountGrams = productQuantity * itemWeightPerPiece;
     double amountToAdd = normalizeQuantity(recipeQuantityNeeded, recipeUnit);
     return ((amountGrams - amountToAdd) / itemWeightPerPiece).floor();
   }
@@ -31,7 +31,7 @@ int subtractQuantity(
   double subtractInPrimary = normalizeQuantity(
     recipeQuantityNeeded,
     recipeUnit,
-    toUnit: itemPrimaryUnit,
+    toUnit: productPrimaryUnit,
   );
-  return (itemQuantity - subtractInPrimary).floor();
+  return (productQuantity - subtractInPrimary).floor();
 }

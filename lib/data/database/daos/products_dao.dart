@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/tables/products_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/generic_names_table.dart';
-import 'package:pantry_io_mobile/domain/models/item_info.dart';
+import 'package:pantry_io_mobile/domain/models/product_info.dart';
 
 part 'products_dao.g.dart';
 
