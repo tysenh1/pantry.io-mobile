@@ -2,12 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 
 class RecipeDialog extends StatelessWidget {
-  final BrowseRecipeItem recipe;
+  final RecipeWithIngredients recipe;
   final VoidCallback onCook;
   final VoidCallback onClose;
   const RecipeDialog({

@@ -28,7 +28,7 @@ class _PantryAddItemWidgetState extends State<PantryAddItemWidget> {
   final TextEditingController _unitTypeController = TextEditingController();
 
   bool _isLoadingProduct = false;
-  ItemInfo? itemInfo;
+  ProductInfo? productInfo;
   List<GenericNameInfo> _dropdownItems = [];
   List<GenericNameInfo> _allGenericNames = [];
   int? _selectedGenericId;
@@ -53,11 +53,11 @@ class _PantryAddItemWidgetState extends State<PantryAddItemWidget> {
 
     final db = Provider.of<AppDatabase>(context, listen: false);
 
-    final localItem = await db.itemsDao.getLocalItemByBarcode(barcode);
+    final localItem = await db.productsDao.getLocalItemByBarcode(barcode);
 
     if (localItem != null) {
       setState(() {
-        itemInfo = ItemInfo(
+        productInfo = ProductInfo(
           barcode: localItem.$1.barcode,
           productName: localItem.$1.productName,
           genericName: GenericNameInfo(

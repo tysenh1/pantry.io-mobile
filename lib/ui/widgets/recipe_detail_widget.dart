@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
 import 'package:pantry_io_mobile/data/repositories/app_state.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:provider/provider.dart';
 
 class RecipeDetailWidget extends StatelessWidget {
-  final BrowseRecipeItem recipe;
+  final RecipeWithIngredients recipe;
 
   const RecipeDetailWidget({super.key, required this.recipe});
 

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/domain/models/browse_recipes_item.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_dialog.dart';
-import 'package:pantry_io_mobile/ui/widgets/recipe_detail_widget.dart';
 
 class RecipeCard extends StatelessWidget {
-  final BrowseRecipeItem recipe;
+  final RecipeWithIngredients recipe;
   final Color? color;
   final VoidCallback onCook;
 
