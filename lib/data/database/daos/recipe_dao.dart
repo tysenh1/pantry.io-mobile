@@ -1,8 +1,9 @@
 import 'package:drift/drift.dart';
+import 'package:pantry_io_mobile/core/utils/ingredient_utils.dart';
+import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipes_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
-import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 
 part 'recipe_dao.g.dart';
@@ -36,6 +37,8 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
     });
   }
 
+
+
   List<RecipeWithIngredients> _filterCookableRecipes(
     List<RecipeWithIngredients> recipes
   ) {
@@ -47,12 +50,14 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       return requiredIngredients.every(
           (ingredient) =>
               ingredient.isStaple ||
-              ingredient.pantryQuantity >= ingredient.quantityNeeded,
+              isIngredientQuantitySufficient(ingredient),
       );
     }).toList();
   }
 
-  Stream<List<RecipeWithIngredients>> watchAllRecipes({bool filter = false}) {
+  Stream<List<RecipeWithIngredients>> watchAllRecipes(
+      bool filterIncompleteRecipes
+  ) {
     final query = select(recipes).join([
       innerJoin(recipeIngredients, recipeIngredients.recipeId.equalsExp(recipes.id)),
       innerJoin(pantry, pantry.id.equalsExp(recipeIngredients.pantryId)),
@@ -73,7 +78,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
           quantityNeeded: ingredient.quantityNeeded,
           ingredientUnit: ingredient.unit,
           pantryQuantity: pantryRow.quantity,
-          primaryUnit: genericName.primaryUnit,
+          pantryUnit: genericName.primaryUnit,
           isOptional: ingredient.optional,
           isStaple: pantryRow.isStaple,
           name: genericName.name,
@@ -81,19 +86,24 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
 
         if (recipeMap.containsKey(recipe.id)) {
           recipeMap[recipe.id]!.ingredients.add(recipeIngredient);
+          if (!isIngredientQuantitySufficient(recipeIngredient)) {
+            recipeMap[recipe.id]!.isRecipeComplete = false;
+          }
         } else {
           recipeMap[recipe.id] = RecipeWithIngredients(
             id: recipe.id,
             name: recipe.name,
             tags: recipe.tags,
             instructions: recipe.instructions,
+            isRecipeComplete: isIngredientQuantitySufficient(recipeIngredient),
             ingredients: [recipeIngredient]
           );
         }
       }
 
       final allRecipes = recipeMap.values.toList();
-      if (filter) {
+
+      if (filterIncompleteRecipes) {
         return _filterCookableRecipes(allRecipes);
       }
       return allRecipes;

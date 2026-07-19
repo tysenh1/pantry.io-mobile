@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy/fuzzy.dart';
+import 'package:pantry_io_mobile/core/constants/common_tags.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/models/tag.dart';
@@ -23,7 +24,6 @@ class GetRecipeScreen extends StatefulWidget {
 class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
   bool _areIncompleteRecipesShown = false;
-  List<Tag> tags = [(label: 'Tag 1'), (label: 'Tag 2'), (label: 'Tag 3')];
 
   final Set<String> selectedTags = {};
 
@@ -52,7 +52,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
   @override
   Widget build(BuildContext context) {
     final db = context.read<AppDatabase>();
-    Stream<List<RecipeWithIngredients>> recipesStream = db.recipeDao.watchAllRecipes();
+    Stream<List<RecipeWithIngredients>> recipesStream = db.recipeDao.watchAllRecipes(!_areIncompleteRecipesShown);
     return Scaffold(
       appBar: AppHeader(title: 'Get Recipe'),
       body: CustomScrollView(
@@ -70,7 +70,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       onChanged: (val) => setState(() => _searchQuery = val)
                     ),
                     AppTagCarousel(
-                      tags: tags.map((tag) {return tag.label;}).toList(),
+                      tags: commonTags,
                       mode: AppChipMode.selectable,
                       onSelect: handleTap,
                       selectedTags: selectedTags,
@@ -124,7 +124,24 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
-                    (context, i) => RecipeCard(recipe: displayedRecipes[i]),
+                    (context, i) {
+                      return RecipeCard(recipe: displayedRecipes[i]);
+                      // if (_areIncompleteRecipesShown) {
+                      //   return RecipeCard(recipe: displayedRecipes[i]);
+                      // } else {
+                      //   if (displayedRecipes[i].isRecipeComplete == true) {
+                      //     return RecipeCard(recipe: displayedRecipes[i]);
+                      //   }
+                      // }
+                      // if (!_areIncompleteRecipesShown && displayedRecipes[i].isRecipeComplete == true) {
+                      //   print("this recipe should be complete: ${displayedRecipes[i].name}");
+                      //   return RecipeCard(recipe: displayedRecipes[i]);
+                      // }
+                      //
+                      // print("this can be complete or incomplete: ${displayedRecipes[i].name}");
+                      // return RecipeCard(recipe: displayedRecipes[i]);
+
+                    },
                     childCount: displayedRecipes.length,
                 ),
               );
