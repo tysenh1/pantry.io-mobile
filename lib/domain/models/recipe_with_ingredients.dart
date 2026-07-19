@@ -3,7 +3,7 @@ import 'dart:convert';
 class RecipeWithIngredients {
   final int id;
   final String name;
-  final String? tags;
+  final Set<String>? tags;
   final String instructions;
   final List<IngredientItem> ingredients;
   bool isRecipeComplete;
@@ -17,14 +17,18 @@ class RecipeWithIngredients {
     required this.isRecipeComplete,
   });
 
-  List<String> get tagList => tags == null
-    ? []
-    : tags!
-      .split(',')
-      .map((t) => t.trim())
-      .where((t) => t.isNotEmpty)
-      .toList();
+  String get tagString => (tags == null || tags!.isEmpty)
+    ? 'No tags'
+    : tags!.join(', ');
 
+//   List<String> get tagList => tags == null
+//     ? []
+//     : tags!
+//       .split(',')
+//       .map((t) => t.trim())
+//       .where((t) => t.isNotEmpty)
+//       .toList();
+//
 }
 
 class IngredientItem {

@@ -45,9 +45,9 @@ class RecipeDialog extends StatelessWidget {
                       )
                     ],
                   ),
-                  if (recipe.tagList.isNotEmpty) ...[
+                  if (recipe.tags != null && recipe.tags!.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    AppTagCarousel(tags: recipe.tagList)
+                    AppTagCarousel(tags: recipe.tags!)
                   ]
                 ]
             ),
