@@ -1,1 +1,1 @@
-const List<String> commonTags = ['Quick', 'Healthy', 'High Protein', 'Disgusting'];
+const Set<String> commonTags = {'Quick', 'Healthy', 'High Protein', 'Disgusting'};

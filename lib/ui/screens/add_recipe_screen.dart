@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
-import 'package:pantry_io_mobile/domain/models/tag.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
@@ -27,7 +26,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   // Mocked generic names fetch data
   List<PantryGenericNameResponse> _genericNames = [];
 
-  List<Tag> tags = [];
+  Set<String> tags = {};
 
   final Set<String> selectedTags = {};
 
@@ -71,11 +70,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         ),
       ];
 
-      tags = [
-        (label: 'Tag 1'),
-        (label: 'Tag 2'),
-        (label: 'Tag 3')
-      ];
+      tags = {'Tag 1', 'Tag 2', 'Tag 3', 'Tag 4'};
 
     });
   }
@@ -127,7 +122,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   void handleRemove(String tagToDelete) {
     setState(() {
-      tags.removeWhere((tag) => tag.label == tagToDelete);
+      tags.removeWhere((tag) => tag == tagToDelete);
     });
   }
 
@@ -152,7 +147,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                     padding: const EdgeInsets.all(8),
                     borderRadius: BorderRadius.circular(999),
                     child: AppTagCarousel(
-                      tags: tags.map((tag) {return tag.label;}).toList(),
+                      tags: tags,
                       mode: AppChipMode.selectable,
                       onSelect: handleTap,
                       selectedTags: selectedTags,

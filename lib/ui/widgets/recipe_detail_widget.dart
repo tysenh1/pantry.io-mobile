@@ -35,7 +35,7 @@ class RecipeDetailWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (recipe.tags != null) Chip(label: Text(recipe.tags!)),
+            if (recipe.tags != null && recipe.tags!.isNotEmpty) Chip(label: Text(recipe.tagString)),
             const Divider(),
             const Text(
               "Ingredients",

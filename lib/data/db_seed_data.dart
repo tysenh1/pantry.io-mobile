@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 
@@ -263,7 +265,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 1,
         'name': 'Garlic Butter Chicken',
-        'tags': 'Quick, High Protein, Low Carb',
+        'tags': ['Quick', 'High Protein', 'Low Carb'],
         'instr': '1. Dice chicken. 2. Sauté garlic in butter/oil. 3. Cook chicken until golden.',
         'ings': [
           {'pantryId': 1, 'name': 'Chicken Breast', 'qty': 500.0, 'unit': 'g'},
@@ -275,7 +277,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 2,
         'name': 'Beef Tacos',
-        'tags': 'Mexican, Family Style, Quick',
+        'tags': ['Mexican', 'Family Style', 'Quick'],
         'instr': '1. Brown beef with onions. 2. Warm tortillas. 3. Assemble with cheese.',
         'ings': [
           {'pantryId': 2, 'name': 'Ground Beef', 'qty': 500.0, 'unit': 'g'},
@@ -287,7 +289,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 3,
         'name': 'Chicken & Broccoli Stir Fry',
-        'tags': 'Asian, Healthy, One-Pan',
+        'tags': ['Asian', 'Healthy', 'One-Pan'],
         'instr': '1. Slice chicken and broccoli. 2. Stir fry. 3. Add soy sauce.',
         'ings': [
           {'pantryId': 1, 'name': 'Chicken Breast', 'qty': 400.0, 'unit': 'g'},
@@ -299,7 +301,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 4,
         'name': 'Red Chicken Curry',
-        'tags': 'Spicy, Thai, Hearty',
+        'tags': ['Spicy', 'Thai', 'Hearty'],
         'instr': '1. Simmer paste with coconut milk. 2. Add chicken and peppers.',
         'ings': [
           {'pantryId': 1, 'name': 'Chicken Breast', 'qty': 500.0, 'unit': 'g'},
@@ -310,7 +312,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 5,
         'name': 'Simple Spaghetti Aglio e Olio',
-        'tags': 'Vegetarian, Italian, Pantry Staples',
+        'tags': ['Vegetarian', 'Italian', 'Pantry Staples'],
         'instr': '1. Boil spaghetti. 2. Sauté garlic in oil. 3. Toss pasta.',
         'ings': [
           {'pantryId': 6, 'name': 'Spaghetti', 'qty': 250.0, 'unit': 'g'},
@@ -321,7 +323,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 6,
         'name': 'Classic Steak and Peppers',
-        'tags': 'High Protein, Dinner',
+        'tags': ['High Protein', 'Dinner'],
         'instr': '1. Sear steak. 2. Sauté peppers/onions. 3. Serve together.',
         'ings': [
           {'pantryId': 31, 'name': 'Beef Steak', 'qty': 400.0, 'unit': 'g'},
@@ -333,7 +335,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 7,
         'name': 'Margherita Pizza',
-        'tags': 'Italian, Vegetarian, Comfort',
+        'tags': ['Italian', 'Vegetarian', 'Comfort'],
         'instr': '1. Make dough. 2. Add sauce and mozzarella. 3. Bake at 450F.',
         'ings': [
           {'pantryId': 29, 'name': 'Tomato Sauce', 'qty': 200.0, 'unit': 'g'},
@@ -345,7 +347,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 8,
         'name': 'Fluffy Pancakes',
-        'tags': 'Breakfast, Quick, Family',
+        'tags': ['Breakfast', 'Quick', 'Family'],
         'instr': '1. Mix dry. 2. Add wet. 3. Cook on medium heat.',
         'ings': [
           {'pantryId': 26, 'name': 'Flour', 'qty': 200.0, 'unit': 'g'},
@@ -358,7 +360,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 9,
         'name': 'Beef Chili',
-        'tags': 'Hearty, Spicy, Freezer Friendly',
+        'tags': ['Hearty', 'Spicy', 'Freezer Friendly'],
         'instr': '1. Brown beef with onions. 2. Add tomatoes and peppers. 3. Simmer.',
         'ings': [
           {'pantryId': 2, 'name': 'Ground Beef', 'qty': 500.0, 'unit': 'g'},
@@ -370,7 +372,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 10,
         'name': 'California Roll',
-        'tags': 'Japanese, Healthy, Fun',
+        'tags': ['Japanese', 'Healthy', 'Fun'],
         'instr': '1. Cook sushi rice. 2. Roll nori with avocado and shrimp.',
         'ings': [
           {'pantryId': 7, 'name': 'White Rice', 'qty': 200.0, 'unit': 'g'},
@@ -381,7 +383,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 11,
         'name': 'Classic Lasagna',
-        'tags': 'Italian, Family Dinner, Make Ahead',
+        'tags': ['Italian', 'Family Dinner', 'Make Ahead'],
         'instr': '1. Layer noodles, beef, sauce. 2. Bake 45 mins at 375F.',
         'ings': [
           {'pantryId': 2, 'name': 'Ground Beef', 'qty': 600.0, 'unit': 'g'},
@@ -393,7 +395,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 12,
         'name': 'Veggie Stir Fry',
-        'tags': 'Vegan, Quick, Healthy',
+        'tags': ['Vegan', 'Quick', 'Healthy'],
         'instr': '1. Chop veggies. 2. High heat stir fry. 3. Add soy sauce.',
         'ings': [
           {'pantryId': 15, 'name': 'Broccoli', 'qty': 1.0, 'unit': 'pcs'},
@@ -405,7 +407,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 13,
         'name': 'Chicken Quesadilla',
-        'tags': 'Mexican, Quick, Kid Friendly',
+        'tags': ['Mexican', 'Quick', 'Kid Friendly'],
         'instr': '1. Shred chicken. 2. Fill tortilla with cheese. 3. Pan fry.',
         'ings': [
           {'pantryId': 1, 'name': 'Chicken Breast', 'qty': 200.0, 'unit': 'g'},
@@ -417,7 +419,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 14,
         'name': 'Chicken Fried Rice',
-        'tags': 'Asian, One Pan, Leftovers',
+        'tags': ['Asian', 'One Pan', 'Leftovers'],
         'instr': '1. Stir fry chicken and rice. 2. Add soy and eggs.',
         'ings': [
           {'pantryId': 7, 'name': 'White Rice', 'qty': 300.0, 'unit': 'g'},
@@ -429,7 +431,7 @@ Future<void> seedAllData(AppDatabase db) async {
       {
         'id': 15,
         'name': 'Veggie Omelette',
-        'tags': 'Breakfast, Quick, High Protein',
+        'tags': ['Breakfast', 'Quick', 'High Protein'],
         'instr': '1. Whisk eggs. 2. Sauté veggies. 3. Fold when set.',
         'ings': [
           {'pantryId': 3, 'name': 'Eggs', 'qty': 3.0, 'unit': 'pcs'},
@@ -463,15 +465,12 @@ Future<void> seedAllData(AppDatabase db) async {
       );
     }
 
-    // Keep track of junction IDs just in case your drift setup requires explicit junction PKs
-    int recipeIngredientId = 1;
-
     for (var r in recipesSeed) {
       await db.into(db.recipes).insert(
         RecipesCompanion.insert(
           id: Value(r['id'] as int),
           name: r['name'] as String,
-          tags: r['tags'] as String,
+          tags: jsonEncode(r['tags'] as List<String>),
           instructions: r['instr'] as String,
         ),
       );
@@ -482,7 +481,6 @@ Future<void> seedAllData(AppDatabase db) async {
 
         await db.into(db.recipeIngredients).insert(
           RecipeIngredientsCompanion.insert(
-            // id: Value(recipeIngredientId++), // Uncomment if your junction table uses an auto-incrementing id
               recipeId: r['id'] as int,
               pantryId: ing['pantryId'] as int,
               quantityNeeded: ing['qty'] as double,

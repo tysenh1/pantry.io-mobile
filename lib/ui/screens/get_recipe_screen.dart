@@ -3,15 +3,13 @@ import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/core/constants/common_tags.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
-import 'package:pantry_io_mobile/domain/models/tag.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
-import 'package:pantry_io_mobile/ui/widgets/common/recipe_card.dart';
-import 'package:pantry_io_mobile/ui/widgets/recipe/confirm_cook_sheet.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_card.dart';
 import 'package:provider/provider.dart';
 
 class GetRecipeScreen extends StatefulWidget {
@@ -52,7 +50,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
   @override
   Widget build(BuildContext context) {
     final db = context.read<AppDatabase>();
-    Stream<List<RecipeWithIngredients>> recipesStream = db.recipeDao.watchAllRecipes(!_areIncompleteRecipesShown);
+    Stream<List<RecipeWithIngredients>> recipesStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: selectedTags);
     return Scaffold(
       appBar: AppHeader(title: 'Get Recipe'),
       body: CustomScrollView(
@@ -99,6 +97,22 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       child: Center(child: CircularProgressIndicator())
                   );
               }
+              if (snapshot.data!.isEmpty) {
+                return const SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 32),
+                      child: Text(
+                        'No recipes match your search',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 16,
+                        ),
+                      )
+                    )
+                  )
+                );
+              }
 
               List<RecipeWithIngredients> displayedRecipes = snapshot.data!;
 
@@ -108,11 +122,12 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                   options: FuzzyOptions(
                     keys: [
                       WeightedKey(name: 'name', getter: (r) => r.name, weight: 1.0),
-                      WeightedKey(
-                        name: 'tags',
-                        getter: (r) => r.tags ?? '',
-                        weight: 0.7,
-                      ),
+                      // Uncomment this codeblock if you want tags to count in the fuzzy search
+                      // WeightedKey(
+                      //   name: 'tags',
+                      //   getter: (r) => r.tags ?? '',
+                      //   weight: 0.7,
+                      // ),
                     ],
                     threshold: 0.4,
                   ),

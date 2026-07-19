@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
-import 'package:pantry_io_mobile/domain/models/tag.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
@@ -29,7 +28,7 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
   // Mocked generic names fetch data
   List<PantryGenericNameResponse> _genericNames = [];
 
-  List<Tag> tags = [];
+  Set<String> tags = {};
 
   final Set<String> selectedTags = {};
 
@@ -73,11 +72,7 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
         ),
       ];
 
-      tags = [
-        (label: 'Tag 1'),
-        (label: 'Tag 2'),
-        (label: 'Tag 3')
-      ];
+      tags = {'Tag 1', 'Tag 2', 'Tag 3', 'Tag 4'};
 
     });
   }
@@ -94,7 +89,7 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
 
   void handleRemove(String tagToDelete) {
     setState(() {
-      tags.removeWhere((tag) => tag.label == tagToDelete);
+      tags.removeWhere((tag) => tag == tagToDelete);
     });
   }
 
@@ -107,7 +102,7 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
         IngredientItem(pantryId: 1, quantityNeeded: 5, ingredientUnit: 'g', pantryQuantity: 500, pantryUnit: 'g', name: 'INGREDIETN NAME'),
         IngredientItem(pantryId: 2, quantityNeeded: 200, ingredientUnit: 'g', pantryQuantity: 200, pantryUnit: 'g', name: 'optional ingredient', isOptional: true)
       ],
-      tags: 'Tag 1,Tag 2,Tag 3,Tag 4, Tag 5'
+      tags: {'Tag 1','Tag 2','Tag 3','Tag 4', 'Tag 5'}
   );
 
   @override
@@ -144,7 +139,7 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
                     padding: const EdgeInsets.all(8),
                     borderRadius: BorderRadius.circular(999),
                     child: AppTagCarousel(
-                      tags: tags.map((tag) {return tag.label;}).toList(),
+                      tags: tags,
                       mode: AppChipMode.selectable,
                       onSelect: handleTap,
                       selectedTags: selectedTags,
@@ -153,14 +148,14 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
                   ),
                   if (tags.isNotEmpty)
                   AppTagCarousel(
-                    tags: tags.map((tag) {return tag.label;}).toList(),
+                    tags: tags,
                     mode: AppChipMode.selectable,
                     onSelect: handleTap,
                     selectedTags: selectedTags,
                   ),
                   if (tags.isNotEmpty)
                   AppTagCarousel(
-                    tags: tags.map((tag) {return tag.label;}).toList(),
+                    tags: tags,
                     mode: AppChipMode.removable,
                     onRemoved: handleRemove,
                     selectedTags: selectedTags,

@@ -4,7 +4,7 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
 
 class AppTagCarousel extends StatelessWidget {
   // This may need to change depending on how I want to use tags
-  final List<String> tags;
+  final Set<String> tags;
   final AppChipMode mode;
   final ValueChanged<String>? onSelect;
   final ValueChanged<String>? onRemoved;

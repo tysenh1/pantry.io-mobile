@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:pantry_io_mobile/core/utils/ingredient_utils.dart';
 import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
@@ -55,9 +57,19 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
     }).toList();
   }
 
-  Stream<List<RecipeWithIngredients>> watchAllRecipes(
-      bool filterIncompleteRecipes
+  List<RecipeWithIngredients> _filterRecipesByTags(
+      List<RecipeWithIngredients> recipes,
+      Set<String> tags
   ) {
+    return recipes.where((recipe) {
+      return tags.every((tag) => recipe.tags?.contains(tag) ?? false);
+    }).toList();
+  }
+
+  Stream<List<RecipeWithIngredients>> watchAllRecipes({
+    bool filterIncompleteRecipes = true,
+    Set<String>? selectedTags,
+  }) {
     final query = select(recipes).join([
       innerJoin(recipeIngredients, recipeIngredients.recipeId.equalsExp(recipes.id)),
       innerJoin(pantry, pantry.id.equalsExp(recipeIngredients.pantryId)),
@@ -93,7 +105,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
           recipeMap[recipe.id] = RecipeWithIngredients(
             id: recipe.id,
             name: recipe.name,
-            tags: recipe.tags,
+            tags: Set<String>.from(jsonDecode(recipe.tags)),
             instructions: recipe.instructions,
             isRecipeComplete: isIngredientQuantitySufficient(recipeIngredient),
             ingredients: [recipeIngredient]
@@ -101,10 +113,14 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
         }
       }
 
-      final allRecipes = recipeMap.values.toList();
+      List<RecipeWithIngredients> allRecipes = recipeMap.values.toList();
 
       if (filterIncompleteRecipes) {
-        return _filterCookableRecipes(allRecipes);
+        allRecipes = _filterCookableRecipes(allRecipes);
+      }
+
+      if (selectedTags != null && selectedTags.isNotEmpty) {
+        allRecipes = _filterRecipesByTags(allRecipes, selectedTags);
       }
       return allRecipes;
     });
