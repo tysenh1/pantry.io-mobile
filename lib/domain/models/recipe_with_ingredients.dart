@@ -6,6 +6,7 @@ class RecipeWithIngredients {
   final String? tags;
   final String instructions;
   final List<IngredientItem> ingredients;
+  bool isRecipeComplete;
 
   RecipeWithIngredients({
     required this.id,
@@ -13,6 +14,7 @@ class RecipeWithIngredients {
     this.tags,
     required this.instructions,
     required this.ingredients,
+    required this.isRecipeComplete,
   });
 
   List<String> get tagList => tags == null
@@ -30,7 +32,7 @@ class IngredientItem {
   final double quantityNeeded;
   final String ingredientUnit;
   final double pantryQuantity;
-  final String primaryUnit;
+  final String pantryUnit;
   final bool isOptional;
   final bool isStaple;
   final String name;
@@ -40,7 +42,7 @@ class IngredientItem {
     required this.quantityNeeded,
     required this.ingredientUnit,
     required this.pantryQuantity,
-    required this.primaryUnit,
+    required this.pantryUnit,
     this.isOptional = false,
     this.isStaple = false,
     required this.name,

@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/core/utils/ingredient_utils.dart';
+import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
+import 'package:path/path.dart';
 
 class ConfirmCookSheet extends StatefulWidget {
   final RecipeWithIngredients recipe;
@@ -34,7 +37,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
         optionalIngredients.add(ing.pantryId);
       } else {
         usedIngredients.add(ing.pantryId);
-        if ((ing.quantityNeeded * 2) > ing.pantryQuantity) {
+        if (!isIngredientQuantitySufficient(ing, 2.0)) {
           canRecipeBeDoubled = false;
         }
       }
@@ -160,18 +163,22 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: usedIngredients.where((pantryId) {
-                        final ing = ingredients.firstWhere((ing)  => ing.pantryId == pantryId);
-                        final newQuantity = ing.pantryQuantity - (ing.quantityNeeded * _multiplier);
-                        return newQuantity >= 0;
-                      }).map((pantryId) {
+                      // children: usedIngredients.where((pantryId) {
+                      //   final ing = ingredients.firstWhere((ing)  => ing.pantryId == pantryId);
+                      //   print(usedIngredients);
+                      //   print(ing.pantryId);
+                      //   print(ing.name);
+                      //   final newQuantity = ing.pantryQuantity - (ing.quantityNeeded * _multiplier);
+                      //   return newQuantity >= 0;
+                      // }).map((pantryId) {
+                      children: usedIngredients.map((pantryId) {
                         final ing = ingredients.firstWhere((ing) => ing.pantryId == pantryId);
-                        final newQuantity = ing.pantryQuantity - (ing.quantityNeeded * _multiplier);
-                        if (newQuantity < 0 && usedIngredients.contains(pantryId)) {
-                          setState(() {
-                            usedIngredients.remove(pantryId);
-                          });
-                        }
+                        print("this is the ${ing.name}");
+                        print("this is the quan ${ing.quantityNeeded} ${ing.ingredientUnit}");
+                        print("this is the pan ${ing.pantryQuantity} ${ing.pantryUnit}");
+                        print("should this even show up? ${widget.recipe.isRecipeComplete}");
+                        final newQuantity = normalizeQuantity(ing.pantryQuantity, ing.pantryUnit) - normalizeQuantity((ing.quantityNeeded * _multiplier), ing.ingredientUnit);
+
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.max,

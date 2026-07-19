@@ -16,7 +16,7 @@ class RecipeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: color ?? Theme.of(context).colorScheme.secondaryContainer,
+      color: color ?? (recipe.isRecipeComplete ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.errorContainer),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         title: Text(
@@ -26,19 +26,21 @@ class RecipeCard extends StatelessWidget {
         subtitle: Text(recipe.tags ?? 'No tags', maxLines: 1, overflow: TextOverflow.ellipsis),
         trailing: const Icon(Icons.chevron_right),
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) => Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              clipBehavior: Clip.hardEdge,
-              insetPadding: const EdgeInsets.all(32),
-              child: RecipeDialog(
-                recipe: recipe,
-              )
-            )
-          );
+          if (recipe.isRecipeComplete) {
+            showDialog(
+                context: context,
+                builder: (context) => Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    clipBehavior: Clip.hardEdge,
+                    insetPadding: const EdgeInsets.all(32),
+                    child: RecipeDialog(
+                      recipe: recipe,
+                    )
+                )
+            );
+          }
         },
       ),
     );
