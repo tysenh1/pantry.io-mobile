@@ -14,6 +14,7 @@ import 'tables/products_table.dart';
 import 'tables/pantry_table.dart';
 import 'tables/recipe_ingredients_table.dart';
 import 'tables/recipes_table.dart';
+import 'tables/recipe_history.dart';
 
 part 'app_database.g.dart';
 
@@ -30,6 +31,7 @@ LazyDatabase _openConnection() => LazyDatabase(() async {
     Pantry,
     RecipeIngredients,
     Recipes,
+    RecipeHistory,
   ],
   daos: [PantryDao, RecipeDao, ProductsDao, GenericNamesDao]
 )
