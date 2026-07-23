@@ -1731,12 +1731,10 @@ class $RecipeHistoryTable extends RecipeHistory
       'REFERENCES recipes (id) ON DELETE SET NULL',
     ),
   );
-  static const VerificationMeta _recipeNameMeta = const VerificationMeta(
-    'recipeName',
-  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  late final GeneratedColumn<String> recipeName = GeneratedColumn<String>(
-    'recipe_name',
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
     aliasedName,
     false,
     type: DriftSqlType.string,
@@ -1801,7 +1799,7 @@ class $RecipeHistoryTable extends RecipeHistory
   List<GeneratedColumn> get $columns => [
     id,
     recipeId,
-    recipeName,
+    name,
     instructions,
     tags,
     multiplier,
@@ -1829,13 +1827,13 @@ class $RecipeHistoryTable extends RecipeHistory
         recipeId.isAcceptableOrUnknown(data['recipe_id']!, _recipeIdMeta),
       );
     }
-    if (data.containsKey('recipe_name')) {
+    if (data.containsKey('name')) {
       context.handle(
-        _recipeNameMeta,
-        recipeName.isAcceptableOrUnknown(data['recipe_name']!, _recipeNameMeta),
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
       );
     } else if (isInserting) {
-      context.missing(_recipeNameMeta);
+      context.missing(_nameMeta);
     }
     if (data.containsKey('instructions')) {
       context.handle(
@@ -1885,9 +1883,9 @@ class $RecipeHistoryTable extends RecipeHistory
         DriftSqlType.int,
         data['${effectivePrefix}recipe_id'],
       ),
-      recipeName: attachedDatabase.typeMapping.read(
+      name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}recipe_name'],
+        data['${effectivePrefix}name'],
       )!,
       instructions: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -1928,7 +1926,7 @@ class RecipeHistoryData extends DataClass
     implements Insertable<RecipeHistoryData> {
   final int id;
   final int? recipeId;
-  final String recipeName;
+  final String name;
   final String instructions;
   final String? tags;
   final double multiplier;
@@ -1937,7 +1935,7 @@ class RecipeHistoryData extends DataClass
   const RecipeHistoryData({
     required this.id,
     this.recipeId,
-    required this.recipeName,
+    required this.name,
     required this.instructions,
     this.tags,
     required this.multiplier,
@@ -1951,7 +1949,7 @@ class RecipeHistoryData extends DataClass
     if (!nullToAbsent || recipeId != null) {
       map['recipe_id'] = Variable<int>(recipeId);
     }
-    map['recipe_name'] = Variable<String>(recipeName);
+    map['name'] = Variable<String>(name);
     map['instructions'] = Variable<String>(instructions);
     if (!nullToAbsent || tags != null) {
       map['tags'] = Variable<String>(tags);
@@ -1974,7 +1972,7 @@ class RecipeHistoryData extends DataClass
       recipeId: recipeId == null && nullToAbsent
           ? const Value.absent()
           : Value(recipeId),
-      recipeName: Value(recipeName),
+      name: Value(name),
       instructions: Value(instructions),
       tags: tags == null && nullToAbsent ? const Value.absent() : Value(tags),
       multiplier: Value(multiplier),
@@ -1991,7 +1989,7 @@ class RecipeHistoryData extends DataClass
     return RecipeHistoryData(
       id: serializer.fromJson<int>(json['id']),
       recipeId: serializer.fromJson<int?>(json['recipeId']),
-      recipeName: serializer.fromJson<String>(json['recipeName']),
+      name: serializer.fromJson<String>(json['name']),
       instructions: serializer.fromJson<String>(json['instructions']),
       tags: serializer.fromJson<String?>(json['tags']),
       multiplier: serializer.fromJson<double>(json['multiplier']),
@@ -2007,7 +2005,7 @@ class RecipeHistoryData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'recipeId': serializer.toJson<int?>(recipeId),
-      'recipeName': serializer.toJson<String>(recipeName),
+      'name': serializer.toJson<String>(name),
       'instructions': serializer.toJson<String>(instructions),
       'tags': serializer.toJson<String?>(tags),
       'multiplier': serializer.toJson<double>(multiplier),
@@ -2021,7 +2019,7 @@ class RecipeHistoryData extends DataClass
   RecipeHistoryData copyWith({
     int? id,
     Value<int?> recipeId = const Value.absent(),
-    String? recipeName,
+    String? name,
     String? instructions,
     Value<String?> tags = const Value.absent(),
     double? multiplier,
@@ -2030,7 +2028,7 @@ class RecipeHistoryData extends DataClass
   }) => RecipeHistoryData(
     id: id ?? this.id,
     recipeId: recipeId.present ? recipeId.value : this.recipeId,
-    recipeName: recipeName ?? this.recipeName,
+    name: name ?? this.name,
     instructions: instructions ?? this.instructions,
     tags: tags.present ? tags.value : this.tags,
     multiplier: multiplier ?? this.multiplier,
@@ -2041,9 +2039,7 @@ class RecipeHistoryData extends DataClass
     return RecipeHistoryData(
       id: data.id.present ? data.id.value : this.id,
       recipeId: data.recipeId.present ? data.recipeId.value : this.recipeId,
-      recipeName: data.recipeName.present
-          ? data.recipeName.value
-          : this.recipeName,
+      name: data.name.present ? data.name.value : this.name,
       instructions: data.instructions.present
           ? data.instructions.value
           : this.instructions,
@@ -2063,7 +2059,7 @@ class RecipeHistoryData extends DataClass
     return (StringBuffer('RecipeHistoryData(')
           ..write('id: $id, ')
           ..write('recipeId: $recipeId, ')
-          ..write('recipeName: $recipeName, ')
+          ..write('name: $name, ')
           ..write('instructions: $instructions, ')
           ..write('tags: $tags, ')
           ..write('multiplier: $multiplier, ')
@@ -2077,7 +2073,7 @@ class RecipeHistoryData extends DataClass
   int get hashCode => Object.hash(
     id,
     recipeId,
-    recipeName,
+    name,
     instructions,
     tags,
     multiplier,
@@ -2090,7 +2086,7 @@ class RecipeHistoryData extends DataClass
       (other is RecipeHistoryData &&
           other.id == this.id &&
           other.recipeId == this.recipeId &&
-          other.recipeName == this.recipeName &&
+          other.name == this.name &&
           other.instructions == this.instructions &&
           other.tags == this.tags &&
           other.multiplier == this.multiplier &&
@@ -2101,7 +2097,7 @@ class RecipeHistoryData extends DataClass
 class RecipeHistoryCompanion extends UpdateCompanion<RecipeHistoryData> {
   final Value<int> id;
   final Value<int?> recipeId;
-  final Value<String> recipeName;
+  final Value<String> name;
   final Value<String> instructions;
   final Value<String?> tags;
   final Value<double> multiplier;
@@ -2110,7 +2106,7 @@ class RecipeHistoryCompanion extends UpdateCompanion<RecipeHistoryData> {
   const RecipeHistoryCompanion({
     this.id = const Value.absent(),
     this.recipeId = const Value.absent(),
-    this.recipeName = const Value.absent(),
+    this.name = const Value.absent(),
     this.instructions = const Value.absent(),
     this.tags = const Value.absent(),
     this.multiplier = const Value.absent(),
@@ -2120,20 +2116,20 @@ class RecipeHistoryCompanion extends UpdateCompanion<RecipeHistoryData> {
   RecipeHistoryCompanion.insert({
     this.id = const Value.absent(),
     this.recipeId = const Value.absent(),
-    required String recipeName,
+    required String name,
     required String instructions,
     this.tags = const Value.absent(),
     this.multiplier = const Value.absent(),
     required DateTime cookedAt,
     required List<ConsumedIngredient> ingredientsConsumed,
-  }) : recipeName = Value(recipeName),
+  }) : name = Value(name),
        instructions = Value(instructions),
        cookedAt = Value(cookedAt),
        ingredientsConsumed = Value(ingredientsConsumed);
   static Insertable<RecipeHistoryData> custom({
     Expression<int>? id,
     Expression<int>? recipeId,
-    Expression<String>? recipeName,
+    Expression<String>? name,
     Expression<String>? instructions,
     Expression<String>? tags,
     Expression<double>? multiplier,
@@ -2143,7 +2139,7 @@ class RecipeHistoryCompanion extends UpdateCompanion<RecipeHistoryData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (recipeId != null) 'recipe_id': recipeId,
-      if (recipeName != null) 'recipe_name': recipeName,
+      if (name != null) 'name': name,
       if (instructions != null) 'instructions': instructions,
       if (tags != null) 'tags': tags,
       if (multiplier != null) 'multiplier': multiplier,
@@ -2156,7 +2152,7 @@ class RecipeHistoryCompanion extends UpdateCompanion<RecipeHistoryData> {
   RecipeHistoryCompanion copyWith({
     Value<int>? id,
     Value<int?>? recipeId,
-    Value<String>? recipeName,
+    Value<String>? name,
     Value<String>? instructions,
     Value<String?>? tags,
     Value<double>? multiplier,
@@ -2166,7 +2162,7 @@ class RecipeHistoryCompanion extends UpdateCompanion<RecipeHistoryData> {
     return RecipeHistoryCompanion(
       id: id ?? this.id,
       recipeId: recipeId ?? this.recipeId,
-      recipeName: recipeName ?? this.recipeName,
+      name: name ?? this.name,
       instructions: instructions ?? this.instructions,
       tags: tags ?? this.tags,
       multiplier: multiplier ?? this.multiplier,
@@ -2184,8 +2180,8 @@ class RecipeHistoryCompanion extends UpdateCompanion<RecipeHistoryData> {
     if (recipeId.present) {
       map['recipe_id'] = Variable<int>(recipeId.value);
     }
-    if (recipeName.present) {
-      map['recipe_name'] = Variable<String>(recipeName.value);
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
     }
     if (instructions.present) {
       map['instructions'] = Variable<String>(instructions.value);
@@ -2214,7 +2210,7 @@ class RecipeHistoryCompanion extends UpdateCompanion<RecipeHistoryData> {
     return (StringBuffer('RecipeHistoryCompanion(')
           ..write('id: $id, ')
           ..write('recipeId: $recipeId, ')
-          ..write('recipeName: $recipeName, ')
+          ..write('name: $name, ')
           ..write('instructions: $instructions, ')
           ..write('tags: $tags, ')
           ..write('multiplier: $multiplier, ')
@@ -2239,6 +2235,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final RecipeDao recipeDao = RecipeDao(this as AppDatabase);
   late final ProductsDao productsDao = ProductsDao(this as AppDatabase);
   late final GenericNamesDao genericNamesDao = GenericNamesDao(
+    this as AppDatabase,
+  );
+  late final RecipeHistoryDao recipeHistoryDao = RecipeHistoryDao(
     this as AppDatabase,
   );
   @override
@@ -4220,7 +4219,7 @@ typedef $$RecipeHistoryTableCreateCompanionBuilder =
     RecipeHistoryCompanion Function({
       Value<int> id,
       Value<int?> recipeId,
-      required String recipeName,
+      required String name,
       required String instructions,
       Value<String?> tags,
       Value<double> multiplier,
@@ -4231,7 +4230,7 @@ typedef $$RecipeHistoryTableUpdateCompanionBuilder =
     RecipeHistoryCompanion Function({
       Value<int> id,
       Value<int?> recipeId,
-      Value<String> recipeName,
+      Value<String> name,
       Value<String> instructions,
       Value<String?> tags,
       Value<double> multiplier,
@@ -4282,8 +4281,8 @@ class $$RecipeHistoryTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get recipeName => $composableBuilder(
-    column: $table.recipeName,
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4355,8 +4354,8 @@ class $$RecipeHistoryTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get recipeName => $composableBuilder(
-    column: $table.recipeName,
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -4421,10 +4420,8 @@ class $$RecipeHistoryTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get recipeName => $composableBuilder(
-    column: $table.recipeName,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumn<String> get instructions => $composableBuilder(
     column: $table.instructions,
@@ -4502,7 +4499,7 @@ class $$RecipeHistoryTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int?> recipeId = const Value.absent(),
-                Value<String> recipeName = const Value.absent(),
+                Value<String> name = const Value.absent(),
                 Value<String> instructions = const Value.absent(),
                 Value<String?> tags = const Value.absent(),
                 Value<double> multiplier = const Value.absent(),
@@ -4512,7 +4509,7 @@ class $$RecipeHistoryTableTableManager
               }) => RecipeHistoryCompanion(
                 id: id,
                 recipeId: recipeId,
-                recipeName: recipeName,
+                name: name,
                 instructions: instructions,
                 tags: tags,
                 multiplier: multiplier,
@@ -4523,7 +4520,7 @@ class $$RecipeHistoryTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int?> recipeId = const Value.absent(),
-                required String recipeName,
+                required String name,
                 required String instructions,
                 Value<String?> tags = const Value.absent(),
                 Value<double> multiplier = const Value.absent(),
@@ -4532,7 +4529,7 @@ class $$RecipeHistoryTableTableManager
               }) => RecipeHistoryCompanion.insert(
                 id: id,
                 recipeId: recipeId,
-                recipeName: recipeName,
+                name: name,
                 instructions: instructions,
                 tags: tags,
                 multiplier: multiplier,

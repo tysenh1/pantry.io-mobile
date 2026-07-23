@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
+import 'package:pantry_io_mobile/data/database/tables/recipe_history_table.dart';
 
 Future<void> seedAllData(AppDatabase db) async {
   await db.transaction(() async {
@@ -442,6 +443,122 @@ Future<void> seedAllData(AppDatabase db) async {
       },
     ];
 
+    final now = DateTime.now();
+
+    final List<Map<String, dynamic>> historySeed = [
+      // --- TODAY ---
+      {
+        'id': 1,
+        'recipeId': 8, // Fluffy Pancakes
+        'cookedAt': now.subtract(const Duration(hours: 6)),
+        'multiplier': 1.0,
+      },
+      {
+        'id': 2,
+        'recipeId': 1, // Garlic Butter Chicken
+        'cookedAt': now.subtract(const Duration(hours: 1)),
+        'multiplier': 2.0,
+      },
+
+      // --- YESTERDAY ---
+      {
+        'id': 3,
+        'recipeId': 15, // Veggie Omelette
+        'cookedAt': now.subtract(const Duration(days: 1, hours: 8)),
+        'multiplier': 1.0,
+      },
+      {
+        'id': 4,
+        'recipeId': 2, // Beef Tacos
+        'cookedAt': now.subtract(const Duration(days: 1, hours: 2)),
+        'multiplier': 2.0, // Double batch for a party
+      },
+
+      // --- 2 DAYS AGO ---
+      {
+        'id': 5,
+        'recipeId': 5, // Simple Spaghetti Aglio e Olio
+        'cookedAt': now.subtract(const Duration(days: 2, hours: 3)),
+        'multiplier': 1.0,
+      },
+
+      // --- 3 DAYS AGO ---
+      {
+        'id': 6,
+        'recipeId': 13, // Chicken Quesadilla
+        'cookedAt': now.subtract(const Duration(days: 3, hours: 6)),
+        'multiplier': 1.0,
+      },
+      {
+        'id': 7,
+        'recipeId': 14, // Chicken Fried Rice
+        'cookedAt': now.subtract(const Duration(days: 3, hours: 1)),
+        'multiplier': 1.0,
+      },
+
+      // --- 5 DAYS AGO ---
+      {
+        'id': 8,
+        'recipeId': 3, // Chicken & Broccoli Stir Fry
+        'cookedAt': now.subtract(const Duration(days: 5, hours: 4)),
+        'multiplier': 0.5, // Half batch
+      },
+      {
+        'id': 9,
+        'recipeId': 7, // Margherita Pizza
+        'cookedAt': now.subtract(const Duration(days: 5, hours: 2)),
+        'multiplier': 1.0,
+      },
+
+      // --- 7 DAYS AGO (1 Week) ---
+      {
+        'id': 10,
+        'recipeId': 8, // Fluffy Pancakes
+        'cookedAt': now.subtract(const Duration(days: 7, hours: 9)),
+        'multiplier': 2.0,
+      },
+      {
+        'id': 11,
+        'recipeId': 6, // Classic Steak and Peppers
+        'cookedAt': now.subtract(const Duration(days: 7, hours: 3)),
+        'multiplier': 1.0,
+      },
+      {
+        'id': 12,
+        'recipeId': 10, // California Roll
+        'cookedAt': now.subtract(const Duration(days: 7, hours: 1)),
+        'multiplier': 1.0,
+      },
+
+      // --- 10 DAYS AGO ---
+      {
+        'id': 13,
+        'recipeId': 11, // Classic Lasagna
+        'cookedAt': now.subtract(const Duration(days: 10, hours: 5)),
+        'multiplier': 1.0,
+      },
+      {
+        'id': 14,
+        'recipeId': 9, // Beef Chili
+        'cookedAt': now.subtract(const Duration(days: 10, hours: 2)),
+        'multiplier': 1.0,
+      },
+
+      // --- 14 DAYS AGO (2 Weeks) ---
+      {
+        'id': 15,
+        'recipeId': 4, // Red Chicken Curry
+        'cookedAt': now.subtract(const Duration(days: 14, hours: 4)),
+        'multiplier': 1.0,
+      },
+      {
+        'id': 16,
+        'recipeId': 12, // Veggie Stir Fry
+        'cookedAt': now.subtract(const Duration(days: 14, hours: 1)),
+        'multiplier': 1.0,
+      },
+    ];
+
     // --- EXECUTE INSERTS ---
     for (var data in genericNamesData) {
       await db.into(db.genericNames).insert(
@@ -489,6 +606,42 @@ Future<void> seedAllData(AppDatabase db) async {
           ),
         );
       }
+    }
+
+    for (var item in historySeed) {
+      // 1. Look up the original recipe from your recipesSeed list
+      final recipe = recipesSeed.firstWhere(
+            (r) => r['id'] == item['recipeId'],
+      );
+
+      final multiplier = item['multiplier'] as double;
+      final rawIngs = recipe['ings'] as List<Map<String, dynamic>>;
+
+      // 2. Map the raw ingredients into your ConsumedIngredient Dart objects
+      // and scale the quantity by the multiplier!
+      final consumedList = rawIngs.map((ing) {
+        return ConsumedIngredient(
+          name: ing['name'] as String,
+          quantity: (ing['qty'] as double) * multiplier,
+          unit: ing['unit'] as String,
+        );
+      }).toList();
+
+      // 3. Insert the snapshot
+      await db.into(db.recipeHistory).insert(
+        RecipeHistoryCompanion.insert(
+          id: Value(item['id'] as int),
+          recipeId: Value(item['recipeId'] as int),
+          name: recipe['name'] as String,
+          instructions: recipe['instr'] as String,
+          // Serialize the tags array to match your DB setup
+          tags: Value(jsonEncode(recipe['tags'] as List<String>)),
+          multiplier: Value(multiplier),
+          cookedAt: item['cookedAt'] as DateTime,
+          // Pass the List<ConsumedIngredient> directly; Drift's TypeConverter handles toSql()
+          ingredientsConsumed: consumedList,
+        ),
+      );
     }
   });
 }

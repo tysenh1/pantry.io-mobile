@@ -10,6 +10,6 @@ class Products extends Table {
   RealColumn get unitSize => real()();
   TextColumn get unitType => text()();
 
-  @override
-  Set<Column> get primaryKey => {id};
+  // @override
+  // Set<Column> get primaryKey => {id};
 }
