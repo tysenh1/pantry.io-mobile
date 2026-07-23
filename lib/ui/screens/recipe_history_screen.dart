@@ -1,32 +1,31 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/core/constants/common_tags.dart';
+import 'package:pantry_io_mobile/core/utils/history_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
-import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
-import 'package:pantry_io_mobile/ui/screens/recipe_history_screen.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
-import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_card.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe_history/recipe_history_card.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
-class GetRecipeScreen extends StatefulWidget {
-  const GetRecipeScreen({super.key});
+class RecipeHistoryScreen extends StatefulWidget {
+  const RecipeHistoryScreen({super.key});
 
   @override
-  State<GetRecipeScreen> createState() => _GetRecipeScreenState();
+  State<RecipeHistoryScreen> createState() => _RecipeHistoryScreenState();
 }
 
-class _GetRecipeScreenState extends State<GetRecipeScreen> {
-
-  bool _areIncompleteRecipesShown = false;
-
+class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
   final Set<String> _selectedTags = {};
-
   String _searchQuery = "";
 
   void handleTap(String tag) {
@@ -52,34 +51,21 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
   @override
   Widget build(BuildContext context) {
     final db = context.read<AppDatabase>();
-    Stream<List<RecipeWithIngredients>> recipesStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: _selectedTags);
+    Stream<List<RecipeHistoryWithIngredients>> recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes();
     return Scaffold(
-      appBar: AppHeader(title: 'Browse Recipes'),
+      appBar: AppHeader(title: 'Cooking History'),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-              child: AppButton(
-              label: 'Open Cooking History',
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const RecipeHistoryScreen()),
-              ),
-              type: AppButtonType.secondary,
-              )
-            )
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: AppCard(
-                title: 'Filter',
-                child: Column(
+              padding: EdgeInsets.all(16),
+                child: AppCard(
+                  title: 'Filter',
+                  child: Column(
                   spacing: 16,
                   children: [
                     AppTextField(
-                      placeholder: 'Search Recipes',
+                      placeholder: 'Search Cooking History',
                       onChanged: (val) => setState(() => _searchQuery = val)
                     ),
                     AppTagCarousel(
@@ -87,30 +73,22 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       mode: AppChipMode.selectable,
                       onSelect: handleTap,
                       selectedTags: _selectedTags,
-                      alignment: Alignment.centerLeft
+                      alignment: Alignment.centerLeft,
                     ),
-                    AppSwitchTileButton(
-                      value: _areIncompleteRecipesShown,
-                      label: 'Show incomplete recipes?',
-                      onChanged: (bool newValue) {
-                        setState(() {
-                          _areIncompleteRecipesShown = newValue;
-                        });
-                      }
-                    )
+                    AppDropdown(items: [DropdownMenuItem(child: Text('thing 1'))], onChanged: (_) {})
                   ]
                 )
               )
             )
           ),
-          StreamBuilder<List<RecipeWithIngredients>>(
-            stream: recipesStream,
+          StreamBuilder<List<RecipeHistoryWithIngredients>>(
+            stream: recipeHistoryStream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return
-                  const SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: Center(child: CircularProgressIndicator())
-                  );
+                    );
               }
               if (snapshot.data!.isEmpty) {
                 return const SliverToBoxAdapter(
@@ -118,7 +96,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                     child: Padding(
                       padding: EdgeInsets.only(top: 32),
                       child: Text(
-                        'No recipes match your search',
+                        'No recipes found',
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 16,
@@ -129,10 +107,10 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                 );
               }
 
-              List<RecipeWithIngredients> displayedRecipes = snapshot.data!;
+              List<RecipeHistoryWithIngredients> displayedRecipes = snapshot.data!;
 
               if (_searchQuery.isNotEmpty) {
-                final fuse = Fuzzy<RecipeWithIngredients>(
+                final fuse = Fuzzy<RecipeHistoryWithIngredients>(
                   displayedRecipes,
                   options: FuzzyOptions(
                     keys: [
@@ -155,29 +133,37 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
                     (context, i) {
-                      return RecipeCard(recipe: displayedRecipes[i]);
-                      // if (_areIncompleteRecipesShown) {
-                      //   return RecipeCard(recipe: displayedRecipes[i]);
-                      // } else {
-                      //   if (displayedRecipes[i].isRecipeComplete == true) {
-                      //     return RecipeCard(recipe: displayedRecipes[i]);
-                      //   }
-                      // }
-                      // if (!_areIncompleteRecipesShown && displayedRecipes[i].isRecipeComplete == true) {
-                      //   print("this recipe should be complete: ${displayedRecipes[i].name}");
-                      //   return RecipeCard(recipe: displayedRecipes[i]);
-                      // }
-                      //
-                      // print("this can be complete or incomplete: ${displayedRecipes[i].name}");
-                      // return RecipeCard(recipe: displayedRecipes[i]);
+                      final currentRecipe = displayedRecipes[i];
 
+                      final bool showHeader = i == 0 ||
+                        !isSameDay(currentRecipe.cookedAt, displayedRecipes[i - 1].cookedAt);
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (showHeader)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                              child: Text(
+                                formatDate(currentRecipe.cookedAt),
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16
+                                  // fontFamily: 'Nunito',
+                                ),
+                              ),
+                            ),
+
+                          RecipeHistoryCard(recipe: currentRecipe),
+                        ],
+                      );
                     },
-                    childCount: displayedRecipes.length,
+                  childCount: displayedRecipes.length,
                 ),
               );
-            },
-          ),
-        ]
+            }
+          )
+        ],
       )
     );
   }

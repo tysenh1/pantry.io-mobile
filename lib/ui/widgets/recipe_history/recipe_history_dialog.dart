@@ -1,0 +1,107 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/core/utils/history_utils.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe/confirm_cook_sheet.dart';
+
+class RecipeHistoryDialog extends StatelessWidget {
+  final RecipeHistoryWithIngredients recipe;
+  const RecipeHistoryDialog({
+    super.key,
+    required this.recipe,
+  });
+
+ String _getCookedDate(DateTime date) {
+   final now = DateTime.now();
+   if (isSameDay(date, now)) return 'Cooked Today';
+   if (isSameDay(date, now.subtract(const Duration(days: 1)))) return 'Cooked Yesterday';
+
+   return "Cooked on ${formatDate(date)}";
+ }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // --- Header Container ---
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(left: 20, top: 16, right: 20, bottom: 12),
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Top Row of Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                            recipe.name,
+                            style: Theme.of(context).textTheme.titleLarge
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: Navigator.of(context).pop,
+                        icon: Icon(Icons.close, size: 28)
+                      )
+                    ],
+                  ),
+                  Text(
+                    _getCookedDate(recipe.cookedAt),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 14
+                    )
+                  )
+                ]
+            ),
+          ),
+          // --- Scrollable Content ---
+          Flexible(
+              child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            'Ingredients',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold
+                            )
+                        ),
+                        const SizedBox(height: 4),
+                        ...recipe.ingredientsConsumed.map((ingredient) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text(
+                                '${ingredient.quantity} ${ingredient.unit} - ${ingredient.name}',
+                                style: Theme.of(context).textTheme.bodyMedium
+                            )
+                        )),
+                        const SizedBox(height: 8),
+                        Text(
+                            'Instructions',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold
+                            )
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                            recipe.instructions,
+                            style: Theme.of(context).textTheme.bodyMedium
+                        )
+                      ]
+                  )
+              )
+          ),
+        ]
+    );
+  }
+}

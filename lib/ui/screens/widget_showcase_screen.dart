@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/data/database/tables/recipe_history_table.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
 import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
@@ -12,6 +14,7 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe/confirm_cook_sheet.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_dialog.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe_history/recipe_history_dialog.dart';
 
 class WidgetShowcaseScreen extends StatefulWidget {
   const WidgetShowcaseScreen({super.key});
@@ -105,6 +108,19 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
       tags: {'Tag 1','Tag 2','Tag 3','Tag 4', 'Tag 5'}
   );
 
+  RecipeHistoryWithIngredients recipeHistory = RecipeHistoryWithIngredients(
+    id: 1,
+    name: "History Recipe",
+    instructions: "COOK THE RECIPE BRO",
+    tags: {'Tag 1', 'Tag 2', 'Tag 3', 'Tag 4'},
+    ingredientsConsumed: [
+      ConsumedIngredient(name: "ing 1", quantity: 200, unit: 'g'),
+      ConsumedIngredient(name: "ing 2", quantity: 20000000, unit: 'kg')
+    ],
+    multiplier: 2.0,
+    cookedAt: DateTime(2026, 6, 12, 15, 34, 0),
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,6 +195,26 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
                         );
                       },
                     type: AppButtonType.secondary
+                  ),
+
+                  AppButton(
+                      label: "Open History Dialog",
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                clipBehavior: Clip.hardEdge,
+                                insetPadding: const EdgeInsets.all(32),
+                                child: RecipeHistoryDialog(
+                                  recipe: recipeHistory,
+                                )
+                            )
+                        );
+                      },
+                      type: AppButtonType.secondary
                   ),
                 ]
               )

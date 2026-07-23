@@ -1,9 +1,9 @@
-import 'package:pantry_io_mobile/domain/models/consumed_ingredient.dart';
+import 'package:pantry_io_mobile/data/database/tables/recipe_history_table.dart';
 
 class RecipeHistoryWithIngredients {
   final int id;
   final int? recipeId;
-  final String recipeName;
+  final String name;
   final String instructions;
   final Set<String>? tags;
   final List<ConsumedIngredient> ingredientsConsumed;
@@ -13,11 +13,15 @@ class RecipeHistoryWithIngredients {
   RecipeHistoryWithIngredients({
     required this.id,
     this.recipeId,
-    required this.recipeName,
+    required this.name,
     required this.instructions,
     this.tags,
     required this.ingredientsConsumed,
     required this.multiplier,
     required this.cookedAt,
   });
+
+  String get tagString => (tags == null || tags!.isEmpty)
+      ? 'No tags'
+      : tags!.join(', ');
 }
