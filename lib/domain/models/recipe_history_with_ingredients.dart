@@ -1,4 +1,5 @@
 import 'package:pantry_io_mobile/data/database/tables/recipe_history_table.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 
 class RecipeHistoryWithIngredients {
   final int id;
@@ -21,7 +22,29 @@ class RecipeHistoryWithIngredients {
     required this.cookedAt,
   });
 
-  String get tagString => (tags == null || tags!.isEmpty)
+  String get formattedTagString => (tags == null || tags!.isEmpty)
       ? 'No tags'
       : tags!.join(', ');
+
+  String get tagString => (tags == null || tags!.isEmpty)
+      ? ''
+      : tags!.join(', ');
+
+  factory RecipeHistoryWithIngredients.fromRecipe(
+    RecipeWithIngredients recipe,
+    double multiplier,
+    DateTime cookedAt
+  ) {
+    return RecipeHistoryWithIngredients(
+      id: 0,
+      recipeId: recipe.id,
+      name: recipe.name,
+      instructions: recipe.instructions,
+      tags: recipe.tags,
+      ingredientsConsumed: recipe.ingredients.map((ing) => ConsumedIngredient(name: ing.name, quantity: ing.quantityNeeded * multiplier, unit: ing.ingredientUnit)).toList(),
+      multiplier: multiplier,
+      cookedAt: cookedAt,
+    );
+  }
 }
+

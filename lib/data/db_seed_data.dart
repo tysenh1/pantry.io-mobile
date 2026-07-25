@@ -221,44 +221,44 @@ Future<void> seedAllData(AppDatabase db) async {
 
     // --- 2. SEED PANTRY ITEMS ---
     final List<Map<String, dynamic>> pantrySeed = [
-      {'id': 1, 'name': 'Chicken Breast', 'qty': 1000.0, 'unit': 'g', 'staple': false, 'genericNameId': 1},
-      {'id': 2, 'name': 'Ground Beef', 'qty': 500.0, 'unit': 'g', 'staple': false, 'genericNameId': 2},
-      {'id': 3, 'name': 'Eggs', 'qty': 12.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 21},
-      {'id': 4, 'name': 'Salmon Fillet', 'qty': 300.0, 'unit': 'g', 'staple': false, 'genericNameId': 13},
-      {'id': 5, 'name': 'Shrimp', 'qty': 200.0, 'unit': 'g', 'staple': false, 'genericNameId': 16},
-      {'id': 6, 'name': 'Spaghetti', 'qty': 500.0, 'unit': 'g', 'staple': true, 'genericNameId': 114},
-      {'id': 7, 'name': 'White Rice', 'qty': 2000.0, 'unit': 'g', 'staple': true, 'genericNameId': 106},
-      {'id': 8, 'name': 'Tortillas', 'qty': 8.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 122},
-      {'id': 9, 'name': 'Brown Rice', 'qty': 1000.0, 'unit': 'g', 'staple': true, 'genericNameId': 107},
-      {'id': 10, 'name': 'Bread Slices', 'qty': 20.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 119},
-      {'id': 11, 'name': 'Lasagna Noodles', 'qty': 400.0, 'unit': 'g', 'staple': false, 'genericNameId': 116},
-      {'id': 12, 'name': 'Garlic', 'qty': 5.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 46},
-      {'id': 13, 'name': 'Onion', 'qty': 2.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 45},
-      {'id': 14, 'name': 'Bell Peppers', 'qty': 3.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 61},
-      {'id': 15, 'name': 'Broccoli', 'qty': 1.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 53},
-      {'id': 16, 'name': 'Spinach', 'qty': 200.0, 'unit': 'g', 'staple': false, 'genericNameId': 57},
-      {'id': 17, 'name': 'Carrots', 'qty': 5.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 51},
-      {'id': 18, 'name': 'Tomatoes', 'qty': 6.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 64},
-      {'id': 19, 'name': 'Mushrooms', 'qty': 200.0, 'unit': 'g', 'staple': false, 'genericNameId': 73},
-      {'id': 20, 'name': 'Zucchini', 'qty': 3.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 67},
-      {'id': 21, 'name': 'Olive Oil', 'qty': 1000.0, 'unit': 'ml', 'staple': true, 'genericNameId': 139},
-      {'id': 22, 'name': 'Soy Sauce', 'qty': 250.0, 'unit': 'ml', 'staple': true, 'genericNameId': 151},
-      {'id': 23, 'name': 'Butter', 'qty': 250.0, 'unit': 'g', 'staple': true, 'genericNameId': 29},
-      {'id': 24, 'name': 'Cheddar Cheese', 'qty': 200.0, 'unit': 'g', 'staple': false, 'genericNameId': 33},
-      {'id': 25, 'name': 'Milk', 'qty': 2000.0, 'unit': 'ml', 'staple': true, 'genericNameId': 25},
-      {'id': 26, 'name': 'Flour', 'qty': 2000.0, 'unit': 'g', 'staple': true, 'genericNameId': 112},
-      {'id': 27, 'name': 'Sugar', 'qty': 1000.0, 'unit': 'g', 'staple': true, 'genericNameId': 125},
-      {'id': 28, 'name': 'Honey', 'qty': 500.0, 'unit': 'g', 'staple': true, 'genericNameId': 128},
-      {'id': 29, 'name': 'Tomato Sauce', 'qty': 800.0, 'unit': 'ml', 'staple': true, 'genericNameId': 161},
-      {'id': 30, 'name': 'Coconut Milk', 'qty': 0.0, 'unit': 'ml', 'staple': false, 'genericNameId': 44},
-      {'id': 31, 'name': 'Beef Steak', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 4},
-      {'id': 32, 'name': 'Mozzarella Cheese', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 34},
-      {'id': 33, 'name': 'Baking Powder', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 133},
-      {'id': 34, 'name': 'Avocado', 'qty': 0.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 103},
-      {'id': 35, 'name': 'Peanut Butter', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 163},
-      {'id': 36, 'name': 'Lime', 'qty': 0.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 87},
-      {'id': 37, 'name': 'Bun', 'qty': 0.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 120},
-      {'id': 38, 'name': 'Chocolate Snacks', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 136},
+      {'id': 1, 'name': 'Chicken Breast', 'qty': 1000.0, 'unit': 'g', 'staple': false, 'genericNameId': 1, 'weightPerPiece': null},
+      {'id': 2, 'name': 'Ground Beef', 'qty': 500.0, 'unit': 'g', 'staple': false, 'genericNameId': 2, 'weightPerPiece': null},
+      {'id': 3, 'name': 'Eggs', 'qty': 12.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 21, 'weightPerPiece': 50.0}, // 1 large egg (without shell)
+      {'id': 4, 'name': 'Salmon Fillet', 'qty': 300.0, 'unit': 'g', 'staple': false, 'genericNameId': 13, 'weightPerPiece': null},
+      {'id': 5, 'name': 'Shrimp', 'qty': 200.0, 'unit': 'g', 'staple': false, 'genericNameId': 16, 'weightPerPiece': null},
+      {'id': 6, 'name': 'Spaghetti', 'qty': 500.0, 'unit': 'g', 'staple': true, 'genericNameId': 114, 'weightPerPiece': null},
+      {'id': 7, 'name': 'White Rice', 'qty': 2000.0, 'unit': 'g', 'staple': true, 'genericNameId': 106, 'weightPerPiece': null},
+      {'id': 8, 'name': 'Tortillas', 'qty': 8.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 122, 'weightPerPiece': 45.0}, // Medium 8-inch flour tortilla
+      {'id': 9, 'name': 'Brown Rice', 'qty': 1000.0, 'unit': 'g', 'staple': true, 'genericNameId': 107, 'weightPerPiece': null},
+      {'id': 10, 'name': 'Bread Slices', 'qty': 20.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 119, 'weightPerPiece': 35.0}, // Standard sandwich slice
+      {'id': 11, 'name': 'Lasagna Noodles', 'qty': 400.0, 'unit': 'g', 'staple': false, 'genericNameId': 116, 'weightPerPiece': null},
+      {'id': 12, 'name': 'Garlic', 'qty': 5.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 46, 'weightPerPiece': 5.0}, // 1 average clove
+      {'id': 13, 'name': 'Onion', 'qty': 2.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 45, 'weightPerPiece': 150.0}, // Medium yellow onion
+      {'id': 14, 'name': 'Bell Peppers', 'qty': 3.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 61, 'weightPerPiece': 150.0}, // Medium bell pepper
+      {'id': 15, 'name': 'Broccoli', 'qty': 1.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 53, 'weightPerPiece': 350.0}, // Medium crown/head
+      {'id': 16, 'name': 'Spinach', 'qty': 200.0, 'unit': 'g', 'staple': false, 'genericNameId': 57, 'weightPerPiece': null},
+      {'id': 17, 'name': 'Carrots', 'qty': 5.0, 'unit': 'pcs', 'staple': true, 'genericNameId': 51, 'weightPerPiece': 60.0}, // Medium carrot
+      {'id': 18, 'name': 'Tomatoes', 'qty': 6.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 64, 'weightPerPiece': 120.0}, // Medium round tomato
+      {'id': 19, 'name': 'Mushrooms', 'qty': 200.0, 'unit': 'g', 'staple': false, 'genericNameId': 73, 'weightPerPiece': null},
+      {'id': 20, 'name': 'Zucchini', 'qty': 3.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 67, 'weightPerPiece': 200.0}, // Medium zucchini
+      {'id': 21, 'name': 'Olive Oil', 'qty': 1000.0, 'unit': 'ml', 'staple': true, 'genericNameId': 139, 'weightPerPiece': null},
+      {'id': 22, 'name': 'Soy Sauce', 'qty': 250.0, 'unit': 'ml', 'staple': true, 'genericNameId': 151, 'weightPerPiece': null},
+      {'id': 23, 'name': 'Butter', 'qty': 250.0, 'unit': 'g', 'staple': true, 'genericNameId': 29, 'weightPerPiece': null},
+      {'id': 24, 'name': 'Cheddar Cheese', 'qty': 200.0, 'unit': 'g', 'staple': false, 'genericNameId': 33, 'weightPerPiece': null},
+      {'id': 25, 'name': 'Milk', 'qty': 2000.0, 'unit': 'ml', 'staple': true, 'genericNameId': 25, 'weightPerPiece': null},
+      {'id': 26, 'name': 'Flour', 'qty': 2000.0, 'unit': 'g', 'staple': true, 'genericNameId': 112, 'weightPerPiece': null},
+      {'id': 27, 'name': 'Sugar', 'qty': 1000.0, 'unit': 'g', 'staple': true, 'genericNameId': 125, 'weightPerPiece': null},
+      {'id': 28, 'name': 'Honey', 'qty': 500.0, 'unit': 'g', 'staple': true, 'genericNameId': 128, 'weightPerPiece': null},
+      {'id': 29, 'name': 'Tomato Sauce', 'qty': 800.0, 'unit': 'ml', 'staple': true, 'genericNameId': 161, 'weightPerPiece': null},
+      {'id': 30, 'name': 'Coconut Milk', 'qty': 0.0, 'unit': 'ml', 'staple': false, 'genericNameId': 44, 'weightPerPiece': null},
+      {'id': 31, 'name': 'Beef Steak', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 4, 'weightPerPiece': null},
+      {'id': 32, 'name': 'Mozzarella Cheese', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 34, 'weightPerPiece': null},
+      {'id': 33, 'name': 'Baking Powder', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 133, 'weightPerPiece': null},
+      {'id': 34, 'name': 'Avocado', 'qty': 0.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 103, 'weightPerPiece': 150.0}, // Medium avocado (without skin/pit)
+      {'id': 35, 'name': 'Peanut Butter', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 163, 'weightPerPiece': null},
+      {'id': 36, 'name': 'Lime', 'qty': 0.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 87, 'weightPerPiece': 60.0}, // Medium lime
+      {'id': 37, 'name': 'Bun', 'qty': 0.0, 'unit': 'pcs', 'staple': false, 'genericNameId': 120, 'weightPerPiece': 50.0}, // Standard burger bun
+      {'id': 38, 'name': 'Chocolate Snacks', 'qty': 0.0, 'unit': 'g', 'staple': false, 'genericNameId': 136, 'weightPerPiece': null},
     ];
 
     // --- 3. SEED RECIPES ---
@@ -578,6 +578,7 @@ Future<void> seedAllData(AppDatabase db) async {
           quantity: Value(item['qty'] as double),
           isStaple: Value(item['staple'] as bool),
           genericNameId: item['genericNameId'] as int,
+          weightPerPiece: Value(item['weightPerPiece'] as double)
         ),
       );
     }

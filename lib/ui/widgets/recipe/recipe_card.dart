@@ -23,7 +23,7 @@ class RecipeCard extends StatelessWidget {
           recipe.name,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(recipe.tagString, maxLines: 1, overflow: TextOverflow.ellipsis),
+        subtitle: Text(recipe.formattedTagString, maxLines: 1, overflow: TextOverflow.ellipsis),
         trailing: recipe.isRecipeComplete ? const Icon(Icons.chevron_right) : null,
         onTap: () {
           if (recipe.isRecipeComplete) {

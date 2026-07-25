@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/core/utils/ingredient_utils.dart';
 import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
+import 'package:pantry_io_mobile/domain/services/recipe_service.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
-import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 
 class ConfirmCookSheet extends StatefulWidget {
   final RecipeWithIngredients recipe;
@@ -41,6 +42,32 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
           canRecipeBeDoubled = false;
         }
       }
+    }
+  }
+
+  Future<void> _confirmCook(BuildContext context) async {
+    final service = context.read<RecipeService>();
+    final recipe = widget.recipe;
+    debugPrint('${recipe.id}');
+    final usedFullIngredients = recipe.ingredients
+      .where((i) => usedIngredients.contains(i.pantryId)).toList();
+
+    await service.cookRecipe(
+      recipe.copyWith(ingredients: usedFullIngredients),
+      _multiplier
+    );
+
+    if (context.mounted) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${recipe.name} cooked!'),
+          duration: const Duration(seconds: 3),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
+        )
+      );
     }
   }
 
@@ -173,10 +200,6 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                       // }).map((pantryId) {
                       children: usedIngredients.map((pantryId) {
                         final ing = ingredients.firstWhere((ing) => ing.pantryId == pantryId);
-                        print("this is the ${ing.name}");
-                        print("this is the quan ${ing.quantityNeeded} ${ing.ingredientUnit}");
-                        print("this is the pan ${ing.pantryQuantity} ${ing.pantryUnit}");
-                        print("should this even show up? ${widget.recipe.isRecipeComplete}");
                         final newQuantity = normalizeQuantity(ing.pantryQuantity, ing.pantryUnit) - normalizeQuantity((ing.quantityNeeded * _multiplier), ing.ingredientUnit);
 
                         return Row(
@@ -273,7 +296,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                     AppButton(
                       label: 'Cook',
                       fontWeight: FontWeight.bold,
-                      onPressed: () {},
+                      onPressed: () => _confirmCook(context),
                       size: AppButtonSize.medium
                     )
                   ]

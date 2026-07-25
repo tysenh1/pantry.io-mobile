@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_history_table.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
@@ -50,5 +51,20 @@ class RecipeHistoryDao extends DatabaseAccessor<AppDatabase> with _$RecipeHistor
 
       return recipeHistoryList;
     });
+  }
+
+  Future<void> insert(RecipeHistoryWithIngredients recipe) async {
+    debugPrint("${recipe.recipeId}");
+    await into(recipeHistory).insert(
+      RecipeHistoryCompanion.insert(
+        recipeId: Value(recipe.recipeId),
+        name: recipe.name,
+        instructions: recipe.instructions,
+        tags: Value(recipe.tagString),
+        ingredientsConsumed: recipe.ingredientsConsumed,
+        multiplier: Value(recipe.multiplier),
+        cookedAt: recipe.cookedAt
+      )
+    );
   }
 }

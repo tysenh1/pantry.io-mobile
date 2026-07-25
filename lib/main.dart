@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
+import 'package:pantry_io_mobile/domain/services/recipe_service.dart';
 import 'package:provider/provider.dart';
 import 'package:pantry_io_mobile/data/repositories/app_state.dart';
 import 'ui/main_wrapper.dart';
@@ -22,6 +23,9 @@ void main() {
         Provider<AppDatabase>(
           create: (context) => AppDatabase.instance,
           dispose: (context, db) => db.close(),
+        ),
+        ProxyProvider<AppDatabase, RecipeService>(
+          update: (_, db, __) => RecipeService(db),
         ),
 
         ChangeNotifierProvider<AppState>(
