@@ -14,13 +14,4 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> cookRecipe(int recipeId) async {
-    try {
-      await db.pantryDao.subtractRecipeIngredientQuantities(recipeId);
-
-      notifyListeners();
-    } catch (e) {
-      debugPrint("Error cooking recipe: ${e}");
-    }
-  }
 }

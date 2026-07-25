@@ -29,6 +29,13 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
   String _searchQuery = "";
 
+  late Stream<List<RecipeWithIngredients>> _recipeStream;
+
+  void _updateStream() {
+    final db = context.read<AppDatabase>();
+    _recipeStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: Set<String>.from(_selectedTags));
+  }
+
   void handleTap(String tag) {
     setState(() {
       if (_selectedTags.contains(tag)) {
@@ -36,12 +43,18 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
       } else {
         _selectedTags.add(tag);
       }
+
+      _updateStream();
+
     });
   }
 
   @override
   void initState() {
     super.initState();
+
+    final db = context.read<AppDatabase>();
+    _recipeStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: _selectedTags);
   }
 
   @override
@@ -51,8 +64,6 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final db = context.read<AppDatabase>();
-    Stream<List<RecipeWithIngredients>> recipesStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: _selectedTags);
     return Scaffold(
       appBar: AppHeader(title: 'Browse Recipes'),
       body: CustomScrollView(
@@ -80,7 +91,10 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                   children: [
                     AppTextField(
                       placeholder: 'Search Recipes',
-                      onChanged: (val) => setState(() => _searchQuery = val)
+                      onChanged: (val)  {
+                        setState(() => _searchQuery = val);
+                        _updateStream();
+                      }
                     ),
                     AppTagCarousel(
                       tags: commonTags,
@@ -96,6 +110,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                         setState(() {
                           _areIncompleteRecipesShown = newValue;
                         });
+                        _updateStream();
                       }
                     )
                   ]
@@ -104,7 +119,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
             )
           ),
           StreamBuilder<List<RecipeWithIngredients>>(
-            stream: recipesStream,
+            stream: _recipeStream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return

@@ -43,10 +43,6 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-  PantryDao get pantryDao => PantryDao(this);
-  RecipeDao get recipeDao => RecipeDao(this);
-  ProductsDao get productsDao => ProductsDao(this);
-  GenericNamesDao get genericNamesDao => GenericNamesDao(this);
 
   @override
   MigrationStrategy get migration => MigrationStrategy(

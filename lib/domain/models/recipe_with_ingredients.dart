@@ -17,18 +17,31 @@ class RecipeWithIngredients {
     required this.isRecipeComplete,
   });
 
-  String get tagString => (tags == null || tags!.isEmpty)
+  String get formattedTagString => (tags == null || tags!.isEmpty)
     ? 'No tags'
     : tags!.join(', ');
 
-//   List<String> get tagList => tags == null
-//     ? []
-//     : tags!
-//       .split(',')
-//       .map((t) => t.trim())
-//       .where((t) => t.isNotEmpty)
-//       .toList();
-//
+  String get tagString => (tags == null || tags!.isEmpty)
+      ? ''
+      : tags!.join(', ');
+
+  RecipeWithIngredients copyWith({
+    int? id,
+    String? name,
+    Set<String>? tags,
+    String? instructions,
+    List<IngredientItem>? ingredients,
+    bool? isRecipeComplete
+  }) {
+    return RecipeWithIngredients(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        tags: tags ?? this.tags,
+        instructions: instructions ?? this.instructions,
+        ingredients: ingredients ?? this.ingredients,
+        isRecipeComplete: isRecipeComplete ?? this.isRecipeComplete
+    );
+  }
 }
 
 class IngredientItem {
@@ -40,6 +53,7 @@ class IngredientItem {
   final bool isOptional;
   final bool isStaple;
   final String name;
+  final double? weightPerPiece;
 
   IngredientItem({
     required this.pantryId,
@@ -50,5 +64,6 @@ class IngredientItem {
     this.isOptional = false,
     this.isStaple = false,
     required this.name,
+    this.weightPerPiece
   });
 }

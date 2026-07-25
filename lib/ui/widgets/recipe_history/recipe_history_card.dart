@@ -25,7 +25,7 @@ class RecipeHistoryCard extends StatelessWidget {
           recipe.name,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(recipe.tagString, maxLines: 1, overflow: TextOverflow.ellipsis),
+        subtitle: Text(recipe.formattedTagString, maxLines: 1, overflow: TextOverflow.ellipsis),
         trailing: const Icon(Icons.chevron_right),
         onTap: () {
             showDialog(
