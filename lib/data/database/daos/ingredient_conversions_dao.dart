@@ -8,14 +8,14 @@ part 'ingredient_conversions_dao.g.dart';
 class IngredientConversionsDao extends DatabaseAccessor<AppDatabase> with _$IngredientConversionsDaoMixin {
   IngredientConversionsDao(AppDatabase db) : super(db);
 
-  Future<double?> getConversionWeight(int genericNameId, String unit) async {
+  Future<double> getConversionWeight(int genericNameId, String unit) async {
     final query = select(ingredientConversions)
         ..where((c) => c.genericNameId.equals(genericNameId))
         ..where((c) => c.unit.equals(unit));
 
-    final row = await query.getSingleOrNull();
+    final row = await query.getSingle();
 
-    return row?.gramWeight;
+    return row.gramWeight;
   }
 
   Future<Set<String>> getAvailableUnitConversions(int genericNameId) async {

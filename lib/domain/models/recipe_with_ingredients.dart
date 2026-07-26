@@ -53,7 +53,8 @@ class IngredientItem {
   final bool isOptional;
   final bool isStaple;
   final String name;
-  final double? weightPerPiece;
+  final double gramWeight;
+  final int genericNameId;
 
   IngredientItem({
     required this.pantryId,
@@ -64,6 +65,7 @@ class IngredientItem {
     this.isOptional = false,
     this.isStaple = false,
     required this.name,
-    this.weightPerPiece
+    required this.gramWeight,
+    required this.genericNameId
   });
 }

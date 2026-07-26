@@ -4,7 +4,6 @@ import 'package:pantry_io_mobile/data/database/tables/products_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/generic_names_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/ingredient_conversions_table.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
-import 'package:pantry_io_mobile/domain/models/product_info.dart';
 import 'package:pantry_io_mobile/data/database/tables/pantry_table.dart';
 
 part 'products_dao.g.dart';

@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:pantry_io_mobile/core/utils/pantry_utils.dart';
 import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/data/database/tables/pantry_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';

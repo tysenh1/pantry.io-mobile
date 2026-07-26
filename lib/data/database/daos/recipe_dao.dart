@@ -1,16 +1,15 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:pantry_io_mobile/core/utils/ingredient_utils.dart';
-import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipes_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
+import 'package:pantry_io_mobile/data/database/tables/ingredient_conversions_table.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 
 part 'recipe_dao.g.dart';
 
-@DriftAccessor(tables: [Recipes, RecipeIngredients])
+@DriftAccessor(tables: [Recipes, RecipeIngredients, IngredientConversions])
 class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   RecipeDao(super.db);
 
@@ -39,7 +38,9 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
     });
   }
 
-
+  bool _isIngredientQuantitySufficient(IngredientItem ing) {
+    return ing.pantryQuantity >= (ing.quantityNeeded * ing.gramWeight);
+  }
 
   List<RecipeWithIngredients> _filterCookableRecipes(
     List<RecipeWithIngredients> recipes
@@ -52,7 +53,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       return requiredIngredients.every(
           (ingredient) =>
               ingredient.isStaple ||
-              isIngredientQuantitySufficient(ingredient),
+              _isIngredientQuantitySufficient(ingredient),
       );
     }).toList();
   }
@@ -74,6 +75,10 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       innerJoin(recipeIngredients, recipeIngredients.recipeId.equalsExp(recipes.id)),
       innerJoin(pantry, pantry.id.equalsExp(recipeIngredients.pantryId)),
       innerJoin(genericNames, genericNames.id.equalsExp(pantry.genericNameId)),
+      innerJoin(ingredientConversions,
+          ingredientConversions.genericNameId.equalsExp(genericNames.id) &
+          recipeIngredients.unit.equalsExp(ingredientConversions.unit)
+      )
     ]);
 
     return query.watch().map((rows) {
@@ -84,6 +89,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
         final ingredient = row.readTable(recipeIngredients);
         final pantryRow = row.readTable(pantry);
         final genericName = row.readTable(genericNames);
+        final conversion = row.readTable(ingredientConversions);
 
         final recipeIngredient = IngredientItem(
           pantryId: ingredient.pantryId,
@@ -94,21 +100,23 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
           isOptional: ingredient.optional,
           isStaple: pantryRow.isStaple,
           name: genericName.name,
+          gramWeight: conversion.gramWeight,
+          genericNameId: genericName.id
         );
 
         if (recipeMap.containsKey(recipe.id)) {
           recipeMap[recipe.id]!.ingredients.add(recipeIngredient);
-          if (!isIngredientQuantitySufficient(recipeIngredient)) {
+          if (!_isIngredientQuantitySufficient(recipeIngredient)) {
             recipeMap[recipe.id]!.isRecipeComplete = false;
           }
         } else {
           recipeMap[recipe.id] = RecipeWithIngredients(
-            id: recipe.id,
-            name: recipe.name,
-            tags: Set<String>.from(jsonDecode(recipe.tags)),
-            instructions: recipe.instructions,
-            isRecipeComplete: isIngredientQuantitySufficient(recipeIngredient),
-            ingredients: [recipeIngredient]
+              id: recipe.id,
+              name: recipe.name,
+              tags: Set<String>.from(jsonDecode(recipe.tags)),
+              instructions: recipe.instructions,
+              isRecipeComplete: _isIngredientQuantitySufficient(recipeIngredient),
+              ingredients: [recipeIngredient]
           );
         }
       }
@@ -122,7 +130,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       if (selectedTags != null && selectedTags.isNotEmpty) {
         allRecipes = _filterRecipesByTags(allRecipes, selectedTags);
       }
-      return allRecipes;
+      return allRecipes.map((recipe) => recipe).toList();
     });
   }
 }

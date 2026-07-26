@@ -100,8 +100,8 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
       instructions: "THESE ARE THE INSTRUCTIONS",
       isRecipeComplete: true,
       ingredients: [
-        IngredientItem(pantryId: 1, quantityNeeded: 5, ingredientUnit: 'g', pantryQuantity: 500, pantryUnit: 'g', name: 'INGREDIETN NAME'),
-        IngredientItem(pantryId: 2, quantityNeeded: 200, ingredientUnit: 'g', pantryQuantity: 200, pantryUnit: 'g', name: 'optional ingredient', isOptional: true)
+        IngredientItem(pantryId: 1, quantityNeeded: 5, ingredientUnit: 'g', pantryQuantity: 500, pantryUnit: 'g', name: 'INGREDIETN NAME', gramWeight: 236.0, genericNameId: 4),
+        IngredientItem(pantryId: 2, quantityNeeded: 200, ingredientUnit: 'g', pantryQuantity: 200, pantryUnit: 'g', name: 'optional ingredient', isOptional: true, gramWeight: 100.0, genericNameId: 5)
       ],
       tags: {'Tag 1','Tag 2','Tag 3','Tag 4', 'Tag 5'}
   );

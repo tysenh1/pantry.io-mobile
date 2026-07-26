@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/core/utils/ingredient_utils.dart';
 import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
+import 'package:pantry_io_mobile/domain/services/ingredient_service.dart';
 import 'package:pantry_io_mobile/domain/services/recipe_service.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
@@ -38,10 +38,18 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
         optionalIngredients.add(ing.pantryId);
       } else {
         usedIngredients.add(ing.pantryId);
-        if (!isIngredientQuantitySufficient(ing, 2.0)) {
-          canRecipeBeDoubled = false;
-        }
+        // if (!isIngredientQuantitySufficient(ing, context, 2.0)) {
+        _isIngredientQuantitySufficient(ing, context, 2.0);
       }
+    }
+  }
+
+  Future<void> _isIngredientQuantitySufficient(IngredientItem ing, BuildContext context, double multiplier) async {
+    final isQuantitySufficient = await isIngredientQuantitySufficient(ing, context, multiplier);
+    if (!isQuantitySufficient) {
+      setState(() {
+        canRecipeBeDoubled = false;
+      });
     }
   }
 
@@ -200,7 +208,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                       // }).map((pantryId) {
                       children: usedIngredients.map((pantryId) {
                         final ing = ingredients.firstWhere((ing) => ing.pantryId == pantryId);
-                        final newQuantity = normalizeQuantity(ing.pantryQuantity, ing.pantryUnit) - normalizeQuantity((ing.quantityNeeded * _multiplier), ing.ingredientUnit);
+                        final newQuantity = ing.pantryQuantity - (ing.quantityNeeded * ing.gramWeight);
 
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
