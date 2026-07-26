@@ -3,6 +3,7 @@ import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:pantry_io_mobile/core/utils/product_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
+import 'package:pantry_io_mobile/domain/models/ingredient_input.dart';
 import 'package:pantry_io_mobile/domain/models/product_info.dart';
 import 'package:pantry_io_mobile/ui/widgets/barcode/barcode_scanner_widget.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
@@ -28,9 +29,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
   bool _isLoadingProduct = false;
   ProductInfo? productInfo;
   List<GenericNameInfo> _dropdownItems = [];
-  List<GenericNameInfo> _allGenericNames = [];
-  int? _selectedGenericId;
+  List<GenericNameInfo> _genericNames = [];
   bool _showGenericNamesReset = false;
+  int? _selectedGenericId;
+  String? _selectedUnit;
+  Set<String> _availableUnits = {};
 
   @override
   void initState() {
@@ -49,7 +52,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
     if (mounted) {
       setState(() {
-        _allGenericNames = allGenericNames;
+        _genericNames = allGenericNames;
         _dropdownItems = allGenericNames;
       });
     }
@@ -69,10 +72,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
         productInfo = ProductInfo(
           barcode: localItem.$1.barcode,
           productName: localItem.$1.productName,
-          genericName: GenericNameInfo(
-            id: localItem.$2.id,
-            name: localItem.$2.name,
-          ),
+          genericName: localItem.$2,
           unitSize: localItem.$1.unitSize.toDouble(),
           unitType: localItem.$1.unitType,
         );
@@ -110,7 +110,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
           result.product?.productName,
           result.product?.categoriesTags,
           result.product?.categories,
-          _allGenericNames,
+          _genericNames,
         );
 
         final filteredGenericNames = genericNameMatches
@@ -195,6 +195,22 @@ class _ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
+  void _onGenericNameChanged(int? newId) async {
+    print("$newId");
+    if (newId == null) return;
+
+    final selectedName = _genericNames.firstWhere((name) => name.id == newId);
+
+    _selectedGenericId = newId;
+
+    final db = context.read<AppDatabase>();
+    final conversions = await db.ingredientConversionsDao.getAvailableUnitConversions(selectedName.id);
+
+    setState(() {
+      _availableUnits = conversions;
+      _selectedUnit = _availableUnits.first;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,16 +239,16 @@ class _ScannerScreenState extends State<ScannerScreen> {
                     placeholder: 'Product Name',
                   ),
                   AppDropdown(
-                    items: _allGenericNames.asMap().entries.map((entry) {
-                      int index = entry.key;
+                    items: _dropdownItems.asMap().entries.map((entry) {
+                      int id = entry.value.id;
                       var data = entry.value;
                       return DropdownMenuItem<int>(
-                        value: index,
+                        value: id,
                         child: Text(data.name)
                       );
                     }).toList(),
                     placeholder: 'Generic Name',
-                    onChanged: (_) {},
+                    onChanged: (int? newId) => _onGenericNameChanged(newId),
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -243,7 +259,23 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       ),
                       SizedBox(width: 16),
                       Expanded(
-                        child: AppTextField(placeholder: 'Unit')
+                        child: AppDropdown<String>(
+                          value: _selectedUnit,
+                          items: _availableUnits.map((unit) {
+                            return DropdownMenuItem<String>(
+                              value: unit,
+                              child: Text(unit),
+                            );
+                          }).toList(),
+                          onChanged: _availableUnits.isEmpty
+                              ? null
+                              : (String? newUnit) {
+                            setState(() {
+                              _selectedUnit = newUnit;
+                            });
+                          },
+                          placeholder: 'Unit',
+                        ),
                       ),
                     ]
                   )

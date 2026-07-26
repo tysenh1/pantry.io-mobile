@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
-import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
+import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
+import 'package:pantry_io_mobile/domain/models/ingredient_input.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
@@ -24,11 +25,12 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final RecipeFormModel _formModel = RecipeFormModel();
 
   // Mocked generic names fetch data
-  List<PantryGenericNameResponse> _genericNames = [];
+  List<GenericNameInfo> _genericNames = [];
 
   Set<String> tags = {};
 
   final Set<String> selectedTags = {};
+
 
   @override
   void initState() {
@@ -54,24 +56,40 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
     setState(() {
       _genericNames = [
-        PantryGenericNameResponse(
+        GenericNameInfo(
           pantryId: 1,
-          genericNameId: 4,
-          weightPerPiece: 5,
+          id: 4,
           name: 'First Generic Name',
-          primaryUnit: 'g',
+          units: {'first unit', 'second unit'}
         ),
-        PantryGenericNameResponse(
+        GenericNameInfo(
           pantryId: 2,
-          genericNameId: 5,
-          weightPerPiece: 10,
+          id: 5,
           name: 'Second Generic Name',
-          primaryUnit: 'g',
+          units: {'third unit', 'fourth unit'}
         ),
       ];
 
       tags = {'Tag 1', 'Tag 2', 'Tag 3', 'Tag 4'};
 
+    });
+  }
+
+  void _onGenericNameChanged(IngredientInput ing, int? newId) async {
+    if (newId == null) return;
+
+    final selectedName = _genericNames.firstWhere((name) => name.id == newId);
+
+    ing.selectedNameId = newId;
+    ing.pantryId = selectedName.pantryId;
+    ing.genericNameId = selectedName.id;
+
+    final db = context.read<AppDatabase>();
+    final conversions = await db.ingredientConversionsDao.getAvailableUnitConversions(selectedName.id);
+
+    setState(() {
+      ing.availableUnits = conversions;
+      ing.selectedUnit = ing.availableUnits.first;
     });
   }
 
@@ -174,16 +192,17 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                       child: Column(
                         spacing: 16,
                         children: [
-                          AppDropdown(
+                          AppDropdown<int>(
+                            value: ing.selectedNameId,
                             items: _genericNames.asMap().entries.map((entry) {
-                              int index = entry.key;
+                              int id = entry.value.id;
                               var data = entry.value;
                               return DropdownMenuItem<int>(
-                                value: index,
-                                child: Text(data.name)
+                                value: id,
+                                child: Text(data.name),
                               );
                             }).toList(),
-                            onChanged: (_) {},
+                            onChanged: (int? newId) => _onGenericNameChanged(ing, newId),
                             placeholder: 'Generic Name',
                           ),
                           Row(
@@ -191,13 +210,33 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
-                                child: AppTextField(placeholder: 'Quantity', controller: ing.qtyController, keyboardType: TextInputType.numberWithOptions(decimal: true))
+                                child: AppTextField(
+                                  placeholder: 'Quantity',
+                                  controller: ing.qtyController,
+                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                ),
                               ),
-                              SizedBox(width: 16),
+                              const SizedBox(width: 16),
                               Expanded(
-                                child: AppTextField(placeholder: 'Unit', controller: ing.unitController)
+                                child: AppDropdown<String>(
+                                  value: ing.selectedUnit,
+                                  items: ing.availableUnits.map((unit) {
+                                    return DropdownMenuItem<String>(
+                                      value: unit,
+                                      child: Text(unit),
+                                    );
+                                  }).toList(),
+                                  onChanged: ing.availableUnits.isEmpty
+                                      ? null
+                                      : (String? newUnit) {
+                                    setState(() {
+                                      ing.selectedUnit = newUnit;
+                                    });
+                                  },
+                                  placeholder: 'Unit',
+                                ),
                               ),
-                            ]
+                            ],
                           )
                         ]
                       )

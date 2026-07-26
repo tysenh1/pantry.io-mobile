@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_history_table.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
-import 'package:pantry_io_mobile/domain/models/pantry_generic_name_response.dart';
+import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
@@ -29,7 +29,7 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
   final RecipeFormModel _formModel = RecipeFormModel();
 
   // Mocked generic names fetch data
-  List<PantryGenericNameResponse> _genericNames = [];
+  List<GenericNameInfo> _genericNames = [];
 
   Set<String> tags = {};
 
@@ -59,19 +59,17 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
 
     setState(() {
       _genericNames = [
-        PantryGenericNameResponse(
+        GenericNameInfo(
           pantryId: 1,
-          genericNameId: 4,
-          weightPerPiece: 5,
+          id: 4,
           name: 'First Generic Name',
-          primaryUnit: 'g',
+          units: {'first unit', 'second unit'}
         ),
-        PantryGenericNameResponse(
+        GenericNameInfo(
           pantryId: 2,
-          genericNameId: 5,
-          weightPerPiece: 10,
+          id: 5,
           name: 'Second Generic Name',
-          primaryUnit: 'g',
+          units: {'third unit', 'fourth unit'}
         ),
       ];
 

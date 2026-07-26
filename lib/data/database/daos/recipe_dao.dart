@@ -94,7 +94,6 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
           isOptional: ingredient.optional,
           isStaple: pantryRow.isStaple,
           name: genericName.name,
-          weightPerPiece: pantryRow.weightPerPiece
         );
 
         if (recipeMap.containsKey(recipe.id)) {

@@ -15,7 +15,7 @@ class RecipeFormModel {
         recipeId: -1,
         pantryId: ing.pantryId,
         quantityNeeded: double.tryParse(ing.qtyController.text.trim()) ?? 0.0,
-        unit: ing.unitController.text,
+        unit: ing.selectedUnit ?? '',
       );
     }).toList();
   }
@@ -37,7 +37,12 @@ class RecipeFormModel {
     if (ingredients.isEmpty) return false;
 
     for (var ing in ingredients) {
-      if (ing.pantryId == 0 || ing.qtyController.text.trim().isEmpty) {
+      if (
+        ing.pantryId == 0 ||
+        ing.qtyController.text.trim().isEmpty ||
+        ing.selectedUnit == null ||
+        ing.selectedUnit!.isEmpty
+      ) {
         return false;
       }
     }

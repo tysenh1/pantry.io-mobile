@@ -6,6 +6,9 @@ part of 'products_dao.dart';
 mixin _$ProductsDaoMixin on DatabaseAccessor<AppDatabase> {
   $GenericNamesTable get genericNames => attachedDatabase.genericNames;
   $ProductsTable get products => attachedDatabase.products;
+  $IngredientConversionsTable get ingredientConversions =>
+      attachedDatabase.ingredientConversions;
+  $PantryTable get pantry => attachedDatabase.pantry;
   ProductsDaoManager get managers => ProductsDaoManager(this);
 }
 
@@ -16,4 +19,11 @@ class ProductsDaoManager {
       $$GenericNamesTableTableManager(_db.attachedDatabase, _db.genericNames);
   $$ProductsTableTableManager get products =>
       $$ProductsTableTableManager(_db.attachedDatabase, _db.products);
+  $$IngredientConversionsTableTableManager get ingredientConversions =>
+      $$IngredientConversionsTableTableManager(
+        _db.attachedDatabase,
+        _db.ingredientConversions,
+      );
+  $$PantryTableTableManager get pantry =>
+      $$PantryTableTableManager(_db.attachedDatabase, _db.pantry);
 }

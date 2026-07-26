@@ -3,27 +3,31 @@ import 'package:pantry_io_mobile/data/database/app_database.dart';
 
 class IngredientInput {
   int pantryId;
+  int? genericNameId;
   String quantityNeeded;
-  String unit;
-  int? selectedNameIndex;
+  String? selectedUnit;
+  int? selectedNameId;
+
+  Set<String> availableUnits;
 
   final qtyController = TextEditingController();
-  final unitController = TextEditingController();
 
   IngredientInput({
     this.pantryId = 0,
+    this.genericNameId,
     this.quantityNeeded = '',
-    this.unit = '',
-  });
+    this.selectedUnit,
+    this.selectedNameId,
+    Set<String>? availableUnits,
+  }) : availableUnits = availableUnits ?? {};
 
   void dispose() {
     qtyController.dispose();
-    unitController.dispose();
   }
 
   @override
   String toString() {
-    return 'IngredientInput(qty: ${qtyController.text}, unit: ${unitController.text}, pantryId: $pantryId, selectedIndex: $selectedNameIndex)';
+    return 'IngredientInput(qty: ${qtyController.text}, unit: ${selectedUnit}, pantryId: $pantryId, selectedIndex: $selectedNameId)';
   }
 
   RecipeIngredientsCompanion toCompanion(int recipeId) {
@@ -31,7 +35,7 @@ class IngredientInput {
       recipeId: recipeId,
       pantryId: pantryId,
       quantityNeeded: double.tryParse(qtyController.text) ?? 0.0,
-      unit: unitController.text,
+      unit: selectedUnit ?? '',
     );
   }
 }

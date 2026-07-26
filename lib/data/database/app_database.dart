@@ -6,6 +6,7 @@ import 'package:pantry_io_mobile/data/database/daos/recipe_dao.dart';
 import 'package:pantry_io_mobile/data/database/daos/products_dao.dart';
 import 'package:pantry_io_mobile/data/database/daos/generic_names_dao.dart';
 import 'package:pantry_io_mobile/data/database/daos/recipe_history_dao.dart';
+import 'package:pantry_io_mobile/data/database/daos/ingredient_conversions_dao.dart';
 import 'package:pantry_io_mobile/data/db_seed_data.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -16,6 +17,7 @@ import 'tables/pantry_table.dart';
 import 'tables/recipe_ingredients_table.dart';
 import 'tables/recipes_table.dart';
 import 'tables/recipe_history_table.dart';
+import 'tables/ingredient_conversions_table.dart';
 
 part 'app_database.g.dart';
 
@@ -33,8 +35,9 @@ LazyDatabase _openConnection() => LazyDatabase(() async {
     RecipeIngredients,
     Recipes,
     RecipeHistory,
+    IngredientConversions
   ],
-  daos: [PantryDao, RecipeDao, ProductsDao, GenericNamesDao, RecipeHistoryDao]
+  daos: [PantryDao, RecipeDao, ProductsDao, GenericNamesDao, RecipeHistoryDao, IngredientConversionsDao]
 )
 class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._internal();

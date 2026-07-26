@@ -39,19 +39,8 @@ class $GenericNamesTable extends GenericNames
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _weightPerPieceMeta = const VerificationMeta(
-    'weightPerPiece',
-  );
   @override
-  late final GeneratedColumn<double> weightPerPiece = GeneratedColumn<double>(
-    'weight_per_piece',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [id, name, primaryUnit, weightPerPiece];
+  List<GeneratedColumn> get $columns => [id, name, primaryUnit];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -86,17 +75,6 @@ class $GenericNamesTable extends GenericNames
     } else if (isInserting) {
       context.missing(_primaryUnitMeta);
     }
-    if (data.containsKey('weight_per_piece')) {
-      context.handle(
-        _weightPerPieceMeta,
-        weightPerPiece.isAcceptableOrUnknown(
-          data['weight_per_piece']!,
-          _weightPerPieceMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_weightPerPieceMeta);
-    }
     return context;
   }
 
@@ -118,10 +96,6 @@ class $GenericNamesTable extends GenericNames
         DriftSqlType.string,
         data['${effectivePrefix}primary_unit'],
       )!,
-      weightPerPiece: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}weight_per_piece'],
-      )!,
     );
   }
 
@@ -135,12 +109,10 @@ class GenericName extends DataClass implements Insertable<GenericName> {
   final int id;
   final String name;
   final String primaryUnit;
-  final double weightPerPiece;
   const GenericName({
     required this.id,
     required this.name,
     required this.primaryUnit,
-    required this.weightPerPiece,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -148,7 +120,6 @@ class GenericName extends DataClass implements Insertable<GenericName> {
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['primary_unit'] = Variable<String>(primaryUnit);
-    map['weight_per_piece'] = Variable<double>(weightPerPiece);
     return map;
   }
 
@@ -157,7 +128,6 @@ class GenericName extends DataClass implements Insertable<GenericName> {
       id: Value(id),
       name: Value(name),
       primaryUnit: Value(primaryUnit),
-      weightPerPiece: Value(weightPerPiece),
     );
   }
 
@@ -170,7 +140,6 @@ class GenericName extends DataClass implements Insertable<GenericName> {
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       primaryUnit: serializer.fromJson<String>(json['primaryUnit']),
-      weightPerPiece: serializer.fromJson<double>(json['weightPerPiece']),
     );
   }
   @override
@@ -180,21 +149,15 @@ class GenericName extends DataClass implements Insertable<GenericName> {
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'primaryUnit': serializer.toJson<String>(primaryUnit),
-      'weightPerPiece': serializer.toJson<double>(weightPerPiece),
     };
   }
 
-  GenericName copyWith({
-    int? id,
-    String? name,
-    String? primaryUnit,
-    double? weightPerPiece,
-  }) => GenericName(
-    id: id ?? this.id,
-    name: name ?? this.name,
-    primaryUnit: primaryUnit ?? this.primaryUnit,
-    weightPerPiece: weightPerPiece ?? this.weightPerPiece,
-  );
+  GenericName copyWith({int? id, String? name, String? primaryUnit}) =>
+      GenericName(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        primaryUnit: primaryUnit ?? this.primaryUnit,
+      );
   GenericName copyWithCompanion(GenericNamesCompanion data) {
     return GenericName(
       id: data.id.present ? data.id.value : this.id,
@@ -202,9 +165,6 @@ class GenericName extends DataClass implements Insertable<GenericName> {
       primaryUnit: data.primaryUnit.present
           ? data.primaryUnit.value
           : this.primaryUnit,
-      weightPerPiece: data.weightPerPiece.present
-          ? data.weightPerPiece.value
-          : this.weightPerPiece,
     );
   }
 
@@ -213,54 +173,46 @@ class GenericName extends DataClass implements Insertable<GenericName> {
     return (StringBuffer('GenericName(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('primaryUnit: $primaryUnit, ')
-          ..write('weightPerPiece: $weightPerPiece')
+          ..write('primaryUnit: $primaryUnit')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, primaryUnit, weightPerPiece);
+  int get hashCode => Object.hash(id, name, primaryUnit);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is GenericName &&
           other.id == this.id &&
           other.name == this.name &&
-          other.primaryUnit == this.primaryUnit &&
-          other.weightPerPiece == this.weightPerPiece);
+          other.primaryUnit == this.primaryUnit);
 }
 
 class GenericNamesCompanion extends UpdateCompanion<GenericName> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> primaryUnit;
-  final Value<double> weightPerPiece;
   const GenericNamesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.primaryUnit = const Value.absent(),
-    this.weightPerPiece = const Value.absent(),
   });
   GenericNamesCompanion.insert({
     this.id = const Value.absent(),
     required String name,
     required String primaryUnit,
-    required double weightPerPiece,
   }) : name = Value(name),
-       primaryUnit = Value(primaryUnit),
-       weightPerPiece = Value(weightPerPiece);
+       primaryUnit = Value(primaryUnit);
   static Insertable<GenericName> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? primaryUnit,
-    Expression<double>? weightPerPiece,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (primaryUnit != null) 'primary_unit': primaryUnit,
-      if (weightPerPiece != null) 'weight_per_piece': weightPerPiece,
     });
   }
 
@@ -268,13 +220,11 @@ class GenericNamesCompanion extends UpdateCompanion<GenericName> {
     Value<int>? id,
     Value<String>? name,
     Value<String>? primaryUnit,
-    Value<double>? weightPerPiece,
   }) {
     return GenericNamesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       primaryUnit: primaryUnit ?? this.primaryUnit,
-      weightPerPiece: weightPerPiece ?? this.weightPerPiece,
     );
   }
 
@@ -290,9 +240,6 @@ class GenericNamesCompanion extends UpdateCompanion<GenericName> {
     if (primaryUnit.present) {
       map['primary_unit'] = Variable<String>(primaryUnit.value);
     }
-    if (weightPerPiece.present) {
-      map['weight_per_piece'] = Variable<double>(weightPerPiece.value);
-    }
     return map;
   }
 
@@ -301,8 +248,7 @@ class GenericNamesCompanion extends UpdateCompanion<GenericName> {
     return (StringBuffer('GenericNamesCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('primaryUnit: $primaryUnit, ')
-          ..write('weightPerPiece: $weightPerPiece')
+          ..write('primaryUnit: $primaryUnit')
           ..write(')'))
         .toString();
   }
@@ -776,25 +722,8 @@ class $PantryTable extends Pantry with TableInfo<$PantryTable, PantryData> {
     ),
     defaultValue: const Constant(false),
   );
-  static const VerificationMeta _weightPerPieceMeta = const VerificationMeta(
-    'weightPerPiece',
-  );
   @override
-  late final GeneratedColumn<double> weightPerPiece = GeneratedColumn<double>(
-    'weight_per_piece',
-    aliasedName,
-    true,
-    type: DriftSqlType.double,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    genericNameId,
-    quantity,
-    isStaple,
-    weightPerPiece,
-  ];
+  List<GeneratedColumn> get $columns => [id, genericNameId, quantity, isStaple];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -833,15 +762,6 @@ class $PantryTable extends Pantry with TableInfo<$PantryTable, PantryData> {
         isStaple.isAcceptableOrUnknown(data['is_staple']!, _isStapleMeta),
       );
     }
-    if (data.containsKey('weight_per_piece')) {
-      context.handle(
-        _weightPerPieceMeta,
-        weightPerPiece.isAcceptableOrUnknown(
-          data['weight_per_piece']!,
-          _weightPerPieceMeta,
-        ),
-      );
-    }
     return context;
   }
 
@@ -867,10 +787,6 @@ class $PantryTable extends Pantry with TableInfo<$PantryTable, PantryData> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_staple'],
       )!,
-      weightPerPiece: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}weight_per_piece'],
-      ),
     );
   }
 
@@ -885,13 +801,11 @@ class PantryData extends DataClass implements Insertable<PantryData> {
   final int genericNameId;
   final double quantity;
   final bool isStaple;
-  final double? weightPerPiece;
   const PantryData({
     required this.id,
     required this.genericNameId,
     required this.quantity,
     required this.isStaple,
-    this.weightPerPiece,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -900,9 +814,6 @@ class PantryData extends DataClass implements Insertable<PantryData> {
     map['generic_name_id'] = Variable<int>(genericNameId);
     map['quantity'] = Variable<double>(quantity);
     map['is_staple'] = Variable<bool>(isStaple);
-    if (!nullToAbsent || weightPerPiece != null) {
-      map['weight_per_piece'] = Variable<double>(weightPerPiece);
-    }
     return map;
   }
 
@@ -912,9 +823,6 @@ class PantryData extends DataClass implements Insertable<PantryData> {
       genericNameId: Value(genericNameId),
       quantity: Value(quantity),
       isStaple: Value(isStaple),
-      weightPerPiece: weightPerPiece == null && nullToAbsent
-          ? const Value.absent()
-          : Value(weightPerPiece),
     );
   }
 
@@ -928,7 +836,6 @@ class PantryData extends DataClass implements Insertable<PantryData> {
       genericNameId: serializer.fromJson<int>(json['genericNameId']),
       quantity: serializer.fromJson<double>(json['quantity']),
       isStaple: serializer.fromJson<bool>(json['isStaple']),
-      weightPerPiece: serializer.fromJson<double?>(json['weightPerPiece']),
     );
   }
   @override
@@ -939,7 +846,6 @@ class PantryData extends DataClass implements Insertable<PantryData> {
       'genericNameId': serializer.toJson<int>(genericNameId),
       'quantity': serializer.toJson<double>(quantity),
       'isStaple': serializer.toJson<bool>(isStaple),
-      'weightPerPiece': serializer.toJson<double?>(weightPerPiece),
     };
   }
 
@@ -948,15 +854,11 @@ class PantryData extends DataClass implements Insertable<PantryData> {
     int? genericNameId,
     double? quantity,
     bool? isStaple,
-    Value<double?> weightPerPiece = const Value.absent(),
   }) => PantryData(
     id: id ?? this.id,
     genericNameId: genericNameId ?? this.genericNameId,
     quantity: quantity ?? this.quantity,
     isStaple: isStaple ?? this.isStaple,
-    weightPerPiece: weightPerPiece.present
-        ? weightPerPiece.value
-        : this.weightPerPiece,
   );
   PantryData copyWithCompanion(PantryCompanion data) {
     return PantryData(
@@ -966,9 +868,6 @@ class PantryData extends DataClass implements Insertable<PantryData> {
           : this.genericNameId,
       quantity: data.quantity.present ? data.quantity.value : this.quantity,
       isStaple: data.isStaple.present ? data.isStaple.value : this.isStaple,
-      weightPerPiece: data.weightPerPiece.present
-          ? data.weightPerPiece.value
-          : this.weightPerPiece,
     );
   }
 
@@ -978,15 +877,13 @@ class PantryData extends DataClass implements Insertable<PantryData> {
           ..write('id: $id, ')
           ..write('genericNameId: $genericNameId, ')
           ..write('quantity: $quantity, ')
-          ..write('isStaple: $isStaple, ')
-          ..write('weightPerPiece: $weightPerPiece')
+          ..write('isStaple: $isStaple')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, genericNameId, quantity, isStaple, weightPerPiece);
+  int get hashCode => Object.hash(id, genericNameId, quantity, isStaple);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -994,8 +891,7 @@ class PantryData extends DataClass implements Insertable<PantryData> {
           other.id == this.id &&
           other.genericNameId == this.genericNameId &&
           other.quantity == this.quantity &&
-          other.isStaple == this.isStaple &&
-          other.weightPerPiece == this.weightPerPiece);
+          other.isStaple == this.isStaple);
 }
 
 class PantryCompanion extends UpdateCompanion<PantryData> {
@@ -1003,34 +899,29 @@ class PantryCompanion extends UpdateCompanion<PantryData> {
   final Value<int> genericNameId;
   final Value<double> quantity;
   final Value<bool> isStaple;
-  final Value<double?> weightPerPiece;
   const PantryCompanion({
     this.id = const Value.absent(),
     this.genericNameId = const Value.absent(),
     this.quantity = const Value.absent(),
     this.isStaple = const Value.absent(),
-    this.weightPerPiece = const Value.absent(),
   });
   PantryCompanion.insert({
     this.id = const Value.absent(),
     required int genericNameId,
     this.quantity = const Value.absent(),
     this.isStaple = const Value.absent(),
-    this.weightPerPiece = const Value.absent(),
   }) : genericNameId = Value(genericNameId);
   static Insertable<PantryData> custom({
     Expression<int>? id,
     Expression<int>? genericNameId,
     Expression<double>? quantity,
     Expression<bool>? isStaple,
-    Expression<double>? weightPerPiece,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (genericNameId != null) 'generic_name_id': genericNameId,
       if (quantity != null) 'quantity': quantity,
       if (isStaple != null) 'is_staple': isStaple,
-      if (weightPerPiece != null) 'weight_per_piece': weightPerPiece,
     });
   }
 
@@ -1039,14 +930,12 @@ class PantryCompanion extends UpdateCompanion<PantryData> {
     Value<int>? genericNameId,
     Value<double>? quantity,
     Value<bool>? isStaple,
-    Value<double?>? weightPerPiece,
   }) {
     return PantryCompanion(
       id: id ?? this.id,
       genericNameId: genericNameId ?? this.genericNameId,
       quantity: quantity ?? this.quantity,
       isStaple: isStaple ?? this.isStaple,
-      weightPerPiece: weightPerPiece ?? this.weightPerPiece,
     );
   }
 
@@ -1065,9 +954,6 @@ class PantryCompanion extends UpdateCompanion<PantryData> {
     if (isStaple.present) {
       map['is_staple'] = Variable<bool>(isStaple.value);
     }
-    if (weightPerPiece.present) {
-      map['weight_per_piece'] = Variable<double>(weightPerPiece.value);
-    }
     return map;
   }
 
@@ -1077,8 +963,7 @@ class PantryCompanion extends UpdateCompanion<PantryData> {
           ..write('id: $id, ')
           ..write('genericNameId: $genericNameId, ')
           ..write('quantity: $quantity, ')
-          ..write('isStaple: $isStaple, ')
-          ..write('weightPerPiece: $weightPerPiece')
+          ..write('isStaple: $isStaple')
           ..write(')'))
         .toString();
   }
@@ -2282,6 +2167,312 @@ class RecipeHistoryCompanion extends UpdateCompanion<RecipeHistoryData> {
   }
 }
 
+class $IngredientConversionsTable extends IngredientConversions
+    with TableInfo<$IngredientConversionsTable, IngredientConversion> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $IngredientConversionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _genericNameIdMeta = const VerificationMeta(
+    'genericNameId',
+  );
+  @override
+  late final GeneratedColumn<int> genericNameId = GeneratedColumn<int>(
+    'generic_name_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES generic_names (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
+  @override
+  late final GeneratedColumn<String> unit = GeneratedColumn<String>(
+    'unit',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _gramWeightMeta = const VerificationMeta(
+    'gramWeight',
+  );
+  @override
+  late final GeneratedColumn<double> gramWeight = GeneratedColumn<double>(
+    'gram_weight',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, genericNameId, unit, gramWeight];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ingredient_conversions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<IngredientConversion> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('generic_name_id')) {
+      context.handle(
+        _genericNameIdMeta,
+        genericNameId.isAcceptableOrUnknown(
+          data['generic_name_id']!,
+          _genericNameIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_genericNameIdMeta);
+    }
+    if (data.containsKey('unit')) {
+      context.handle(
+        _unitMeta,
+        unit.isAcceptableOrUnknown(data['unit']!, _unitMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_unitMeta);
+    }
+    if (data.containsKey('gram_weight')) {
+      context.handle(
+        _gramWeightMeta,
+        gramWeight.isAcceptableOrUnknown(data['gram_weight']!, _gramWeightMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gramWeightMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  IngredientConversion map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return IngredientConversion(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      genericNameId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}generic_name_id'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      )!,
+      gramWeight: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}gram_weight'],
+      )!,
+    );
+  }
+
+  @override
+  $IngredientConversionsTable createAlias(String alias) {
+    return $IngredientConversionsTable(attachedDatabase, alias);
+  }
+}
+
+class IngredientConversion extends DataClass
+    implements Insertable<IngredientConversion> {
+  final int id;
+  final int genericNameId;
+  final String unit;
+  final double gramWeight;
+  const IngredientConversion({
+    required this.id,
+    required this.genericNameId,
+    required this.unit,
+    required this.gramWeight,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['generic_name_id'] = Variable<int>(genericNameId);
+    map['unit'] = Variable<String>(unit);
+    map['gram_weight'] = Variable<double>(gramWeight);
+    return map;
+  }
+
+  IngredientConversionsCompanion toCompanion(bool nullToAbsent) {
+    return IngredientConversionsCompanion(
+      id: Value(id),
+      genericNameId: Value(genericNameId),
+      unit: Value(unit),
+      gramWeight: Value(gramWeight),
+    );
+  }
+
+  factory IngredientConversion.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return IngredientConversion(
+      id: serializer.fromJson<int>(json['id']),
+      genericNameId: serializer.fromJson<int>(json['genericNameId']),
+      unit: serializer.fromJson<String>(json['unit']),
+      gramWeight: serializer.fromJson<double>(json['gramWeight']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'genericNameId': serializer.toJson<int>(genericNameId),
+      'unit': serializer.toJson<String>(unit),
+      'gramWeight': serializer.toJson<double>(gramWeight),
+    };
+  }
+
+  IngredientConversion copyWith({
+    int? id,
+    int? genericNameId,
+    String? unit,
+    double? gramWeight,
+  }) => IngredientConversion(
+    id: id ?? this.id,
+    genericNameId: genericNameId ?? this.genericNameId,
+    unit: unit ?? this.unit,
+    gramWeight: gramWeight ?? this.gramWeight,
+  );
+  IngredientConversion copyWithCompanion(IngredientConversionsCompanion data) {
+    return IngredientConversion(
+      id: data.id.present ? data.id.value : this.id,
+      genericNameId: data.genericNameId.present
+          ? data.genericNameId.value
+          : this.genericNameId,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      gramWeight: data.gramWeight.present
+          ? data.gramWeight.value
+          : this.gramWeight,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('IngredientConversion(')
+          ..write('id: $id, ')
+          ..write('genericNameId: $genericNameId, ')
+          ..write('unit: $unit, ')
+          ..write('gramWeight: $gramWeight')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, genericNameId, unit, gramWeight);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is IngredientConversion &&
+          other.id == this.id &&
+          other.genericNameId == this.genericNameId &&
+          other.unit == this.unit &&
+          other.gramWeight == this.gramWeight);
+}
+
+class IngredientConversionsCompanion
+    extends UpdateCompanion<IngredientConversion> {
+  final Value<int> id;
+  final Value<int> genericNameId;
+  final Value<String> unit;
+  final Value<double> gramWeight;
+  const IngredientConversionsCompanion({
+    this.id = const Value.absent(),
+    this.genericNameId = const Value.absent(),
+    this.unit = const Value.absent(),
+    this.gramWeight = const Value.absent(),
+  });
+  IngredientConversionsCompanion.insert({
+    this.id = const Value.absent(),
+    required int genericNameId,
+    required String unit,
+    required double gramWeight,
+  }) : genericNameId = Value(genericNameId),
+       unit = Value(unit),
+       gramWeight = Value(gramWeight);
+  static Insertable<IngredientConversion> custom({
+    Expression<int>? id,
+    Expression<int>? genericNameId,
+    Expression<String>? unit,
+    Expression<double>? gramWeight,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (genericNameId != null) 'generic_name_id': genericNameId,
+      if (unit != null) 'unit': unit,
+      if (gramWeight != null) 'gram_weight': gramWeight,
+    });
+  }
+
+  IngredientConversionsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? genericNameId,
+    Value<String>? unit,
+    Value<double>? gramWeight,
+  }) {
+    return IngredientConversionsCompanion(
+      id: id ?? this.id,
+      genericNameId: genericNameId ?? this.genericNameId,
+      unit: unit ?? this.unit,
+      gramWeight: gramWeight ?? this.gramWeight,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (genericNameId.present) {
+      map['generic_name_id'] = Variable<int>(genericNameId.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
+    if (gramWeight.present) {
+      map['gram_weight'] = Variable<double>(gramWeight.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('IngredientConversionsCompanion(')
+          ..write('id: $id, ')
+          ..write('genericNameId: $genericNameId, ')
+          ..write('unit: $unit, ')
+          ..write('gramWeight: $gramWeight')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2292,6 +2483,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RecipeIngredientsTable recipeIngredients =
       $RecipeIngredientsTable(this);
   late final $RecipeHistoryTable recipeHistory = $RecipeHistoryTable(this);
+  late final $IngredientConversionsTable ingredientConversions =
+      $IngredientConversionsTable(this);
   late final PantryDao pantryDao = PantryDao(this as AppDatabase);
   late final RecipeDao recipeDao = RecipeDao(this as AppDatabase);
   late final ProductsDao productsDao = ProductsDao(this as AppDatabase);
@@ -2301,6 +2494,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final RecipeHistoryDao recipeHistoryDao = RecipeHistoryDao(
     this as AppDatabase,
   );
+  late final IngredientConversionsDao ingredientConversionsDao =
+      IngredientConversionsDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2312,6 +2507,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recipes,
     recipeIngredients,
     recipeHistory,
+    ingredientConversions,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -2350,6 +2546,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       ),
       result: [TableUpdate('recipe_history', kind: UpdateKind.update)],
     ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'generic_names',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('ingredient_conversions', kind: UpdateKind.delete)],
+    ),
   ]);
 }
 
@@ -2358,14 +2561,12 @@ typedef $$GenericNamesTableCreateCompanionBuilder =
       Value<int> id,
       required String name,
       required String primaryUnit,
-      required double weightPerPiece,
     });
 typedef $$GenericNamesTableUpdateCompanionBuilder =
     GenericNamesCompanion Function({
       Value<int> id,
       Value<String> name,
       Value<String> primaryUnit,
-      Value<double> weightPerPiece,
     });
 
 final class $$GenericNamesTableReferences
@@ -2415,6 +2616,34 @@ final class $$GenericNamesTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $IngredientConversionsTable,
+    List<IngredientConversion>
+  >
+  _ingredientConversionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.ingredientConversions,
+        aliasName: $_aliasNameGenerator(
+          db.genericNames.id,
+          db.ingredientConversions.genericNameId,
+        ),
+      );
+
+  $$IngredientConversionsTableProcessedTableManager
+  get ingredientConversionsRefs {
+    final manager = $$IngredientConversionsTableTableManager(
+      $_db,
+      $_db.ingredientConversions,
+    ).filter((f) => f.genericNameId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _ingredientConversionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$GenericNamesTableFilterComposer
@@ -2438,11 +2667,6 @@ class $$GenericNamesTableFilterComposer
 
   ColumnFilters<String> get primaryUnit => $composableBuilder(
     column: $table.primaryUnit,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get weightPerPiece => $composableBuilder(
-    column: $table.weightPerPiece,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2495,6 +2719,32 @@ class $$GenericNamesTableFilterComposer
     );
     return f(composer);
   }
+
+  Expression<bool> ingredientConversionsRefs(
+    Expression<bool> Function($$IngredientConversionsTableFilterComposer f) f,
+  ) {
+    final $$IngredientConversionsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.ingredientConversions,
+          getReferencedColumn: (t) => t.genericNameId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$IngredientConversionsTableFilterComposer(
+                $db: $db,
+                $table: $db.ingredientConversions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$GenericNamesTableOrderingComposer
@@ -2520,11 +2770,6 @@ class $$GenericNamesTableOrderingComposer
     column: $table.primaryUnit,
     builder: (column) => ColumnOrderings(column),
   );
-
-  ColumnOrderings<double> get weightPerPiece => $composableBuilder(
-    column: $table.weightPerPiece,
-    builder: (column) => ColumnOrderings(column),
-  );
 }
 
 class $$GenericNamesTableAnnotationComposer
@@ -2544,11 +2789,6 @@ class $$GenericNamesTableAnnotationComposer
 
   GeneratedColumn<String> get primaryUnit => $composableBuilder(
     column: $table.primaryUnit,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<double> get weightPerPiece => $composableBuilder(
-    column: $table.weightPerPiece,
     builder: (column) => column,
   );
 
@@ -2601,6 +2841,32 @@ class $$GenericNamesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> ingredientConversionsRefs<T extends Object>(
+    Expression<T> Function($$IngredientConversionsTableAnnotationComposer a) f,
+  ) {
+    final $$IngredientConversionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.ingredientConversions,
+          getReferencedColumn: (t) => t.genericNameId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$IngredientConversionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.ingredientConversions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$GenericNamesTableTableManager
@@ -2616,7 +2882,11 @@ class $$GenericNamesTableTableManager
           $$GenericNamesTableUpdateCompanionBuilder,
           (GenericName, $$GenericNamesTableReferences),
           GenericName,
-          PrefetchHooks Function({bool productsRefs, bool pantryRefs})
+          PrefetchHooks Function({
+            bool productsRefs,
+            bool pantryRefs,
+            bool ingredientConversionsRefs,
+          })
         > {
   $$GenericNamesTableTableManager(_$AppDatabase db, $GenericNamesTable table)
     : super(
@@ -2634,24 +2904,20 @@ class $$GenericNamesTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<String> primaryUnit = const Value.absent(),
-                Value<double> weightPerPiece = const Value.absent(),
               }) => GenericNamesCompanion(
                 id: id,
                 name: name,
                 primaryUnit: primaryUnit,
-                weightPerPiece: weightPerPiece,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
                 required String name,
                 required String primaryUnit,
-                required double weightPerPiece,
               }) => GenericNamesCompanion.insert(
                 id: id,
                 name: name,
                 primaryUnit: primaryUnit,
-                weightPerPiece: weightPerPiece,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -2661,62 +2927,89 @@ class $$GenericNamesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({productsRefs = false, pantryRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (productsRefs) db.products,
-                if (pantryRefs) db.pantry,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (productsRefs)
-                    await $_getPrefetchedData<
-                      GenericName,
-                      $GenericNamesTable,
-                      Product
-                    >(
-                      currentTable: table,
-                      referencedTable: $$GenericNamesTableReferences
-                          ._productsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$GenericNamesTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).productsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where(
-                            (e) => e.genericNameId == item.id,
-                          ),
-                      typedResults: items,
-                    ),
-                  if (pantryRefs)
-                    await $_getPrefetchedData<
-                      GenericName,
-                      $GenericNamesTable,
-                      PantryData
-                    >(
-                      currentTable: table,
-                      referencedTable: $$GenericNamesTableReferences
-                          ._pantryRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$GenericNamesTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).pantryRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where(
-                            (e) => e.genericNameId == item.id,
-                          ),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({
+                productsRefs = false,
+                pantryRefs = false,
+                ingredientConversionsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (productsRefs) db.products,
+                    if (pantryRefs) db.pantry,
+                    if (ingredientConversionsRefs) db.ingredientConversions,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (productsRefs)
+                        await $_getPrefetchedData<
+                          GenericName,
+                          $GenericNamesTable,
+                          Product
+                        >(
+                          currentTable: table,
+                          referencedTable: $$GenericNamesTableReferences
+                              ._productsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$GenericNamesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).productsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.genericNameId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (pantryRefs)
+                        await $_getPrefetchedData<
+                          GenericName,
+                          $GenericNamesTable,
+                          PantryData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$GenericNamesTableReferences
+                              ._pantryRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$GenericNamesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).pantryRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.genericNameId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (ingredientConversionsRefs)
+                        await $_getPrefetchedData<
+                          GenericName,
+                          $GenericNamesTable,
+                          IngredientConversion
+                        >(
+                          currentTable: table,
+                          referencedTable: $$GenericNamesTableReferences
+                              ._ingredientConversionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$GenericNamesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).ingredientConversionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.genericNameId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -2733,7 +3026,11 @@ typedef $$GenericNamesTableProcessedTableManager =
       $$GenericNamesTableUpdateCompanionBuilder,
       (GenericName, $$GenericNamesTableReferences),
       GenericName,
-      PrefetchHooks Function({bool productsRefs, bool pantryRefs})
+      PrefetchHooks Function({
+        bool productsRefs,
+        bool pantryRefs,
+        bool ingredientConversionsRefs,
+      })
     >;
 typedef $$ProductsTableCreateCompanionBuilder =
     ProductsCompanion Function({
@@ -3075,7 +3372,6 @@ typedef $$PantryTableCreateCompanionBuilder =
       required int genericNameId,
       Value<double> quantity,
       Value<bool> isStaple,
-      Value<double?> weightPerPiece,
     });
 typedef $$PantryTableUpdateCompanionBuilder =
     PantryCompanion Function({
@@ -3083,7 +3379,6 @@ typedef $$PantryTableUpdateCompanionBuilder =
       Value<int> genericNameId,
       Value<double> quantity,
       Value<bool> isStaple,
-      Value<double?> weightPerPiece,
     });
 
 final class $$PantryTableReferences
@@ -3155,11 +3450,6 @@ class $$PantryTableFilterComposer
 
   ColumnFilters<bool> get isStaple => $composableBuilder(
     column: $table.isStaple,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get weightPerPiece => $composableBuilder(
-    column: $table.weightPerPiece,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3236,11 +3526,6 @@ class $$PantryTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get weightPerPiece => $composableBuilder(
-    column: $table.weightPerPiece,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   $$GenericNamesTableOrderingComposer get genericNameId {
     final $$GenericNamesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -3282,11 +3567,6 @@ class $$PantryTableAnnotationComposer
 
   GeneratedColumn<bool> get isStaple =>
       $composableBuilder(column: $table.isStaple, builder: (column) => column);
-
-  GeneratedColumn<double> get weightPerPiece => $composableBuilder(
-    column: $table.weightPerPiece,
-    builder: (column) => column,
-  );
 
   $$GenericNamesTableAnnotationComposer get genericNameId {
     final $$GenericNamesTableAnnotationComposer composer = $composerBuilder(
@@ -3373,13 +3653,11 @@ class $$PantryTableTableManager
                 Value<int> genericNameId = const Value.absent(),
                 Value<double> quantity = const Value.absent(),
                 Value<bool> isStaple = const Value.absent(),
-                Value<double?> weightPerPiece = const Value.absent(),
               }) => PantryCompanion(
                 id: id,
                 genericNameId: genericNameId,
                 quantity: quantity,
                 isStaple: isStaple,
-                weightPerPiece: weightPerPiece,
               ),
           createCompanionCallback:
               ({
@@ -3387,13 +3665,11 @@ class $$PantryTableTableManager
                 required int genericNameId,
                 Value<double> quantity = const Value.absent(),
                 Value<bool> isStaple = const Value.absent(),
-                Value<double?> weightPerPiece = const Value.absent(),
               }) => PantryCompanion.insert(
                 id: id,
                 genericNameId: genericNameId,
                 quantity: quantity,
                 isStaple: isStaple,
-                weightPerPiece: weightPerPiece,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -4685,6 +4961,327 @@ typedef $$RecipeHistoryTableProcessedTableManager =
       RecipeHistoryData,
       PrefetchHooks Function({bool recipeId})
     >;
+typedef $$IngredientConversionsTableCreateCompanionBuilder =
+    IngredientConversionsCompanion Function({
+      Value<int> id,
+      required int genericNameId,
+      required String unit,
+      required double gramWeight,
+    });
+typedef $$IngredientConversionsTableUpdateCompanionBuilder =
+    IngredientConversionsCompanion Function({
+      Value<int> id,
+      Value<int> genericNameId,
+      Value<String> unit,
+      Value<double> gramWeight,
+    });
+
+final class $$IngredientConversionsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $IngredientConversionsTable,
+          IngredientConversion
+        > {
+  $$IngredientConversionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $GenericNamesTable _genericNameIdTable(_$AppDatabase db) =>
+      db.genericNames.createAlias(
+        $_aliasNameGenerator(
+          db.ingredientConversions.genericNameId,
+          db.genericNames.id,
+        ),
+      );
+
+  $$GenericNamesTableProcessedTableManager get genericNameId {
+    final $_column = $_itemColumn<int>('generic_name_id')!;
+
+    final manager = $$GenericNamesTableTableManager(
+      $_db,
+      $_db.genericNames,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_genericNameIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$IngredientConversionsTableFilterComposer
+    extends Composer<_$AppDatabase, $IngredientConversionsTable> {
+  $$IngredientConversionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get unit => $composableBuilder(
+    column: $table.unit,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get gramWeight => $composableBuilder(
+    column: $table.gramWeight,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$GenericNamesTableFilterComposer get genericNameId {
+    final $$GenericNamesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.genericNameId,
+      referencedTable: $db.genericNames,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GenericNamesTableFilterComposer(
+            $db: $db,
+            $table: $db.genericNames,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$IngredientConversionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $IngredientConversionsTable> {
+  $$IngredientConversionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get unit => $composableBuilder(
+    column: $table.unit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get gramWeight => $composableBuilder(
+    column: $table.gramWeight,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$GenericNamesTableOrderingComposer get genericNameId {
+    final $$GenericNamesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.genericNameId,
+      referencedTable: $db.genericNames,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GenericNamesTableOrderingComposer(
+            $db: $db,
+            $table: $db.genericNames,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$IngredientConversionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $IngredientConversionsTable> {
+  $$IngredientConversionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get unit =>
+      $composableBuilder(column: $table.unit, builder: (column) => column);
+
+  GeneratedColumn<double> get gramWeight => $composableBuilder(
+    column: $table.gramWeight,
+    builder: (column) => column,
+  );
+
+  $$GenericNamesTableAnnotationComposer get genericNameId {
+    final $$GenericNamesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.genericNameId,
+      referencedTable: $db.genericNames,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GenericNamesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.genericNames,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$IngredientConversionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $IngredientConversionsTable,
+          IngredientConversion,
+          $$IngredientConversionsTableFilterComposer,
+          $$IngredientConversionsTableOrderingComposer,
+          $$IngredientConversionsTableAnnotationComposer,
+          $$IngredientConversionsTableCreateCompanionBuilder,
+          $$IngredientConversionsTableUpdateCompanionBuilder,
+          (IngredientConversion, $$IngredientConversionsTableReferences),
+          IngredientConversion,
+          PrefetchHooks Function({bool genericNameId})
+        > {
+  $$IngredientConversionsTableTableManager(
+    _$AppDatabase db,
+    $IngredientConversionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$IngredientConversionsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$IngredientConversionsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$IngredientConversionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> genericNameId = const Value.absent(),
+                Value<String> unit = const Value.absent(),
+                Value<double> gramWeight = const Value.absent(),
+              }) => IngredientConversionsCompanion(
+                id: id,
+                genericNameId: genericNameId,
+                unit: unit,
+                gramWeight: gramWeight,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int genericNameId,
+                required String unit,
+                required double gramWeight,
+              }) => IngredientConversionsCompanion.insert(
+                id: id,
+                genericNameId: genericNameId,
+                unit: unit,
+                gramWeight: gramWeight,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$IngredientConversionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({genericNameId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (genericNameId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.genericNameId,
+                                referencedTable:
+                                    $$IngredientConversionsTableReferences
+                                        ._genericNameIdTable(db),
+                                referencedColumn:
+                                    $$IngredientConversionsTableReferences
+                                        ._genericNameIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$IngredientConversionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $IngredientConversionsTable,
+      IngredientConversion,
+      $$IngredientConversionsTableFilterComposer,
+      $$IngredientConversionsTableOrderingComposer,
+      $$IngredientConversionsTableAnnotationComposer,
+      $$IngredientConversionsTableCreateCompanionBuilder,
+      $$IngredientConversionsTableUpdateCompanionBuilder,
+      (IngredientConversion, $$IngredientConversionsTableReferences),
+      IngredientConversion,
+      PrefetchHooks Function({bool genericNameId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4701,4 +5298,6 @@ class $AppDatabaseManager {
       $$RecipeIngredientsTableTableManager(_db, _db.recipeIngredients);
   $$RecipeHistoryTableTableManager get recipeHistory =>
       $$RecipeHistoryTableTableManager(_db, _db.recipeHistory);
+  $$IngredientConversionsTableTableManager get ingredientConversions =>
+      $$IngredientConversionsTableTableManager(_db, _db.ingredientConversions);
 }

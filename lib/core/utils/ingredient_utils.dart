@@ -5,17 +5,17 @@ bool isIngredientQuantitySufficient(IngredientItem ingredient, [double multiplie
   return normalizeQuantity(ingredient.pantryQuantity, ingredient.pantryUnit) >= normalizeQuantity((ingredient.quantityNeeded * multiplier), ingredient.ingredientUnit);
 }
 
-double subtractIngredientQuantity(IngredientItem ingredient) {
-  if (ingredient.ingredientUnit == ingredient.pantryUnit) {
-    return ingredient.pantryQuantity - ingredient.quantityNeeded;
-  }
-
-  if (ingredient.pantryUnit == 'pcs' && ingredient.ingredientUnit != 'pcs') {
-    double amountGrams = ingredient.pantryQuantity * ingredient.weightPerPiece!;
-    return (normalizeQuantity(amountGrams, 'g', toUnit: ingredient.ingredientUnit));
-  }
-
-  if (ingredient.pantryUnit != 'pcs' && ingredient.ingredientUnit == 'pcs') {
-    const amountGrams =
-  }
-}
+// double subtractIngredientQuantity(IngredientItem ingredient) {
+//   if (ingredient.ingredientUnit == ingredient.pantryUnit) {
+//     return ingredient.pantryQuantity - ingredient.quantityNeeded;
+//   }
+//
+//   if (ingredient.pantryUnit == 'pcs' && ingredient.ingredientUnit != 'pcs') {
+//     double amountGrams = ingredient.pantryQuantity * ingredient.weightPerPiece!;
+//     return (normalizeQuantity(amountGrams, 'g', toUnit: ingredient.ingredientUnit));
+//   }
+//
+//   if (ingredient.pantryUnit != 'pcs' && ingredient.ingredientUnit == 'pcs') {
+//     const amountGrams =
+//   }
+// }
