@@ -10,6 +10,9 @@ class AppTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final ValueChanged<String>? onSubmitted;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
 
   const AppTextField({
     super.key,
@@ -18,7 +21,10 @@ class AppTextField extends StatelessWidget {
     this.controller,
     this.onChanged,
     this.keyboardType,
-    this.validator
+    this.validator,
+    this.onSubmitted,
+    this.focusNode,
+    this.textInputAction
   });
 
   @override
@@ -33,6 +39,9 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: placeholder
       ),
+      textInputAction: textInputAction,
+      focusNode: focusNode,
+      onFieldSubmitted: onSubmitted,
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipes_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
@@ -16,17 +17,15 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   Future<void> createRecipe({
     required String name,
     required String instructions,
-    String? rawTags,
+    Set<String>? tags,
     required List<RecipeIngredientsCompanion> ingredientCompanions,
   }) {
     return transaction(() async {
-      final cleanedTags = rawTags?.trim().replaceAll(' ', '') ?? '';
-
       final recipeId = await into(recipes).insert(
         RecipesCompanion.insert(
           name: name,
           instructions: instructions,
-          tags: cleanedTags,
+          tags: jsonEncode(tags?.toList() ?? []),
         ),
       );
 
@@ -90,6 +89,8 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
         final pantryRow = row.readTable(pantry);
         final genericName = row.readTable(genericNames);
         final conversion = row.readTable(ingredientConversions);
+
+        debugPrint("These are the recipes ${recipe.name} ${recipe.tags}");
 
         final recipeIngredient = IngredientItem(
           pantryId: ingredient.pantryId,

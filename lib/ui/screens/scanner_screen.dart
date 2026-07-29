@@ -196,7 +196,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
   }
 
   void _onGenericNameChanged(int? newId) async {
-    print("$newId");
     if (newId == null) return;
 
     final selectedName = _genericNames.firstWhere((name) => name.id == newId);

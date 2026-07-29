@@ -24,7 +24,6 @@ class WidgetShowcaseScreen extends StatefulWidget {
 }
 
 class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
-  final _formKey = GlobalKey<FormState>();
 
   final RecipeFormModel _formModel = RecipeFormModel();
 

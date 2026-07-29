@@ -20,27 +20,25 @@ class AddRecipeScreen extends StatefulWidget {
 }
 
 class _AddRecipeScreenState extends State<AddRecipeScreen> {
-  final _formKey = GlobalKey<FormState>();
 
   final RecipeFormModel _formModel = RecipeFormModel();
 
-  // Mocked generic names fetch data
   List<GenericNameInfo> _genericNames = [];
 
   Set<String> tags = {};
 
-  final Set<String> selectedTags = {};
-
+  final _tagFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _fetchGenericNames();
+    _loadGenericNames();
   }
 
   @override
   void dispose() {
     _formModel.dispose();
+    _tagFocusNode.dispose();
     super.dispose();
   }
 
@@ -51,28 +49,15 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   }
 
   // function to call db for generic names, has static data right now
-  void _fetchGenericNames() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+  Future<void> _loadGenericNames() async {
+    final db = Provider.of<AppDatabase>(context, listen: false);
+    final allGenericNames = await db.genericNamesDao.getAllGenericNameInfo();
 
-    setState(() {
-      _genericNames = [
-        GenericNameInfo(
-          pantryId: 1,
-          id: 4,
-          name: 'First Generic Name',
-          units: {'first unit', 'second unit'}
-        ),
-        GenericNameInfo(
-          pantryId: 2,
-          id: 5,
-          name: 'Second Generic Name',
-          units: {'third unit', 'fourth unit'}
-        ),
-      ];
-
-      tags = {'Tag 1', 'Tag 2', 'Tag 3', 'Tag 4'};
-
-    });
+    if (mounted) {
+      setState(() {
+        _genericNames = allGenericNames;
+      });
+    }
   }
 
   void _onGenericNameChanged(IngredientInput ing, int? newId) async {
@@ -105,7 +90,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     db.recipeDao.createRecipe(
       name: _formModel.nameController.text.trim(),
       instructions: _formModel.instructionsController.text.trim(),
-      rawTags: _formModel.tagsController.text.trim(),
+      tags: tags,
       ingredientCompanions: _formModel.getIngredientCompanions(),
     );
 
@@ -128,15 +113,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     );
   }
 
-  void handleTap(String tag) {
-    setState(() {
-      if (selectedTags.contains(tag)) {
-        selectedTags.remove(tag);
-      } else {
-        selectedTags.add(tag);
-      }
-    });
-  }
 
   void handleRemove(String tagToDelete) {
     setState(() {
@@ -166,14 +142,22 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                     borderRadius: BorderRadius.circular(999),
                     child: AppTagCarousel(
                       tags: tags,
-                      mode: AppChipMode.selectable,
-                      onSelect: handleTap,
-                      selectedTags: selectedTags,
+                      mode: AppChipMode.removable,
+                      onRemoved: handleRemove,
                       alignment: Alignment.centerLeft
                     ),
                   ),
                   AppTextField(
-                    placeholder: 'Tags', controller: _formModel.tagsController
+                    placeholder: 'Tags', controller: _formModel.tagsController, focusNode: _tagFocusNode, textInputAction: TextInputAction.done, onSubmitted: (val) {
+                      final trimmed = val.trim();
+                      if (trimmed.isNotEmpty) {
+                        setState(() {
+                          tags.add(trimmed);
+                          _formModel.tagsController.clear();
+                        });
+                        _tagFocusNode.requestFocus();
+                      }
+                    },
                   )
                 ]
               )
@@ -252,7 +236,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
             ),
 
             SizedBox(height: 20),
-            AppButton(label: "Add Pantry Item", onPressed: () {}, type: AppButtonType.primary)
+            AppButton(label: "Add Recipe", onPressed: _handleSubmit, type: AppButtonType.primary)
           ]
         )
       )

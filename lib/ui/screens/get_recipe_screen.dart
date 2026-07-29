@@ -92,7 +92,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                     AppTextField(
                       placeholder: 'Search Recipes',
                       onChanged: (val)  {
-                        setState(() => _searchQuery = val);
+                        setState(() {_searchQuery = val; _updateStream();});
                         _updateStream();
                       }
                     ),
@@ -109,8 +109,8 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       onChanged: (bool newValue) {
                         setState(() {
                           _areIncompleteRecipesShown = newValue;
+                          _updateStream();
                         });
-                        _updateStream();
                       }
                     )
                   ]
@@ -127,6 +127,13 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       child: Center(child: CircularProgressIndicator())
                   );
               }
+              // if (snapshot.hasError) {
+              //   debugPrint('stream error: ${snapshot.error}');
+              //   debugPrint('stack trace: ${snapshot.stackTrace}');
+              //   return SliverToBoxAdapter(
+              //     child: Text('Error: ${snapshot.error}'),
+              //   );
+              // }
               if (snapshot.data!.isEmpty) {
                 return const SliverToBoxAdapter(
                   child: Center(
