@@ -30,6 +30,15 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
   Set<int> optionalIngredients = {};
   bool canRecipeBeDoubled = true;
 
+  void _updateCanBeDoubled() {
+    final allUsed = widget.recipe.ingredients
+        .where((i) => usedIngredients.contains(i.pantryId));
+
+    canRecipeBeDoubled = allUsed.every((ing) =>
+    ing.pantryQuantity >= (ing.quantityNeeded * ing.gramWeight * 2.0)
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -38,19 +47,20 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
         optionalIngredients.add(ing.pantryId);
       } else {
         usedIngredients.add(ing.pantryId);
-        // if (!isIngredientQuantitySufficient(ing, context, 2.0)) {
-        _isIngredientQuantitySufficient(ing, context, 2.0);
       }
     }
+    _updateCanBeDoubled();
   }
 
-  Future<void> _isIngredientQuantitySufficient(IngredientItem ing, BuildContext context, double multiplier) async {
-    final isQuantitySufficient = await isIngredientQuantitySufficient(ing, context, multiplier);
+  void _isIngredientQuantitySufficient(IngredientItem ing, double multiplier) {
+    final isQuantitySufficient = ing.pantryQuantity >= ((ing.quantityNeeded * ing.gramWeight) * multiplier);
+    debugPrint("$isQuantitySufficient, ${ing.name}");
     if (!isQuantitySufficient) {
       setState(() {
         canRecipeBeDoubled = false;
       });
     }
+    debugPrint("Can the recipe be doubled ${canRecipeBeDoubled}");
   }
 
   Future<void> _confirmCook(BuildContext context) async {
@@ -208,7 +218,11 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                       // }).map((pantryId) {
                       children: usedIngredients.map((pantryId) {
                         final ing = ingredients.firstWhere((ing) => ing.pantryId == pantryId);
-                        final newQuantity = ing.pantryQuantity - (ing.quantityNeeded * ing.gramWeight);
+                        final newQuantity = (ing.pantryQuantity - ((ing.quantityNeeded * ing.gramWeight) * _multiplier)) / ing.gramWeight;
+
+                        final formattedQuantity = (newQuantity * 10).floor() / 10;
+
+                        _isIngredientQuantitySufficient(ing, 2.0);
 
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -234,9 +248,9 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                             ),
 
                             Text(
-                              '$newQuantity ${ing.ingredientUnit}',
+                              '$formattedQuantity ${ing.ingredientUnit}',
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: newQuantity > 0 ? Colors.green : Colors.red
+                                color: formattedQuantity > 0 ? Colors.green : Colors.red
                               )
                             )
                           ]
@@ -265,7 +279,9 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: optionalIngredients.map((pantryId) {
                         final ing = ingredients.firstWhere((ing) => ing.pantryId == pantryId);
-                        final newQuantity = ing.pantryQuantity - (ing.quantityNeeded * _multiplier);
+                        final newQuantity = (ing.pantryQuantity - ((ing.quantityNeeded * ing.gramWeight) * _multiplier)) / ing.gramWeight;
+
+                        final formattedQuantity = (newQuantity * 10).floor() / 10;
                         final isOn = usedIngredients.contains(pantryId);
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -278,7 +294,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
 
                             AppSwitchTileButton(
                               value: isOn,
-                              isDisabled: newQuantity < 0,
+                              isDisabled: formattedQuantity < 0,
                               onChanged: (bool newValue) {
                                 setState(() {
                                   if (newValue) {
@@ -286,6 +302,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                                   } else {
                                     usedIngredients.remove(pantryId);
                                   }
+                                  _updateCanBeDoubled();
                                 });
                               }
                             )
