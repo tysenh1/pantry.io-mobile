@@ -15,10 +15,6 @@ class RecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("${recipe.name}");
-    for (final ing in recipe.ingredients) {
-      debugPrint("name: ${ing.name}, is quan ad: ${ing.pantryQuantity >= (ing.quantityNeeded * ing.gramWeight)}");
-    }
     return Card(
       color: color ?? (recipe.isRecipeComplete ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.errorContainer),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

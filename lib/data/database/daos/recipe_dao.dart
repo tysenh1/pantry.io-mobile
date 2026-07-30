@@ -38,7 +38,6 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   }
 
   bool _isIngredientQuantitySufficient(IngredientItem ing) {
-    debugPrint("Recipe Name: ${ing.name}, quan: ${ing.quantityNeeded * ing.gramWeight}, pan quan: ${ing.pantryQuantity}");
     return ing.pantryQuantity >= (ing.quantityNeeded * ing.gramWeight);
   }
 
@@ -49,7 +48,6 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       final requiredIngredients = recipe.ingredients
           .where((i) => !i.isOptional)
           .toList();
-      debugPrint("recipe name: ${recipe.name}");
 
       return requiredIngredients.every(
           (ingredient) =>
@@ -130,12 +128,6 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
 
       if (filterIncompleteRecipes) {
         allRecipes = _filterCookableRecipes(allRecipes);
-      }
-
-      for (final row in allRecipes) {
-        for (final ing in row.ingredients) {
-          debugPrint("Recipe Name: ${row.name}, quan: ${ing.quantityNeeded * ing.gramWeight}, pan quan: ${ing.pantryQuantity}");
-        }
       }
 
       if (selectedTags != null && selectedTags.isNotEmpty) {
