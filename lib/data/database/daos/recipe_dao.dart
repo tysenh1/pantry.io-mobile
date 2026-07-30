@@ -38,6 +38,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   }
 
   bool _isIngredientQuantitySufficient(IngredientItem ing) {
+    debugPrint("Recipe Name: ${ing.name}, quan: ${ing.quantityNeeded * ing.gramWeight}, pan quan: ${ing.pantryQuantity}");
     return ing.pantryQuantity >= (ing.quantityNeeded * ing.gramWeight);
   }
 
@@ -48,10 +49,11 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       final requiredIngredients = recipe.ingredients
           .where((i) => !i.isOptional)
           .toList();
+      debugPrint("recipe name: ${recipe.name}");
 
       return requiredIngredients.every(
           (ingredient) =>
-              ingredient.isStaple ||
+              // ingredient.isStaple ||
               _isIngredientQuantitySufficient(ingredient),
       );
     }).toList();
@@ -74,7 +76,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       innerJoin(recipeIngredients, recipeIngredients.recipeId.equalsExp(recipes.id)),
       innerJoin(pantry, pantry.id.equalsExp(recipeIngredients.pantryId)),
       innerJoin(genericNames, genericNames.id.equalsExp(pantry.genericNameId)),
-      innerJoin(ingredientConversions,
+      leftOuterJoin(ingredientConversions,
           ingredientConversions.genericNameId.equalsExp(genericNames.id) &
           recipeIngredients.unit.equalsExp(ingredientConversions.unit)
       )
@@ -88,9 +90,9 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
         final ingredient = row.readTable(recipeIngredients);
         final pantryRow = row.readTable(pantry);
         final genericName = row.readTable(genericNames);
-        final conversion = row.readTable(ingredientConversions);
+        final conversion = row.readTableOrNull(ingredientConversions);
 
-        debugPrint("These are the recipes ${recipe.name} ${recipe.tags}");
+
 
         final recipeIngredient = IngredientItem(
           pantryId: ingredient.pantryId,
@@ -101,7 +103,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
           isOptional: ingredient.optional,
           isStaple: pantryRow.isStaple,
           name: genericName.name,
-          gramWeight: conversion.gramWeight,
+          gramWeight: (conversion != null) ? conversion.gramWeight : 1,
           genericNameId: genericName.id
         );
 
@@ -122,10 +124,18 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
         }
       }
 
+
+
       List<RecipeWithIngredients> allRecipes = recipeMap.values.toList();
 
       if (filterIncompleteRecipes) {
         allRecipes = _filterCookableRecipes(allRecipes);
+      }
+
+      for (final row in allRecipes) {
+        for (final ing in row.ingredients) {
+          debugPrint("Recipe Name: ${row.name}, quan: ${ing.quantityNeeded * ing.gramWeight}, pan quan: ${ing.pantryQuantity}");
+        }
       }
 
       if (selectedTags != null && selectedTags.isNotEmpty) {

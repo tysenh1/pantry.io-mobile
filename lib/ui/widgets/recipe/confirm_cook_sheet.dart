@@ -54,19 +54,16 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
 
   void _isIngredientQuantitySufficient(IngredientItem ing, double multiplier) {
     final isQuantitySufficient = ing.pantryQuantity >= ((ing.quantityNeeded * ing.gramWeight) * multiplier);
-    debugPrint("$isQuantitySufficient, ${ing.name}");
     if (!isQuantitySufficient) {
       setState(() {
         canRecipeBeDoubled = false;
       });
     }
-    debugPrint("Can the recipe be doubled ${canRecipeBeDoubled}");
   }
 
   Future<void> _confirmCook(BuildContext context) async {
     final service = context.read<RecipeService>();
     final recipe = widget.recipe;
-    debugPrint('${recipe.id}');
     final usedFullIngredients = recipe.ingredients
       .where((i) => usedIngredients.contains(i.pantryId)).toList();
 
@@ -265,14 +262,15 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 8,
                   children: [
-                    Text(
-                      'Optional Ingredients',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold
-                      ),
+                    if (optionalIngredients.isNotEmpty)
+                      Text(
+                        'Optional Ingredients',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold
+                        ),
 
-                    ),
+                      ),
 
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -313,7 +311,8 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                   ]
                 ),
 
-                SizedBox(height: 2),
+                if (optionalIngredients.isNotEmpty)
+                  SizedBox(height: 2),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,

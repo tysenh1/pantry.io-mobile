@@ -54,7 +54,6 @@ class RecipeHistoryDao extends DatabaseAccessor<AppDatabase> with _$RecipeHistor
   }
 
   Future<void> insert(RecipeHistoryWithIngredients recipe) async {
-    debugPrint("${recipe.recipeId}");
     await into(recipeHistory).insert(
       RecipeHistoryCompanion.insert(
         recipeId: Value(recipe.recipeId),

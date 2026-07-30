@@ -149,7 +149,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
         );
       }
     } catch (e) {
-      debugPrint(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Network error looking up barcode')),
       );
