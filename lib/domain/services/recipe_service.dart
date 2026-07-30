@@ -15,10 +15,11 @@ class RecipeService {
     await _db.transaction(() async {
       for (final ingredient in recipe.ingredients) {
         final normalizedQuantity = ingredient.quantityNeeded * ingredient.gramWeight;
-        await _db.pantryDao.subtractQuantity(normalizedQuantity, ingredient.pantryId);
+        final roundedQuantity = (normalizedQuantity * 10).floor() / 10;
+        // await _db.pantryDao.subtractQuantity(roundedQuantity, ingredient.pantryId);
 
-        await _db.recipeHistoryDao.insert(RecipeHistoryWithIngredients.fromRecipe(recipe, multiplier, DateTime.now()));
       }
+      await _db.recipeHistoryDao.insert(RecipeHistoryWithIngredients.fromRecipe(recipe, multiplier, DateTime.now()));
     });
   }
 }

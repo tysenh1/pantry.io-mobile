@@ -24,7 +24,7 @@ class RecipeHistoryDao extends DatabaseAccessor<AppDatabase> with _$RecipeHistor
   Stream<List<RecipeHistoryWithIngredients>> watchAllRecipes({
     Set<String>? selectedTags,
   }) {
-    return select(recipeHistory).watch().map((rows) {
+    return (select(recipeHistory)..orderBy([(t) => OrderingTerm.desc(t.cookedAt)])).watch().map((rows) {
       List<RecipeHistoryWithIngredients> recipeHistoryList = [];
 
       for (final recipe in rows) {
@@ -59,7 +59,7 @@ class RecipeHistoryDao extends DatabaseAccessor<AppDatabase> with _$RecipeHistor
         recipeId: Value(recipe.recipeId),
         name: recipe.name,
         instructions: recipe.instructions,
-        tags: Value(recipe.tagString),
+        tags: Value(jsonEncode(recipe.tags?.toList() ?? [])),
         ingredientsConsumed: recipe.ingredientsConsumed,
         multiplier: Value(recipe.multiplier),
         cookedAt: recipe.cookedAt

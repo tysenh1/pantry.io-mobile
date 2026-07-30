@@ -93,7 +93,6 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       placeholder: 'Search Recipes',
                       onChanged: (val)  {
                         setState(() {_searchQuery = val; _updateStream();});
-                        _updateStream();
                       }
                     ),
                     AppTagCarousel(

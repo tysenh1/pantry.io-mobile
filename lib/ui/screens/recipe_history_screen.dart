@@ -28,6 +28,13 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
   final Set<String> _selectedTags = {};
   String _searchQuery = "";
 
+  late Stream<List<RecipeHistoryWithIngredients>> _recipeHistoryStream;
+
+  void _updateStream() {
+    final db = context.read<AppDatabase>();
+    _recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes(selectedTags: _selectedTags);
+  }
+
   void handleTap(String tag) {
     setState(() {
       if (_selectedTags.contains(tag)) {
@@ -35,12 +42,16 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
       } else {
         _selectedTags.add(tag);
       }
+      _updateStream();
     });
   }
 
   @override
   void initState() {
     super.initState();
+
+    final db = context.read<AppDatabase>();
+    _recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes(selectedTags: _selectedTags);
   }
 
   @override
@@ -50,8 +61,6 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final db = context.read<AppDatabase>();
-    Stream<List<RecipeHistoryWithIngredients>> recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes();
     return Scaffold(
       appBar: AppHeader(title: 'Cooking History'),
       body: CustomScrollView(
@@ -66,7 +75,9 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
                   children: [
                     AppTextField(
                       placeholder: 'Search Cooking History',
-                      onChanged: (val) => setState(() => _searchQuery = val)
+                      onChanged: (val) {
+                        setState(() {_searchQuery = val; _updateStream();});
+                      }
                     ),
                     AppTagCarousel(
                       tags: commonTags,
@@ -82,7 +93,7 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
             )
           ),
           StreamBuilder<List<RecipeHistoryWithIngredients>>(
-            stream: recipeHistoryStream,
+            stream: _recipeHistoryStream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return
@@ -90,6 +101,14 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
                       child: Center(child: CircularProgressIndicator())
                     );
               }
+
+              // if (snapshot.hasError) {
+              //   debugPrint('stream error: ${snapshot.error}');
+              //   debugPrint('stack trace: ${snapshot.stackTrace}');
+              //   return SliverToBoxAdapter(
+              //     child: Text('Error: ${snapshot.error}'),
+              //   );
+              // }
               if (snapshot.data!.isEmpty) {
                 return const SliverToBoxAdapter(
                   child: Center(
