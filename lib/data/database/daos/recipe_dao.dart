@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:pantry_io_mobile/core/constants/get_recipe_sort_order.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipes_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
@@ -69,6 +70,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
   Stream<List<RecipeWithIngredients>> watchAllRecipes({
     bool filterIncompleteRecipes = true,
     Set<String>? selectedTags,
+    GetRecipeSortOrder sortOrder = GetRecipeSortOrder.nameAsc
   }) {
     final query = select(recipes).join([
       innerJoin(recipeIngredients, recipeIngredients.recipeId.equalsExp(recipes.id)),
@@ -133,7 +135,14 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
       if (selectedTags != null && selectedTags.isNotEmpty) {
         allRecipes = _filterRecipesByTags(allRecipes, selectedTags);
       }
-      return allRecipes.map((recipe) => recipe).toList();
+
+      switch (sortOrder) {
+        case GetRecipeSortOrder.nameAsc:
+          allRecipes.sort((a, b) => a.name.compareTo(b.name));
+        case GetRecipeSortOrder.nameDesc:
+          allRecipes.sort((a, b) => b.name.compareTo(a.name));
+      }
+      return allRecipes;
     });
   }
 }
