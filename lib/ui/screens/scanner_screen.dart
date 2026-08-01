@@ -24,9 +24,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
   final TextEditingController _barcodeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _unitSizeController = TextEditingController();
-  final TextEditingController _unitTypeController = TextEditingController();
 
-  bool _isLoadingProduct = false;
+  bool _isProductLoading = false;
   ProductInfo? productInfo;
   List<GenericNameInfo> _dropdownItems = [];
   List<GenericNameInfo> _genericNames = [];
@@ -60,7 +59,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   Future<void> _fetchProductData(String barcode) async {
     setState(() {
-      _isLoadingProduct = true;
+      _isProductLoading = true;
     });
 
     final db = Provider.of<AppDatabase>(context, listen: false);
@@ -79,7 +78,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
         _barcodeController.text = localItem.$1.barcode;
         _nameController.text = localItem.$1.productName;
         _unitSizeController.text = localItem.$1.unitSize.toString();
-        _unitTypeController.text = localItem.$1.unitType;
       });
 
       return;
@@ -119,12 +117,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
             .toList();
         String productName = result.product?.productName ?? '';
         double quantity = parseQuantity(result);
-        String unit = parseUnit(result);
+        // String unit = parseUnit(result);
         setState(() {
 
 
           if (filteredGenericNames.isNotEmpty) {
             _selectedGenericId = filteredGenericNames.first.id;
+            _availableUnits = filteredGenericNames.first.units;
+            _selectedUnit = _availableUnits.first;
             _dropdownItems = filteredGenericNames;
             _showGenericNamesReset = true;
           } else {
@@ -139,7 +139,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
           _barcodeController.text = barcode;
           _nameController.text = productName;
           _unitSizeController.text = quantity.toString();
-          _unitTypeController.text = unit;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -154,7 +153,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
       );
     } finally {
       if (mounted) {
-        setState(() => _isLoadingProduct = false);
+        setState(() => _isProductLoading = false);
       }
     }
   }
@@ -182,7 +181,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                                 onBarcodeScanned: (barcode) {
                                   _fetchProductData(barcode);
                                   Navigator.of(context).pop();
-                                }
+                                },
+                              isProductLoading: _isProductLoading
                             )
                         )
                     );
@@ -203,6 +203,10 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
     final db = context.read<AppDatabase>();
     final conversions = await db.ingredientConversionsDao.getAvailableUnitConversions(selectedName.id);
+
+    for (final con in conversions) {
+      debugPrint("con ${con}");
+    }
 
     setState(() {
       _availableUnits = conversions;
@@ -232,9 +236,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 children: [
                   AppTextField(
                     placeholder: 'Barcode',
+                    controller: _barcodeController
                   ),
                   AppTextField(
                     placeholder: 'Product Name',
+                    controller: _nameController
                   ),
                   AppDropdown(
                     items: _dropdownItems.asMap().entries.map((entry) {
@@ -245,6 +251,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         child: Text(data.name)
                       );
                     }).toList(),
+                    value: _selectedGenericId,
                     placeholder: 'Generic Name',
                     onChanged: (int? newId) => _onGenericNameChanged(newId),
                   ),
@@ -253,7 +260,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: AppTextField(placeholder: 'Quantity', keyboardType: TextInputType.numberWithOptions(decimal: true))
+                        child: AppTextField(
+                            placeholder: 'Quantity',
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
+                          controller: _unitSizeController
+                        )
                       ),
                       SizedBox(width: 16),
                       Expanded(

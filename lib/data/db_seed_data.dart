@@ -1024,6 +1024,7 @@ Future<void> seedAllData(AppDatabase db) async {
         PantryCompanion.insert(
           id: Value(item['id'] as int),
           quantity: Value(item['qty'] as double),
+          unit: item['unit'] as String,
           isStaple: Value(item['staple'] as bool),
           genericNameId: item['genericNameId'] as int,
         ),

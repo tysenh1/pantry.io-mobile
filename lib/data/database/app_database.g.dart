@@ -722,8 +722,23 @@ class $PantryTable extends Pantry with TableInfo<$PantryTable, PantryData> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
   @override
-  List<GeneratedColumn> get $columns => [id, genericNameId, quantity, isStaple];
+  late final GeneratedColumn<String> unit = GeneratedColumn<String>(
+    'unit',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    genericNameId,
+    quantity,
+    isStaple,
+    unit,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -762,6 +777,14 @@ class $PantryTable extends Pantry with TableInfo<$PantryTable, PantryData> {
         isStaple.isAcceptableOrUnknown(data['is_staple']!, _isStapleMeta),
       );
     }
+    if (data.containsKey('unit')) {
+      context.handle(
+        _unitMeta,
+        unit.isAcceptableOrUnknown(data['unit']!, _unitMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_unitMeta);
+    }
     return context;
   }
 
@@ -787,6 +810,10 @@ class $PantryTable extends Pantry with TableInfo<$PantryTable, PantryData> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_staple'],
       )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      )!,
     );
   }
 
@@ -801,11 +828,13 @@ class PantryData extends DataClass implements Insertable<PantryData> {
   final int genericNameId;
   final double quantity;
   final bool isStaple;
+  final String unit;
   const PantryData({
     required this.id,
     required this.genericNameId,
     required this.quantity,
     required this.isStaple,
+    required this.unit,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -814,6 +843,7 @@ class PantryData extends DataClass implements Insertable<PantryData> {
     map['generic_name_id'] = Variable<int>(genericNameId);
     map['quantity'] = Variable<double>(quantity);
     map['is_staple'] = Variable<bool>(isStaple);
+    map['unit'] = Variable<String>(unit);
     return map;
   }
 
@@ -823,6 +853,7 @@ class PantryData extends DataClass implements Insertable<PantryData> {
       genericNameId: Value(genericNameId),
       quantity: Value(quantity),
       isStaple: Value(isStaple),
+      unit: Value(unit),
     );
   }
 
@@ -836,6 +867,7 @@ class PantryData extends DataClass implements Insertable<PantryData> {
       genericNameId: serializer.fromJson<int>(json['genericNameId']),
       quantity: serializer.fromJson<double>(json['quantity']),
       isStaple: serializer.fromJson<bool>(json['isStaple']),
+      unit: serializer.fromJson<String>(json['unit']),
     );
   }
   @override
@@ -846,6 +878,7 @@ class PantryData extends DataClass implements Insertable<PantryData> {
       'genericNameId': serializer.toJson<int>(genericNameId),
       'quantity': serializer.toJson<double>(quantity),
       'isStaple': serializer.toJson<bool>(isStaple),
+      'unit': serializer.toJson<String>(unit),
     };
   }
 
@@ -854,11 +887,13 @@ class PantryData extends DataClass implements Insertable<PantryData> {
     int? genericNameId,
     double? quantity,
     bool? isStaple,
+    String? unit,
   }) => PantryData(
     id: id ?? this.id,
     genericNameId: genericNameId ?? this.genericNameId,
     quantity: quantity ?? this.quantity,
     isStaple: isStaple ?? this.isStaple,
+    unit: unit ?? this.unit,
   );
   PantryData copyWithCompanion(PantryCompanion data) {
     return PantryData(
@@ -868,6 +903,7 @@ class PantryData extends DataClass implements Insertable<PantryData> {
           : this.genericNameId,
       quantity: data.quantity.present ? data.quantity.value : this.quantity,
       isStaple: data.isStaple.present ? data.isStaple.value : this.isStaple,
+      unit: data.unit.present ? data.unit.value : this.unit,
     );
   }
 
@@ -877,13 +913,14 @@ class PantryData extends DataClass implements Insertable<PantryData> {
           ..write('id: $id, ')
           ..write('genericNameId: $genericNameId, ')
           ..write('quantity: $quantity, ')
-          ..write('isStaple: $isStaple')
+          ..write('isStaple: $isStaple, ')
+          ..write('unit: $unit')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, genericNameId, quantity, isStaple);
+  int get hashCode => Object.hash(id, genericNameId, quantity, isStaple, unit);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -891,7 +928,8 @@ class PantryData extends DataClass implements Insertable<PantryData> {
           other.id == this.id &&
           other.genericNameId == this.genericNameId &&
           other.quantity == this.quantity &&
-          other.isStaple == this.isStaple);
+          other.isStaple == this.isStaple &&
+          other.unit == this.unit);
 }
 
 class PantryCompanion extends UpdateCompanion<PantryData> {
@@ -899,29 +937,35 @@ class PantryCompanion extends UpdateCompanion<PantryData> {
   final Value<int> genericNameId;
   final Value<double> quantity;
   final Value<bool> isStaple;
+  final Value<String> unit;
   const PantryCompanion({
     this.id = const Value.absent(),
     this.genericNameId = const Value.absent(),
     this.quantity = const Value.absent(),
     this.isStaple = const Value.absent(),
+    this.unit = const Value.absent(),
   });
   PantryCompanion.insert({
     this.id = const Value.absent(),
     required int genericNameId,
     this.quantity = const Value.absent(),
     this.isStaple = const Value.absent(),
-  }) : genericNameId = Value(genericNameId);
+    required String unit,
+  }) : genericNameId = Value(genericNameId),
+       unit = Value(unit);
   static Insertable<PantryData> custom({
     Expression<int>? id,
     Expression<int>? genericNameId,
     Expression<double>? quantity,
     Expression<bool>? isStaple,
+    Expression<String>? unit,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (genericNameId != null) 'generic_name_id': genericNameId,
       if (quantity != null) 'quantity': quantity,
       if (isStaple != null) 'is_staple': isStaple,
+      if (unit != null) 'unit': unit,
     });
   }
 
@@ -930,12 +974,14 @@ class PantryCompanion extends UpdateCompanion<PantryData> {
     Value<int>? genericNameId,
     Value<double>? quantity,
     Value<bool>? isStaple,
+    Value<String>? unit,
   }) {
     return PantryCompanion(
       id: id ?? this.id,
       genericNameId: genericNameId ?? this.genericNameId,
       quantity: quantity ?? this.quantity,
       isStaple: isStaple ?? this.isStaple,
+      unit: unit ?? this.unit,
     );
   }
 
@@ -954,6 +1000,9 @@ class PantryCompanion extends UpdateCompanion<PantryData> {
     if (isStaple.present) {
       map['is_staple'] = Variable<bool>(isStaple.value);
     }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
+    }
     return map;
   }
 
@@ -963,7 +1012,8 @@ class PantryCompanion extends UpdateCompanion<PantryData> {
           ..write('id: $id, ')
           ..write('genericNameId: $genericNameId, ')
           ..write('quantity: $quantity, ')
-          ..write('isStaple: $isStaple')
+          ..write('isStaple: $isStaple, ')
+          ..write('unit: $unit')
           ..write(')'))
         .toString();
   }
@@ -3372,6 +3422,7 @@ typedef $$PantryTableCreateCompanionBuilder =
       required int genericNameId,
       Value<double> quantity,
       Value<bool> isStaple,
+      required String unit,
     });
 typedef $$PantryTableUpdateCompanionBuilder =
     PantryCompanion Function({
@@ -3379,6 +3430,7 @@ typedef $$PantryTableUpdateCompanionBuilder =
       Value<int> genericNameId,
       Value<double> quantity,
       Value<bool> isStaple,
+      Value<String> unit,
     });
 
 final class $$PantryTableReferences
@@ -3450,6 +3502,11 @@ class $$PantryTableFilterComposer
 
   ColumnFilters<bool> get isStaple => $composableBuilder(
     column: $table.isStaple,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get unit => $composableBuilder(
+    column: $table.unit,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3526,6 +3583,11 @@ class $$PantryTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get unit => $composableBuilder(
+    column: $table.unit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$GenericNamesTableOrderingComposer get genericNameId {
     final $$GenericNamesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -3567,6 +3629,9 @@ class $$PantryTableAnnotationComposer
 
   GeneratedColumn<bool> get isStaple =>
       $composableBuilder(column: $table.isStaple, builder: (column) => column);
+
+  GeneratedColumn<String> get unit =>
+      $composableBuilder(column: $table.unit, builder: (column) => column);
 
   $$GenericNamesTableAnnotationComposer get genericNameId {
     final $$GenericNamesTableAnnotationComposer composer = $composerBuilder(
@@ -3653,11 +3718,13 @@ class $$PantryTableTableManager
                 Value<int> genericNameId = const Value.absent(),
                 Value<double> quantity = const Value.absent(),
                 Value<bool> isStaple = const Value.absent(),
+                Value<String> unit = const Value.absent(),
               }) => PantryCompanion(
                 id: id,
                 genericNameId: genericNameId,
                 quantity: quantity,
                 isStaple: isStaple,
+                unit: unit,
               ),
           createCompanionCallback:
               ({
@@ -3665,11 +3732,13 @@ class $$PantryTableTableManager
                 required int genericNameId,
                 Value<double> quantity = const Value.absent(),
                 Value<bool> isStaple = const Value.absent(),
+                required String unit,
               }) => PantryCompanion.insert(
                 id: id,
                 genericNameId: genericNameId,
                 quantity: quantity,
                 isStaple: isStaple,
+                unit: unit,
               ),
           withReferenceMapper: (p0) => p0
               .map(

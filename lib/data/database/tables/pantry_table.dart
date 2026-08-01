@@ -10,6 +10,7 @@ class Pantry extends Table {
   )();
   RealColumn get quantity => real().withDefault(const Constant(0.0))();
   BoolColumn get isStaple => boolean().withDefault(const Constant(false))();
+  TextColumn get unit => text()();
 
   @override
   Set<Column> get primaryKey => {id};

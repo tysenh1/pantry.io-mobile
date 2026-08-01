@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:fuzzy/data/fuzzy_options.dart';
 import 'package:fuzzy/data/result.dart';
 import 'package:fuzzy/fuzzy.dart';
@@ -93,6 +94,10 @@ List<Result<GenericNameInfo>> findGenericMatch(String? genericName, String? prod
   final finalResults = uniqueResults.values.toList();
 
   finalResults.sort((a, b) => a.score.compareTo(b.score));
+
+  for (final thing in finalResults) {
+    debugPrint("kill me ${thing.item.units}");
+  }
 
   return finalResults;
 

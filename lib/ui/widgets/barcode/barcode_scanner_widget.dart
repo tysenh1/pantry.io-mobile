@@ -4,8 +4,13 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 class BarcodeScannerWidget extends StatefulWidget {
   final Function(String) onBarcodeScanned;
+  final bool isProductLoading;
 
-  const BarcodeScannerWidget({super.key, required this.onBarcodeScanned});
+  const BarcodeScannerWidget({
+    super.key,
+    required this.onBarcodeScanned,
+    required this.isProductLoading
+  });
 
   @override
   State<BarcodeScannerWidget> createState() => _BarcodeScannerWidgetState();
@@ -60,7 +65,7 @@ class _BarcodeScannerWidgetState extends State<BarcodeScannerWidget> {
   }
 
   Widget _buildBody() {
-    if (_isChecking) {
+    if (_isChecking || widget.isProductLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 

@@ -7,6 +7,7 @@ mixin _$IngredientConversionsDaoMixin on DatabaseAccessor<AppDatabase> {
   $GenericNamesTable get genericNames => attachedDatabase.genericNames;
   $IngredientConversionsTable get ingredientConversions =>
       attachedDatabase.ingredientConversions;
+  $PantryTable get pantry => attachedDatabase.pantry;
   IngredientConversionsDaoManager get managers =>
       IngredientConversionsDaoManager(this);
 }
@@ -21,4 +22,6 @@ class IngredientConversionsDaoManager {
         _db.attachedDatabase,
         _db.ingredientConversions,
       );
+  $$PantryTableTableManager get pantry =>
+      $$PantryTableTableManager(_db.attachedDatabase, _db.pantry);
 }

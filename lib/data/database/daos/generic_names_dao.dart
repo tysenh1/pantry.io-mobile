@@ -35,10 +35,11 @@ class GenericNamesDao extends DatabaseAccessor<AppDatabase> with _$GenericNamesD
       final id = row.read(genericNames.id)!;
       final name = row.read(genericNames.name)!;
       final pantryId = row.read(pantry.id)!;
+      final pantryUnit = row.read(pantry.unit);
       final conversion = row.readTable(ingredientConversions);
 
       if (!groupedByName.containsKey(id)) {
-        groupedByName[id] = (name, {}, pantryId);
+        groupedByName[id] = (name, {pantryUnit!}, pantryId);
       }
 
       groupedByName[id]!.$2.add(conversion.unit);
