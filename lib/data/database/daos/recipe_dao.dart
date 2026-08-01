@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:pantry_io_mobile/core/constants/get_recipe_sort_order.dart';
+import 'package:pantry_io_mobile/core/utils/get_recipe_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipes_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
@@ -38,40 +37,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
     });
   }
 
-  bool _isIngredientQuantitySufficient(IngredientItem ing) {
-    return ing.pantryQuantity >= (ing.quantityNeeded * ing.gramWeight);
-  }
-
-  List<RecipeWithIngredients> _filterCookableRecipes(
-    List<RecipeWithIngredients> recipes
-  ) {
-    return recipes.where((recipe) {
-      final requiredIngredients = recipe.ingredients
-          .where((i) => !i.isOptional)
-          .toList();
-
-      return requiredIngredients.every(
-          (ingredient) =>
-              // ingredient.isStaple ||
-              _isIngredientQuantitySufficient(ingredient),
-      );
-    }).toList();
-  }
-
-  List<RecipeWithIngredients> _filterRecipesByTags(
-      List<RecipeWithIngredients> recipes,
-      Set<String> tags
-  ) {
-    return recipes.where((recipe) {
-      return tags.every((tag) => recipe.tags?.contains(tag) ?? false);
-    }).toList();
-  }
-
-  Stream<List<RecipeWithIngredients>> watchAllRecipes({
-    bool filterIncompleteRecipes = true,
-    Set<String>? selectedTags,
-    GetRecipeSortOrder sortOrder = GetRecipeSortOrder.nameAsc
-  }) {
+  Stream<List<RecipeWithIngredients>> watchAllRecipes() {
     final query = select(recipes).join([
       innerJoin(recipeIngredients, recipeIngredients.recipeId.equalsExp(recipes.id)),
       innerJoin(pantry, pantry.id.equalsExp(recipeIngredients.pantryId)),
@@ -109,7 +75,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
 
         if (recipeMap.containsKey(recipe.id)) {
           recipeMap[recipe.id]!.ingredients.add(recipeIngredient);
-          if (!_isIngredientQuantitySufficient(recipeIngredient)) {
+          if (!isIngredientQuantitySufficient(recipeIngredient)) {
             recipeMap[recipe.id]!.isRecipeComplete = false;
           }
         } else {
@@ -118,31 +84,13 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
               name: recipe.name,
               tags: Set<String>.from(jsonDecode(recipe.tags)),
               instructions: recipe.instructions,
-              isRecipeComplete: _isIngredientQuantitySufficient(recipeIngredient),
+              isRecipeComplete: isIngredientQuantitySufficient(recipeIngredient),
               ingredients: [recipeIngredient]
           );
         }
       }
 
-
-
-      List<RecipeWithIngredients> allRecipes = recipeMap.values.toList();
-
-      if (filterIncompleteRecipes) {
-        allRecipes = _filterCookableRecipes(allRecipes);
-      }
-
-      if (selectedTags != null && selectedTags.isNotEmpty) {
-        allRecipes = _filterRecipesByTags(allRecipes, selectedTags);
-      }
-
-      switch (sortOrder) {
-        case GetRecipeSortOrder.nameAsc:
-          allRecipes.sort((a, b) => a.name.compareTo(b.name));
-        case GetRecipeSortOrder.nameDesc:
-          allRecipes.sort((a, b) => b.name.compareTo(a.name));
-      }
-      return allRecipes;
+      return recipeMap.values.toList();
     });
   }
 }

@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
+import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/services/ingredient_service.dart';
-import 'package:pantry_io_mobile/domain/services/recipe_service.dart';
+import 'package:pantry_io_mobile/domain/services/get_recipe_service.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
 import 'package:provider/provider.dart';
@@ -62,14 +63,14 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
   }
 
   Future<void> _confirmCook(BuildContext context) async {
-    final service = context.read<RecipeService>();
     final recipe = widget.recipe;
     final usedFullIngredients = recipe.ingredients
       .where((i) => usedIngredients.contains(i.pantryId)).toList();
 
-    await service.cookRecipe(
+    await GetRecipeService().cookRecipe(
       recipe.copyWith(ingredients: usedFullIngredients),
-      _multiplier
+      _multiplier,
+      context.read<AppDatabase>()
     );
 
     if (context.mounted) {

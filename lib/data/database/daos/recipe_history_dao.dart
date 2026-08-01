@@ -14,19 +14,7 @@ part 'recipe_history_dao.g.dart';
 class RecipeHistoryDao extends DatabaseAccessor<AppDatabase> with _$RecipeHistoryDaoMixin {
   RecipeHistoryDao(super.db);
 
-  List<RecipeHistoryWithIngredients> _filterRecipesByTags(
-      List<RecipeHistoryWithIngredients> recipes,
-      Set<String> tags,
-      ) {
-    return recipes.where((recipe) {
-      return tags.every((tag) => recipe.tags?.contains(tag) ?? false);
-    }).toList();
-  }
-
-  Stream<List<RecipeHistoryWithIngredients>> watchAllRecipes({
-    Set<String>? selectedTags,
-    RecipeHistorySortOrder sortOrder = RecipeHistorySortOrder.dateDesc
-  }) {
+  Stream<List<RecipeHistoryWithIngredients>> watchAllRecipes() {
     return (select(recipeHistory)..orderBy([(t) => OrderingTerm.desc(t.cookedAt)])).watch().map((rows) {
       List<RecipeHistoryWithIngredients> recipeHistoryList = [];
 
@@ -45,18 +33,6 @@ class RecipeHistoryDao extends DatabaseAccessor<AppDatabase> with _$RecipeHistor
             multiplier: recipe.multiplier,
             cookedAt: recipe.cookedAt
         ));
-      }
-
-      if (selectedTags != null && selectedTags.isNotEmpty) {
-        recipeHistoryList =
-            _filterRecipesByTags(recipeHistoryList, selectedTags);
-      }
-
-      switch (sortOrder) {
-        case RecipeHistorySortOrder.dateAsc:
-          recipeHistoryList.sort((a, b) => a.cookedAt.compareTo(b.cookedAt));
-        case RecipeHistorySortOrder.dateDesc:
-          recipeHistoryList.sort((a, b) => b.cookedAt.compareTo(a.cookedAt));
       }
 
       return recipeHistoryList;
