@@ -6,6 +6,7 @@ import 'package:pantry_io_mobile/core/constants/recipe_history_sort_order.dart';
 import 'package:pantry_io_mobile/core/utils/history_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
+import 'package:pantry_io_mobile/domain/services/recipe_history_service.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
@@ -28,14 +29,8 @@ class RecipeHistoryScreen extends StatefulWidget {
 class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
   final Set<String> _selectedTags = {};
   String _searchQuery = "";
-
   late Stream<List<RecipeHistoryWithIngredients>> _recipeHistoryStream;
   RecipeHistorySortOrder sortOrder = RecipeHistorySortOrder.dateDesc;
-
-  void _updateStream(RecipeHistorySortOrder newSortOrder) {
-    final db = context.read<AppDatabase>();
-    _recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes(selectedTags: _selectedTags, sortOrder: newSortOrder);
-  }
 
   void handleTap(String tag) {
     setState(() {
@@ -44,7 +39,6 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
       } else {
         _selectedTags.add(tag);
       }
-      _updateStream(sortOrder);
     });
   }
 
@@ -53,7 +47,7 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
     super.initState();
 
     final db = context.read<AppDatabase>();
-    _recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes(selectedTags: _selectedTags);
+    _recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes();
   }
 
   @override
@@ -78,7 +72,7 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
                     AppTextField(
                       placeholder: 'Search Cooking History',
                       onChanged: (val) {
-                        setState(() {_searchQuery = val; _updateStream(sortOrder);});
+                        setState(() {_searchQuery = val;});
                       }
                     ),
                     AppTagCarousel(
@@ -91,10 +85,7 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
                     AppDropdown(
                       items: recipeHistorySortOptions,
                       value: sortOrder,
-                      onChanged: (RecipeHistorySortOrder? newSortOrder) => setState(() {
-                        sortOrder = newSortOrder!;
-                        _updateStream(newSortOrder);
-                      })
+                      onChanged: (RecipeHistorySortOrder? newSortOrder) => setState(() {sortOrder = newSortOrder!;})
                     )
                   ]
                 )
@@ -137,26 +128,12 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
 
               List<RecipeHistoryWithIngredients> displayedRecipes = snapshot.data!;
 
-              if (_searchQuery.isNotEmpty) {
-                final fuse = Fuzzy<RecipeHistoryWithIngredients>(
-                  displayedRecipes,
-                  options: FuzzyOptions(
-                    keys: [
-                      WeightedKey(name: 'name', getter: (r) => r.name, weight: 1.0),
-                      // Uncomment this codeblock if you want tags to count in the fuzzy search
-                      // WeightedKey(
-                      //   name: 'tags',
-                      //   getter: (r) => r.tags ?? '',
-                      //   weight: 0.7,
-                      // ),
-                    ],
-                    threshold: 0.4,
-                  ),
-                );
-
-                final results = fuse.search(_searchQuery);
-                displayedRecipes = results.map((r) => r.item).toList();
-              }
+              displayedRecipes = RecipeHistoryService().process(
+                recipes: displayedRecipes,
+                sortOrder: sortOrder,
+                searchQuery: _searchQuery,
+                selectedTags: _selectedTags
+              );
 
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
