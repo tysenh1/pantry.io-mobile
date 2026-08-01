@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/core/constants/common_tags.dart';
+import 'package:pantry_io_mobile/core/constants/get_recipe_sort_order.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/screens/recipe_history_screen.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
+import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
@@ -31,9 +33,12 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
   late Stream<List<RecipeWithIngredients>> _recipeStream;
 
-  void _updateStream() {
+  GetRecipeSortOrder sortOrder = GetRecipeSortOrder.nameAsc;
+
+  void _updateStream(GetRecipeSortOrder? newSortOrder) {
+    debugPrint("the stream should be updated right now, this is the new sort order: $newSortOrder");
     final db = context.read<AppDatabase>();
-    _recipeStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: Set<String>.from(_selectedTags));
+    _recipeStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: Set<String>.from(_selectedTags), sortOrder: newSortOrder!);
   }
 
   void handleTap(String tag) {
@@ -44,7 +49,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
         _selectedTags.add(tag);
       }
 
-      _updateStream();
+      _updateStream(sortOrder);
 
     });
   }
@@ -92,7 +97,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                     AppTextField(
                       placeholder: 'Search Recipes',
                       onChanged: (val)  {
-                        setState(() {_searchQuery = val; _updateStream();});
+                        setState(() {_searchQuery = val; _updateStream(sortOrder);});
                       }
                     ),
                     AppTagCarousel(
@@ -108,9 +113,21 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       onChanged: (bool newValue) {
                         setState(() {
                           _areIncompleteRecipesShown = newValue;
-                          _updateStream();
+                          _updateStream(sortOrder);
                         });
                       }
+                    ),
+                    AppDropdown(
+                      items: getRecipeSortOptions.map((option) => DropdownMenuItem<GetRecipeSortOrder>(
+                        value: option.$1,
+                        child: Text(option.$2)
+                      )).toList(),
+                      placeholder: 'Sort Options',
+                      value: sortOrder,
+                      onChanged: (GetRecipeSortOrder? newSortOrder) => setState(() {
+                        sortOrder = newSortOrder!;
+                        _updateStream(newSortOrder);
+                      })
                     )
                   ]
                 )
