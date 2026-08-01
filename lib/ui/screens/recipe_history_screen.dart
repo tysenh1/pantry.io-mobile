@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/core/constants/common_tags.dart';
+import 'package:pantry_io_mobile/core/constants/recipe_history_sort_order.dart';
 import 'package:pantry_io_mobile/core/utils/history_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
@@ -29,10 +30,11 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
   String _searchQuery = "";
 
   late Stream<List<RecipeHistoryWithIngredients>> _recipeHistoryStream;
+  RecipeHistorySortOrder sortOrder = RecipeHistorySortOrder.dateDesc;
 
-  void _updateStream() {
+  void _updateStream(RecipeHistorySortOrder newSortOrder) {
     final db = context.read<AppDatabase>();
-    _recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes(selectedTags: _selectedTags);
+    _recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes(selectedTags: _selectedTags, sortOrder: newSortOrder);
   }
 
   void handleTap(String tag) {
@@ -42,7 +44,7 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
       } else {
         _selectedTags.add(tag);
       }
-      _updateStream();
+      _updateStream(sortOrder);
     });
   }
 
@@ -76,7 +78,7 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
                     AppTextField(
                       placeholder: 'Search Cooking History',
                       onChanged: (val) {
-                        setState(() {_searchQuery = val; _updateStream();});
+                        setState(() {_searchQuery = val; _updateStream(sortOrder);});
                       }
                     ),
                     AppTagCarousel(
@@ -86,7 +88,14 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
                       selectedTags: _selectedTags,
                       alignment: Alignment.centerLeft,
                     ),
-                    AppDropdown(items: [DropdownMenuItem(child: Text('thing 1'))], onChanged: (_) {})
+                    AppDropdown(
+                      items: recipeHistorySortOptions,
+                      value: sortOrder,
+                      onChanged: (RecipeHistorySortOrder? newSortOrder) => setState(() {
+                        sortOrder = newSortOrder!;
+                        _updateStream(newSortOrder);
+                      })
+                    )
                   ]
                 )
               )
