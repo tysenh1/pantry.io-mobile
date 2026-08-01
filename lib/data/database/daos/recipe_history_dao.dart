@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:pantry_io_mobile/core/constants/get_recipe_sort_order.dart';
+import 'package:pantry_io_mobile/core/constants/recipe_history_sort_order.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_history_table.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
@@ -14,7 +16,7 @@ class RecipeHistoryDao extends DatabaseAccessor<AppDatabase> with _$RecipeHistor
 
   List<RecipeHistoryWithIngredients> _filterRecipesByTags(
       List<RecipeHistoryWithIngredients> recipes,
-      Set<String> tags
+      Set<String> tags,
       ) {
     return recipes.where((recipe) {
       return tags.every((tag) => recipe.tags?.contains(tag) ?? false);
@@ -23,6 +25,7 @@ class RecipeHistoryDao extends DatabaseAccessor<AppDatabase> with _$RecipeHistor
 
   Stream<List<RecipeHistoryWithIngredients>> watchAllRecipes({
     Set<String>? selectedTags,
+    RecipeHistorySortOrder sortOrder = RecipeHistorySortOrder.dateDesc
   }) {
     return (select(recipeHistory)..orderBy([(t) => OrderingTerm.desc(t.cookedAt)])).watch().map((rows) {
       List<RecipeHistoryWithIngredients> recipeHistoryList = [];
@@ -47,6 +50,13 @@ class RecipeHistoryDao extends DatabaseAccessor<AppDatabase> with _$RecipeHistor
       if (selectedTags != null && selectedTags.isNotEmpty) {
         recipeHistoryList =
             _filterRecipesByTags(recipeHistoryList, selectedTags);
+      }
+
+      switch (sortOrder) {
+        case RecipeHistorySortOrder.dateAsc:
+          recipeHistoryList.sort((a, b) => a.cookedAt.compareTo(b.cookedAt));
+        case RecipeHistorySortOrder.dateDesc:
+          recipeHistoryList.sort((a, b) => b.cookedAt.compareTo(a.cookedAt));
       }
 
       return recipeHistoryList;

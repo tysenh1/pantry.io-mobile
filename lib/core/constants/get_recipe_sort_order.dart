@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
+
 enum GetRecipeSortOrder {
   nameAsc,
   nameDesc
 }
 
-final List<(GetRecipeSortOrder, String)> getRecipeSortOptions = [
-  (GetRecipeSortOrder.nameAsc, 'A → Z'),
-  (GetRecipeSortOrder.nameDesc, 'Z → A')
+final getRecipeSortOptions = const [
+  DropdownMenuItem(value: GetRecipeSortOrder.nameAsc, child: Text('A → Z')),
+  DropdownMenuItem(value: GetRecipeSortOrder.nameDesc, child: Text('Z → A'))
 ];

@@ -35,7 +35,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
   GetRecipeSortOrder sortOrder = GetRecipeSortOrder.nameAsc;
 
-  void _updateStream(GetRecipeSortOrder? newSortOrder) {
+  void _updateStream(GetRecipeSortOrder newSortOrder) {
     debugPrint("the stream should be updated right now, this is the new sort order: $newSortOrder");
     final db = context.read<AppDatabase>();
     _recipeStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: Set<String>.from(_selectedTags), sortOrder: newSortOrder!);
@@ -118,11 +118,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       }
                     ),
                     AppDropdown(
-                      items: getRecipeSortOptions.map((option) => DropdownMenuItem<GetRecipeSortOrder>(
-                        value: option.$1,
-                        child: Text(option.$2)
-                      )).toList(),
-                      placeholder: 'Sort Options',
+                      items: getRecipeSortOptions,
                       value: sortOrder,
                       onChanged: (GetRecipeSortOrder? newSortOrder) => setState(() {
                         sortOrder = newSortOrder!;
