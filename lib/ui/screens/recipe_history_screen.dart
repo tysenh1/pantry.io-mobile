@@ -1,23 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/core/constants/common_tags.dart';
 import 'package:pantry_io_mobile/core/constants/recipe_history_sort_order.dart';
-import 'package:pantry_io_mobile/core/utils/history_utils.dart';
+import 'package:pantry_io_mobile/core/utils/recipe_history_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/services/recipe_history_service.dart';
-import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
-import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe_history/recipe_history_card.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 class RecipeHistoryScreen extends StatefulWidget {
   const RecipeHistoryScreen({super.key});

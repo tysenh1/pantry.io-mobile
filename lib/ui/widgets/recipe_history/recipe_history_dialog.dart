@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/core/utils/history_utils.dart';
+import 'package:pantry_io_mobile/core/utils/recipe_history_utils.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';

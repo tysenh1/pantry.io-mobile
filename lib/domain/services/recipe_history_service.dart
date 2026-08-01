@@ -1,5 +1,5 @@
 import 'package:pantry_io_mobile/core/constants/recipe_history_sort_order.dart';
-import 'package:pantry_io_mobile/core/utils/history_utils.dart';
+import 'package:pantry_io_mobile/core/utils/recipe_history_utils.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
 
 class RecipeHistoryService {

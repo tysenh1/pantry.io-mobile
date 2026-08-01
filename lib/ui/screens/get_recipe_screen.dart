@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/core/constants/common_tags.dart';
 import 'package:pantry_io_mobile/core/constants/get_recipe_sort_order.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
+import 'package:pantry_io_mobile/domain/services/get_recipe_service.dart';
 import 'package:pantry_io_mobile/ui/screens/recipe_history_screen.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
@@ -35,12 +35,6 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
   GetRecipeSortOrder sortOrder = GetRecipeSortOrder.nameAsc;
 
-  void _updateStream(GetRecipeSortOrder newSortOrder) {
-    debugPrint("the stream should be updated right now, this is the new sort order: $newSortOrder");
-    final db = context.read<AppDatabase>();
-    _recipeStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: Set<String>.from(_selectedTags), sortOrder: newSortOrder!);
-  }
-
   void handleTap(String tag) {
     setState(() {
       if (_selectedTags.contains(tag)) {
@@ -48,9 +42,6 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
       } else {
         _selectedTags.add(tag);
       }
-
-      _updateStream(sortOrder);
-
     });
   }
 
@@ -59,7 +50,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
     super.initState();
 
     final db = context.read<AppDatabase>();
-    _recipeStream = db.recipeDao.watchAllRecipes(filterIncompleteRecipes: !_areIncompleteRecipesShown, selectedTags: _selectedTags);
+    _recipeStream = db.recipeDao.watchAllRecipes();
   }
 
   @override
@@ -97,7 +88,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                     AppTextField(
                       placeholder: 'Search Recipes',
                       onChanged: (val)  {
-                        setState(() {_searchQuery = val; _updateStream(sortOrder);});
+                        setState(() {_searchQuery = val;});
                       }
                     ),
                     AppTagCarousel(
@@ -113,7 +104,6 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       onChanged: (bool newValue) {
                         setState(() {
                           _areIncompleteRecipesShown = newValue;
-                          _updateStream(sortOrder);
                         });
                       }
                     ),
@@ -122,7 +112,6 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                       value: sortOrder,
                       onChanged: (GetRecipeSortOrder? newSortOrder) => setState(() {
                         sortOrder = newSortOrder!;
-                        _updateStream(newSortOrder);
                       })
                     )
                   ]
@@ -165,26 +154,13 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
               List<RecipeWithIngredients> displayedRecipes = snapshot.data!;
 
-              if (_searchQuery.isNotEmpty) {
-                final fuse = Fuzzy<RecipeWithIngredients>(
-                  displayedRecipes,
-                  options: FuzzyOptions(
-                    keys: [
-                      WeightedKey(name: 'name', getter: (r) => r.name, weight: 1.0),
-                      // Uncomment this codeblock if you want tags to count in the fuzzy search
-                      // WeightedKey(
-                      //   name: 'tags',
-                      //   getter: (r) => r.tags ?? '',
-                      //   weight: 0.7,
-                      // ),
-                    ],
-                    threshold: 0.4,
-                  ),
-                );
-
-                final results = fuse.search(_searchQuery);
-                displayedRecipes = results.map((r) => r.item).toList();
-              }
+              displayedRecipes = GetRecipeService().process(
+                recipes: displayedRecipes,
+                sortOrder: sortOrder,
+                searchQuery: _searchQuery,
+                selectedTags: _selectedTags,
+                showIncompleteRecipes: _areIncompleteRecipesShown
+              );
 
               return SliverList(
                 delegate: SliverChildBuilderDelegate(

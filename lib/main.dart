@@ -24,9 +24,10 @@ void main() {
           create: (context) => AppDatabase.instance,
           dispose: (context, db) => db.close(),
         ),
-        ProxyProvider<AppDatabase, RecipeService>(
-          update: (_, db, __) => RecipeService(db),
-        ),
+        // Uncomment this code if you add more db stuff to the service and want to add it as a provider again
+        // ProxyProvider<AppDatabase, GetRecipeService>(
+        //   update: (_, db, __) => GetRecipeService(db),
+        // ),
 
         ChangeNotifierProvider<AppState>(
           create: (context) {
