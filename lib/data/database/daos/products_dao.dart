@@ -27,7 +27,7 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
       final genericData = rows.first.readTable(genericNames);
       final pantryData = rows.first.readTable(pantry);
 
-      final Map<int, LocalUnit> units = {};
+      final Map<int, LocalUnit> units = {-1: LocalUnit(id: -1, name: pantryData.unit, value: 1.0)};
 
       for (final row in rows) {
         final conversionData = row.readTable(ingredientConversions);

@@ -1,11 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/data/database/tables/pantry_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/generic_names_table.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
-import 'package:pantry_io_mobile/domain/models/local_unit.dart';
-import 'package:pantry_io_mobile/domain/models/scanner_item.dart';
 
 part 'pantry_dao.g.dart';
 
@@ -76,11 +73,23 @@ class PantryDao extends DatabaseAccessor<AppDatabase> with _$PantryDaoMixin {
     ).write(PantryCompanion(quantity: Value(row.quantity - amount)));
   }
 
-  Future<void> updatePantry(int genericNameId, PantryCompanion pantryItem, double productQuantity, int pantryId) async {
+  Future<void> updatePantry(PantryCompanion pantryItem, double productQuantity, int pantryId) async {
     return transaction(() async {
       final newQuantity = pantryItem.quantity.value + productQuantity;
       final updatedItem = pantryItem.copyWith(
         quantity: Value(newQuantity),
+      );
+      await update(pantry).replace(updatedItem);
+    });
+  }
+
+  Future<void> updatePantryByGenericId(PantryCompanion pantryItem, double productQuantity) async {
+    return transaction(() async {
+      final existingItem = await (pantry.select()..where((p) => p.genericNameId.equals(pantryItem.genericNameId.value))).getSingle();
+      final newQuantity = pantryItem.quantity.value + productQuantity;
+      final updatedItem = pantryItem.copyWith(
+        id: Value(existingItem.id),
+        quantity: Value(newQuantity)
       );
       await update(pantry).replace(updatedItem);
     });
