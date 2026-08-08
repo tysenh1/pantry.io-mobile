@@ -73,7 +73,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     final conversions = await db.ingredientConversionsDao.getAvailableUnitConversions(selectedName.id);
 
     setState(() {
-      ing.availableUnits = conversions;
+      ing.availableUnits = conversions.values.map((unit) => unit.name).toSet();
       ing.selectedUnit = ing.availableUnits.first;
     });
   }

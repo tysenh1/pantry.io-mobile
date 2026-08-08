@@ -4,6 +4,8 @@ import 'package:pantry_io_mobile/data/database/tables/pantry_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/generic_names_table.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
+import 'package:pantry_io_mobile/domain/models/local_unit.dart';
+import 'package:pantry_io_mobile/domain/models/scanner_item.dart';
 
 part 'pantry_dao.g.dart';
 
@@ -49,6 +51,21 @@ class PantryDao extends DatabaseAccessor<AppDatabase> with _$PantryDaoMixin {
   //   return await query.getSingle();
   // }
 
+  Future<PantryCompanion> getPantryItemById(int pantryId) async {
+    final item = await (pantry.select()..where((p) => p.id.equals(pantryId))).getSingle();
+    return PantryCompanion.insert(
+      id: Value(item.id),
+      genericNameId: item.genericNameId,
+      quantity: Value(item.quantity),
+      unit: item.unit
+    );
+  }
+
+  Future<PantryCompanion> getPantryFromGenericNameId(int genericNameId) async {
+    final item = await (pantry.select()..where((p) => p.genericNameId.equals(genericNameId))).getSingle();
+    return PantryCompanion.insert(id: Value(item.id), genericNameId: item.genericNameId, unit: item.unit, quantity: Value(item.quantity));
+  }
+
   Future<void> subtractQuantity(double amount, int pantryId) async {
     final row = await (select(pantry)
       ..where((p) => p.id.equals(pantryId))
@@ -59,6 +76,14 @@ class PantryDao extends DatabaseAccessor<AppDatabase> with _$PantryDaoMixin {
     ).write(PantryCompanion(quantity: Value(row.quantity - amount)));
   }
 
-  // Future<int> insertPantryItem()
+  Future<void> updatePantry(int genericNameId, PantryCompanion pantryItem, double productQuantity, int pantryId) async {
+    return transaction(() async {
+      final newQuantity = pantryItem.quantity.value + productQuantity;
+      final updatedItem = pantryItem.copyWith(
+        quantity: Value(newQuantity),
+      );
+      await update(pantry).replace(updatedItem);
+    });
+  }
 
 }

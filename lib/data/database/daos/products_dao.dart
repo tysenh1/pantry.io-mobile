@@ -5,6 +5,7 @@ import 'package:pantry_io_mobile/data/database/tables/generic_names_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/ingredient_conversions_table.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
 import 'package:pantry_io_mobile/data/database/tables/pantry_table.dart';
+import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 
 part 'products_dao.g.dart';
 
@@ -26,11 +27,11 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
       final genericData = rows.first.readTable(genericNames);
       final pantryData = rows.first.readTable(pantry);
 
-      final Set<String> units = {};
+      final Map<int, LocalUnit> units = {};
 
       for (final row in rows) {
         final conversionData = row.readTable(ingredientConversions);
-        units.add(conversionData.unit);
+        units[conversionData.id] = LocalUnit(id: conversionData.id, name: conversionData.unit, value: conversionData.gramWeight);
       }
 
       GenericNameInfo name = GenericNameInfo(
@@ -46,7 +47,11 @@ class ProductsDao extends DatabaseAccessor<AppDatabase> with _$ProductsDaoMixin 
     return null;
   }
 
-  // Future<int> insertProduct(ItemInfo item) async {
-  //   return await into(product).insert(item.toCompanion());
-  // }
+  Future<void> insertProduct(ProductsCompanion product) async {
+    return transaction(() async {
+      final existingItem = await (products.select()..where((p) => p.barcode.equals(product.barcode.value))).getSingleOrNull();
+      if (existingItem != null) return;
+      await into(products).insert(product);
+    });
+  }
 }
