@@ -19,13 +19,24 @@ class AppDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = items.isEmpty ? Colors.grey : Theme.of(context).colorScheme.secondary;
     return DropdownButtonFormField<T>(
       initialValue: value,
       onChanged: onChanged,
-      decoration: InputDecoration(
-        hintText: placeholder,
-        hintStyle: const TextStyle(
-          fontFamily: 'Inter'
+      // decoration: InputDecoration(
+      //   hintText: placeholder,
+      //   hintStyle: TextStyle(
+      //     fontFamily: 'Inter',
+      //     color: color,
+      //   ),
+      // ),
+
+      hint: Text(
+        placeholder ?? '',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          fontFamily: 'Inter',
+          fontSize: 16,
+          color: color,
         )
       ),
       items: items

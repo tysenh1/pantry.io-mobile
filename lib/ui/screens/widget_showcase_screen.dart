@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_history_table.dart';
 import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
+import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
@@ -62,13 +63,20 @@ class _WidgetShowcaseScreenState extends State<WidgetShowcaseScreen> {
           pantryId: 1,
           id: 4,
           name: 'First Generic Name',
-          units: {'first unit', 'second unit'}
+          units: <int, LocalUnit>{
+            0: LocalUnit(id: 0, name: 'first unit', value: 120),
+            1: LocalUnit(id: 1, name: 'second unit', value: 10)
+          }
         ),
         GenericNameInfo(
           pantryId: 2,
           id: 5,
           name: 'Second Generic Name',
-          units: {'third unit', 'fourth unit'}
+          // units: {'third unit', 'fourth unit'}
+          units: <int, LocalUnit>{
+            0: LocalUnit(id: 0, name: 'third unit', value: 340),
+            3: LocalUnit(id: 3, name: 'fourth unit', value: 9345)
+          }
         ),
       ];
 

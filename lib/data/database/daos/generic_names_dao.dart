@@ -4,6 +4,7 @@ import 'package:pantry_io_mobile/data/database/tables/generic_names_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/pantry_table.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
 import 'package:pantry_io_mobile/data/database/tables/ingredient_conversions_table.dart';
+import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 
 part 'generic_names_dao.g.dart';
 
@@ -29,7 +30,7 @@ class GenericNamesDao extends DatabaseAccessor<AppDatabase> with _$GenericNamesD
     ]);
 
     final rows = await query.get();
-    final Map<int, (String, Set<String>, int)> groupedByName = {};
+    final Map<int, (String, Map<int, LocalUnit>, int)> groupedByName = {};
 
     for (final row in rows) {
       final id = row.read(genericNames.id)!;
@@ -39,10 +40,15 @@ class GenericNamesDao extends DatabaseAccessor<AppDatabase> with _$GenericNamesD
       final conversion = row.readTable(ingredientConversions);
 
       if (!groupedByName.containsKey(id)) {
-        groupedByName[id] = (name, {pantryUnit!}, pantryId);
+        groupedByName[id] = (name, {-1: LocalUnit(id: -1, name: pantryUnit!, value: 1.0)}, pantryId);
       }
 
-      groupedByName[id]!.$2.add(conversion.unit);
+      // groupedByName[id]!.$2.add(conversion.unit);
+      groupedByName[id]!.$2[conversion.id] = LocalUnit(
+        id: conversion.id,
+        name: conversion.unit,
+        value: conversion.gramWeight
+      );
     }
 
     return groupedByName.entries.map((entry) {

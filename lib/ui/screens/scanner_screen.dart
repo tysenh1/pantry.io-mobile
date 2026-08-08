@@ -3,15 +3,17 @@ import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:pantry_io_mobile/core/utils/product_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
-import 'package:pantry_io_mobile/domain/models/ingredient_input.dart';
-import 'package:pantry_io_mobile/domain/models/product_info.dart';
+import 'package:pantry_io_mobile/domain/models/scanner_screen_form.dart';
+import 'package:pantry_io_mobile/domain/services/scanner_screen_service.dart';
 import 'package:pantry_io_mobile/ui/widgets/barcode/barcode_scanner_widget.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
+import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 import 'package:provider/provider.dart';
+import 'package:pantry_io_mobile/core/utils/string_utils.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
@@ -21,18 +23,13 @@ class ScannerScreen extends StatefulWidget {
 }
 
 class _ScannerScreenState extends State<ScannerScreen> {
-  final TextEditingController _barcodeController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _unitSizeController = TextEditingController();
+  final ScannerScreenFormModel _formModel = ScannerScreenFormModel();
 
   bool _isProductLoading = false;
-  ProductInfo? productInfo;
   List<GenericNameInfo> _dropdownItems = [];
   List<GenericNameInfo> _genericNames = [];
-  bool _showGenericNamesReset = false;
-  int? _selectedGenericId;
-  String? _selectedUnit;
-  Set<String> _availableUnits = {};
+  // bool _showGenericNamesReset = false;
+  Map<int, LocalUnit> _availableUnits = {};
 
   @override
   void initState() {
@@ -43,6 +40,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   @override
   void dispose() {
     super.dispose();
+    _formModel.dispose();
   }
 
   Future<void> _loadGenericNames() async {
@@ -60,6 +58,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   Future<void> _fetchProductData(String barcode) async {
     setState(() {
       _isProductLoading = true;
+      _dropdownItems = _genericNames;
     });
 
     final db = Provider.of<AppDatabase>(context, listen: false);
@@ -67,19 +66,21 @@ class _ScannerScreenState extends State<ScannerScreen> {
     final localItem = await db.productsDao.getLocalItemByBarcode(barcode);
 
     if (localItem != null) {
-      setState(() {
-        productInfo = ProductInfo(
-          barcode: localItem.$1.barcode,
-          productName: localItem.$1.productName,
-          genericName: localItem.$2,
-          unitSize: localItem.$1.unitSize.toDouble(),
-          unitType: localItem.$1.unitType,
-        );
-        _barcodeController.text = localItem.$1.barcode;
-        _nameController.text = localItem.$1.productName;
-        _unitSizeController.text = localItem.$1.unitSize.toString();
-      });
+      final db = Provider.of<AppDatabase>(context, listen: false);
 
+      try {
+        ScannerScreenService().processLocalItem(localItem.$1, localItem.$2, db);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Error inserting new pantry item."))
+        );
+        return;
+      }
+
+      setState(() {
+        _isProductLoading = false;
+        _showSuccessModal(localItem.$1.productName);
+      });
       return;
     }
 
@@ -117,28 +118,34 @@ class _ScannerScreenState extends State<ScannerScreen> {
             .toList();
         String productName = result.product?.productName ?? '';
         double quantity = parseQuantity(result);
-        // String unit = parseUnit(result);
         setState(() {
 
-
           if (filteredGenericNames.isNotEmpty) {
-            _selectedGenericId = filteredGenericNames.first.id;
+            final parsedUnits = fuzzyFindLocalUnit(result, filteredGenericNames.first.units.values.toList(), parseUnit(result));
+            if (parsedUnits.isNotEmpty) {
+              _formModel.selectedUnitId = parsedUnits.first.item.id;
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Unit could not be parsed, enter in grams/ml if packaging unit is not available.'))
+              );
+            }
+            _formModel.selectedGenericId = filteredGenericNames.first.id;
             _availableUnits = filteredGenericNames.first.units;
-            _selectedUnit = _availableUnits.first;
+            _formModel.selectedUnitId = _availableUnits.keys.first;
             _dropdownItems = filteredGenericNames;
-            _showGenericNamesReset = true;
+            // _showGenericNamesReset = true;
           } else {
-            _selectedGenericId = null;
-            _showGenericNamesReset = false;
+            _formModel.selectedGenericId = null;
+            // _showGenericNamesReset = false;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Product not found. Please enter manually.'),
               ),
             );
           }
-          _barcodeController.text = barcode;
-          _nameController.text = productName;
-          _unitSizeController.text = quantity.toString();
+          _formModel.barcodeController.text = barcode;
+          _formModel.nameController.text = productName.toLowerCase().toTitleCase();
+          _formModel.unitSizeController.text = quantity.toString();
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -199,19 +206,58 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
     final selectedName = _genericNames.firstWhere((name) => name.id == newId);
 
-    _selectedGenericId = newId;
+    _formModel.selectedGenericId = newId;
 
     final db = context.read<AppDatabase>();
     final conversions = await db.ingredientConversionsDao.getAvailableUnitConversions(selectedName.id);
 
-    for (final con in conversions) {
-      debugPrint("con ${con}");
-    }
-
     setState(() {
       _availableUnits = conversions;
-      _selectedUnit = _availableUnits.first;
+      _formModel.selectedUnitId = _availableUnits.keys.first;
     });
+  }
+
+  void _onSubmit() async {
+    if (!_formModel.isValid()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Some fields are missing values.")),
+      );
+      return;
+    }
+
+    // final genericName = _dropdownItems[_formModel.selectedGenericId!];
+    final genericName = _dropdownItems.firstWhere((item) => item.id == _formModel.selectedGenericId);
+    final unit = genericName.units[_formModel.selectedUnitId!];
+    final productCompanion = _formModel.getProductCompanion(unit!);
+
+    final db = context.read<AppDatabase>();
+    try {
+      ScannerScreenService().processNewItem(productCompanion!, unit, genericName.id, db);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error inserting new pantry item."))
+      );
+      return;
+    }
+    _formModel.reset();
+
+    _showSuccessModal(productCompanion.productName.value);
+  }
+
+  void _showSuccessModal(String name) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Success!'),
+        content: Text("$name has been added!"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -236,11 +282,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 children: [
                   AppTextField(
                     placeholder: 'Barcode',
-                    controller: _barcodeController
+                    controller: _formModel.barcodeController
                   ),
                   AppTextField(
                     placeholder: 'Product Name',
-                    controller: _nameController
+                    controller: _formModel.nameController
                   ),
                   AppDropdown(
                     items: _dropdownItems.asMap().entries.map((entry) {
@@ -251,7 +297,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         child: Text(data.name)
                       );
                     }).toList(),
-                    value: _selectedGenericId,
+                    value: _formModel.selectedGenericId,
                     placeholder: 'Generic Name',
                     onChanged: (int? newId) => _onGenericNameChanged(newId),
                   ),
@@ -263,37 +309,55 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         child: AppTextField(
                             placeholder: 'Quantity',
                             keyboardType: TextInputType.numberWithOptions(decimal: true),
-                          controller: _unitSizeController
+                          controller: _formModel.unitSizeController
                         )
                       ),
                       SizedBox(width: 16),
                       Expanded(
-                        child: AppDropdown<String>(
-                          value: _selectedUnit,
-                          items: _availableUnits.map((unit) {
-                            return DropdownMenuItem<String>(
-                              value: unit,
-                              child: Text(unit),
-                            );
-                          }).toList(),
+                        child: AppDropdown<int>(
+                          value: _formModel.selectedUnitId,
+                          items: _formModel.selectedGenericId != null
+                            ? _availableUnits.values.map((unit) =>
+                              DropdownMenuItem<int>(
+                                value: unit.id,
+                                child: Text(unit.name.toTitleCase())
+                              )
+                            ).toList()
+                          : [],
                           onChanged: _availableUnits.isEmpty
                               ? null
-                              : (String? newUnit) {
+                              : (int? newUnitId) {
                             setState(() {
-                              _selectedUnit = newUnit;
+                              _formModel.selectedUnitId = newUnitId;
                             });
                           },
                           placeholder: 'Unit',
                         ),
                       ),
                     ]
+                  ),
+                      AppButton(
+                        type: AppButtonType.secondary,
+                        label: 'Reset Generic Names',
+                        onPressed: () => setState(() {
+                          _dropdownItems = _genericNames;
+                          _formModel.selectedUnitId = null;
+                          _formModel.selectedGenericId = null;
+                        }),
+                      ),
+                  AppButton(
+                    type: AppButtonType.secondary,
+                    label: 'Reset Form',
+                    onPressed: () => setState(() {
+                      _formModel.reset();
+                    })
                   )
                 ],
               )
             ),
             AppButton(
               label: 'Add Pantry Item',
-              onPressed: () {},
+              onPressed: _onSubmit,
             )
           ]
         )

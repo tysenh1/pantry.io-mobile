@@ -4,6 +4,7 @@ import 'package:fuzzy/data/result.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
+import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 
 final UNIT_REGEX = RegExp(r'([0-9.]+)\s*([a-zA-Z]+)');
 
@@ -30,6 +31,24 @@ String parseUnit(ProductResultV3 result) {
   }
 
   return '';
+}
+
+List<Result<LocalUnit>> fuzzyFindLocalUnit(ProductResultV3 result, List<LocalUnit> units, String parsedUnit) {
+  final fuse = Fuzzy<LocalUnit>(
+    units,
+    options: FuzzyOptions(
+      keys: [WeightedKey(name: 'name', getter: (u) => u.name, weight: 1.0)],
+      threshold: 0.4
+    )
+  );
+
+  if (parsedUnit != '') {
+    final results = fuse.search(parsedUnit);
+
+    results.sort((a, b) => a.score.compareTo(b.score));
+    return results;
+  }
+  return [];
 }
 
 List<Result<GenericNameInfo>> findGenericMatch(String? genericName, String? productName, List<String>? categoriesTags, String? categoriesString, List<GenericNameInfo> genericNames) {
@@ -94,10 +113,6 @@ List<Result<GenericNameInfo>> findGenericMatch(String? genericName, String? prod
   final finalResults = uniqueResults.values.toList();
 
   finalResults.sort((a, b) => a.score.compareTo(b.score));
-
-  for (final thing in finalResults) {
-    debugPrint("kill me ${thing.item.units}");
-  }
 
   return finalResults;
 

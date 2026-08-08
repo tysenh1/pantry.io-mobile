@@ -1,9 +1,11 @@
 
 
+import 'package:pantry_io_mobile/domain/models/local_unit.dart';
+
 class GenericNameInfo {
   final int id;
   final String name;
-  final Set<String> units;
+  final Map<int, LocalUnit> units;
   final int pantryId;
 
   const GenericNameInfo({

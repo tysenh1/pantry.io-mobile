@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/tables/ingredient_conversions_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/pantry_table.dart';
+import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 
 part 'ingredient_conversions_dao.g.dart';
 
@@ -19,8 +20,8 @@ class IngredientConversionsDao extends DatabaseAccessor<AppDatabase> with _$Ingr
     return row.gramWeight;
   }
 
-  Future<Set<String>> getAvailableUnitConversions(int genericNameId) async {
-    Set<String> units = {};
+  Future<Map<int, LocalUnit>> getAvailableUnitConversions(int genericNameId) async {
+    Map<int, LocalUnit> units = {};
 
     final query = select(ingredientConversions).join([
       innerJoin(pantry, pantry.genericNameId.equals(genericNameId))
@@ -32,10 +33,10 @@ class IngredientConversionsDao extends DatabaseAccessor<AppDatabase> with _$Ingr
       final conversion = row.readTable(ingredientConversions);
       final pantryRow = row.readTable(pantry);
 
-      if (!units.contains(pantryRow.unit)) {
-        units.add(pantryRow.unit);
+      if (!units.keys.contains(conversion.id)) {
+        units[-1] = LocalUnit(id: -1, name: pantryRow.unit, value: 1.0);
       }
-      units.add(conversion.unit);
+      units[conversion.id] = LocalUnit(id: conversion.id, name: conversion.unit, value: conversion.gramWeight);
     }
 
     return units;
