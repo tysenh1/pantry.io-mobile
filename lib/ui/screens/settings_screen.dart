@@ -21,7 +21,7 @@ class SettingsScreen extends StatelessWidget {
               ),
               value: appState.isLLMConnected,
               onChanged: (value) {
-                appState.setLLMConnected(value);
+                appState.setIsLLMConnected(value);
               },
             ),
           ),

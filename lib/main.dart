@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
+import 'package:pantry_io_mobile/core/storage/storage_service.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/services/get_recipe_service.dart';
 import 'package:provider/provider.dart';
@@ -28,11 +29,18 @@ void main() {
         // ProxyProvider<AppDatabase, GetRecipeService>(
         //   update: (_, db, __) => GetRecipeService(db),
         // ),
+        Provider<StorageService>(
+          create: (context) => StorageService()
+        ),
 
         ChangeNotifierProvider<AppState>(
           create: (context) {
             final db = Provider.of<AppDatabase>(context, listen: false);
-            return AppState(db: db);
+            final storage = context.read<StorageService>();
+            return AppState(
+              db: db,
+              storage: storage
+            )..initialize();
           }
         )
       ],
