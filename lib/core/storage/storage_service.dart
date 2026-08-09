@@ -21,19 +21,28 @@ class StorageService {
   }
 
 
+  Future<void> setIsLLMConnected(bool value) {
+    return _preferences.setBool('llm_connected', value);
+  }
+
+  Future<bool> isLLMConnected() async {
+    return await _preferences.getBool('llm_connected') ?? false;
+  }
+
+
   // --------- Secure Storage Values ---------
   Future<void> saveOFFToken(String token) {
     return _secureStorage.write(
-      key: 'offToken',
+      key: 'off_token',
       value: token
     );
   }
 
   Future<String?> getOFFToken() {
-    return _secureStorage.read(key: 'offToken');
+    return _secureStorage.read(key: 'off_token');
   }
 
   Future<void> deleteOFFToken() {
-    return _secureStorage.delete(key: 'offToken');
+    return _secureStorage.delete(key: 'off_token');
   }
 }
