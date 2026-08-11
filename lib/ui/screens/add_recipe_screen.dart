@@ -10,16 +10,23 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
+import 'package:pantry_io_mobile/ui/widgets/tutorial/tutorial_spotlight.dart';
 import 'package:provider/provider.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class AddRecipeScreen extends StatefulWidget {
-  const AddRecipeScreen({super.key});
+  final bool isTutorial;
+  final VoidCallback? onTutorialNext;
+  const AddRecipeScreen({super.key, required this.isTutorial, this.onTutorialNext});
 
   @override
   State<AddRecipeScreen> createState() => _AddRecipeScreenState();
 }
 
 class _AddRecipeScreenState extends State<AddRecipeScreen> {
+  final GlobalKey _recipeKey = GlobalKey();
+  final GlobalKey _genericNameKey = GlobalKey();
+  final GlobalKey _unitKey = GlobalKey();
 
   final RecipeFormModel _formModel = RecipeFormModel();
 
@@ -33,6 +40,15 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   void initState() {
     super.initState();
     _loadGenericNames();
+    if (widget.isTutorial) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([
+          _recipeKey,
+          _genericNameKey,
+          _unitKey
+        ]);
+      });
+    }
   }
 
   @override
@@ -128,40 +144,49 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         padding: EdgeInsets.all(20),
         child: Column(
           children: [
-            AppCard(
-              title: "Recipe Information",
-              child: Column(
-                spacing: 16,
-                children: [
-                  AppTextField(placeholder: 'Recipe Name', controller: _formModel.nameController),
-                  AppTextField(placeholder: 'Instructions', controller: _formModel.instructionsController, isMultiLine: true),
-                  if (tags.isNotEmpty)
-                  AppCard(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    padding: const EdgeInsets.all(8),
-                    borderRadius: BorderRadius.circular(999),
-                    child: AppTagCarousel(
-                      tags: tags,
-                      mode: AppChipMode.removable,
-                      onRemoved: handleRemove,
-                      alignment: Alignment.centerLeft
-                    ),
-                  ),
-                  AppTextField(
-                    placeholder: 'Tags', controller: _formModel.tagsController, focusNode: _tagFocusNode, textInputAction: TextInputAction.done, onSubmitted: (val) {
-                      final trimmed = val.trim();
-                      if (trimmed.isNotEmpty) {
-                        setState(() {
-                          tags.add(trimmed);
-                          _formModel.tagsController.clear();
-                        });
-                        _tagFocusNode.requestFocus();
-                      }
-                    },
+            TutorialSpotlight(
+              isTutorial: widget.isTutorial,
+              showcaseKey: _recipeKey,
+              title: 'Recipe Information',
+              description: 'do something here idk bro',
+              currentStep: 1,
+              totalSteps: 3,
+              child: AppCard(
+                  title: "Recipe Information",
+                  child: Column(
+                      spacing: 16,
+                      children: [
+                        AppTextField(placeholder: 'Recipe Name', controller: _formModel.nameController),
+                        AppTextField(placeholder: 'Instructions', controller: _formModel.instructionsController, isMultiLine: true),
+                        if (tags.isNotEmpty)
+                          AppCard(
+                            color: Theme.of(context).colorScheme.secondaryContainer,
+                            padding: const EdgeInsets.all(8),
+                            borderRadius: BorderRadius.circular(999),
+                            child: AppTagCarousel(
+                                tags: tags,
+                                mode: AppChipMode.removable,
+                                onRemoved: handleRemove,
+                                alignment: Alignment.centerLeft
+                            ),
+                          ),
+                        AppTextField(
+                          placeholder: 'Tags', controller: _formModel.tagsController, focusNode: _tagFocusNode, textInputAction: TextInputAction.done, onSubmitted: (val) {
+                          final trimmed = val.trim();
+                          if (trimmed.isNotEmpty) {
+                            setState(() {
+                              tags.add(trimmed);
+                              _formModel.tagsController.clear();
+                            });
+                            _tagFocusNode.requestFocus();
+                          }
+                        },
+                        )
+                      ]
                   )
-                ]
-              )
+              ),
             ),
+
             SizedBox(height: 20),
             AppCard(
               title: 'Ingredients',
@@ -176,19 +201,28 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                       child: Column(
                         spacing: 16,
                         children: [
-                          AppDropdown<int>(
-                            value: ing.selectedNameId,
-                            items: _genericNames.asMap().entries.map((entry) {
-                              int id = entry.value.id;
-                              var data = entry.value;
-                              return DropdownMenuItem<int>(
-                                value: id,
-                                child: Text(data.name),
-                              );
-                            }).toList(),
-                            onChanged: (int? newId) => _onGenericNameChanged(ing, newId),
-                            placeholder: 'Generic Name',
+                          TutorialSpotlight(
+                            isTutorial: widget.isTutorial,
+                            showcaseKey: _genericNameKey,
+                            title: 'Generic name dropdown',
+                            currentStep: 2,
+                            totalSteps: 3,
+                            description: 'when the name is generic broooo',
+                            child: AppDropdown<int>(
+                              value: ing.selectedNameId,
+                              items: _genericNames.asMap().entries.map((entry) {
+                                int id = entry.value.id;
+                                var data = entry.value;
+                                return DropdownMenuItem<int>(
+                                  value: id,
+                                  child: Text(data.name),
+                                );
+                              }).toList(),
+                              onChanged: (int? newId) => _onGenericNameChanged(ing, newId),
+                              placeholder: 'Generic Name',
+                            ),
                           ),
+
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -201,25 +235,41 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                                 ),
                               ),
                               const SizedBox(width: 16),
+
                               Expanded(
-                                child: AppDropdown<String>(
-                                  value: ing.selectedUnit,
-                                  items: ing.availableUnits.map((unit) {
-                                    return DropdownMenuItem<String>(
-                                      value: unit,
-                                      child: Text(unit),
-                                    );
-                                  }).toList(),
-                                  onChanged: ing.availableUnits.isEmpty
-                                      ? null
-                                      : (String? newUnit) {
-                                    setState(() {
-                                      ing.selectedUnit = newUnit;
-                                    });
+                                child: TutorialSpotlight(
+                                  isTutorial: widget.isTutorial,
+                                  showcaseKey: _unitKey,
+                                  title: 'unit',
+                                  currentStep: 3,
+                                  totalSteps: 3,
+                                  description: 'when you uhhhhh un in the uhh it uhhh I think',
+                                  onTargetClick: () {
+                                    if (widget.onTutorialNext != null) {
+                                      widget.onTutorialNext!();
+                                    }
                                   },
-                                  placeholder: 'Unit',
+
+                                  child: AppDropdown<String>(
+                                    value: ing.selectedUnit,
+                                    items: ing.availableUnits.map((unit) {
+                                      return DropdownMenuItem<String>(
+                                        value: unit,
+                                        child: Text(unit),
+                                      );
+                                    }).toList(),
+                                    onChanged: ing.availableUnits.isEmpty
+                                        ? null
+                                        : (String? newUnit) {
+                                      setState(() {
+                                        ing.selectedUnit = newUnit;
+                                      });
+                                    },
+                                    placeholder: 'Unit',
+                                  ),
                                 ),
                               ),
+
                             ],
                           )
                         ]

@@ -7,6 +7,7 @@ import 'package:pantry_io_mobile/ui/screens/get_recipe_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/scanner_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/settings_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/widget_showcase_screen.dart';
+import 'package:pantry_io_mobile/ui/tutorial_runner.dart';
 import 'package:pantry_io_mobile/ui/widgets/bottom_nav.dart';
 import 'package:pantry_io_mobile/domain/models/nav_item.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
@@ -22,6 +23,19 @@ class MainWrapper extends StatefulWidget {
 class _MainWrapperState extends State<MainWrapper> {
   NavTab _currentTab = NavTab.addRecipe;
 
+  void _startTutorial(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TutorialRunner(
+          onComplete: () {
+            Navigator.of(context).pop();
+            context.read<AppState>().completeOnboarding();
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
@@ -36,27 +50,33 @@ class _MainWrapperState extends State<MainWrapper> {
 
       case AppPhase.onboarding:
         return Scaffold(
-          body: Center(
-            // child: Text('me wen I on the board lololol')
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 40,
-              children: [
-                const Text('me wen I on the board lololol'),
-                AppButton(
-                  label: 'End Onboarding',
-                  onPressed: () => appState.completeOnboarding()
+            body: Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 20,
+                    children: [
+                      const Text('Welcome to Pantry IO!'),
+                      AppButton(
+                        label: 'Start Walkthrough',
+                        type: AppButtonType.primary,
+                        onPressed: () => _startTutorial(context),
+                      ),
+                      AppButton(
+                        label: 'Skip Onboarding',
+                        type: AppButtonType.secondary,
+                        onPressed: () => appState.completeOnboarding(),
+                      )
+                    ]
                 )
-              ]
             )
-          )
         );
 
       case AppPhase.app:
-        return _MainNavigation(
+        return MainNavigation(
           currentTab: _currentTab,
           isLLMConnected: appState.isLLMConnected,
+          isTutorial: false,
           onTabChanged: (tab) {
             setState(() {
               _currentTab = tab;
@@ -64,33 +84,23 @@ class _MainWrapperState extends State<MainWrapper> {
           }
         );
     }
-
-    return Consumer<AppState>(
-      builder: (context, appState, _) {
-        return _MainNavigation(
-          currentTab: _currentTab,
-          isLLMConnected: appState.isLLMConnected,
-          onTabChanged: (tab) {
-            setState(() {
-              _currentTab = tab;
-            });
-          },
-        );
-      },
-    );
   }
 }
 
-class _MainNavigation extends StatelessWidget {
-  const _MainNavigation({
+class MainNavigation extends StatelessWidget {
+  const MainNavigation({
     required this.currentTab,
     required this.isLLMConnected,
     required this.onTabChanged,
+    required this.isTutorial,
+    this.onTutorialNextTab,
   });
 
   final NavTab currentTab;
   final bool isLLMConnected;
   final ValueChanged<NavTab> onTabChanged;
+  final bool isTutorial;
+  final VoidCallback? onTutorialNextTab;
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +157,7 @@ class _MainNavigation extends StatelessWidget {
       ),
       NavItem(
         id: NavTab.addRecipe,
-        screen: const AddRecipeScreen(),
+        screen: AddRecipeScreen(isTutorial: isTutorial),
         item: const BottomNavigationBarItem(
           icon: Icon(Icons.add),
           label: 'Add Recipe',
