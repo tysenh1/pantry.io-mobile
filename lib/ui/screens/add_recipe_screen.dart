@@ -83,11 +83,9 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       hideSkip: false,
       alignSkip: Alignment.topRight,
       onFinish: () {
-        print("Tutorial finished");
         widget.onTutorialNext?.call();
       },
       onSkip: () {
-        print("Tutorial skipped");
         widget.onTutorialNext?.call();
         return true;
       },
@@ -194,6 +192,18 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
               );
             },
           ),
+          TargetContent(
+            align: ContentAlign.top,
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                title: 'Generic name dropdown',
+                description: 'when the name is generic broooo',
+                currentStep: 2,
+                totalSteps: 3,
+                onNext: () => controller.next(),
+              );
+            },
+          ),
         ],
       ),
       TargetFocus(
@@ -211,10 +221,10 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 currentStep: 3,
                 totalSteps: 3,
                 onNext: () {
-                  controller.next();
-                  if (widget.onTutorialNext != null) {
-                    widget.onTutorialNext!();
-                  }
+                  tutorialCoachMark?.finish();
+                  // if (widget.onTutorialNext != null) {
+                  //   widget.onTutorialNext!();
+                  // }
                 },
               );
             },

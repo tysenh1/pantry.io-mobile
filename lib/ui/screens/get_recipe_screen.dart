@@ -76,11 +76,19 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
       hideSkip: false,
       alignSkip: Alignment.topRight,
       onFinish: () {
-        print("Tutorial finished");
-        widget.onTutorialNext?.call();
+        // widget.onTutorialNext?.call();
+        Navigator.push(
+          context,
+          // MaterialPageRoute(builder: (context) => RecipeHistoryScreen(isTutorial: true, onTutorialNext: widget.onTutorialNext)),
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                RecipeHistoryScreen(isTutorial: true, onTutorialNext: widget.onTutorialNext,),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero
+          )
+        );
       },
       onSkip: () {
-        print("Tutorial skipped");
         widget.onTutorialNext?.call();
         return true;
       },
@@ -145,7 +153,14 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                     description: ' for when you need to remember n stuff',
                     currentStep: 3,
                     totalSteps: 3,
-                    onNext: () => controller.next()
+                    onNext: () {
+                      tutorialCoachMark?.finish();
+                      // tutorialCoachMark!.finish();
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(builder: (context) => RecipeHistoryScreen(isTutorial: true, onTutorialNext: widget.onTutorialNext))
+                      // );
+                    }
                 );
               }
           )
@@ -168,7 +183,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
               key: _historyKey,
               onPressed: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const RecipeHistoryScreen()),
+                MaterialPageRoute(builder: (context) => RecipeHistoryScreen(isTutorial: false, onTutorialNext: () {})),
               ),
               type: AppButtonType.secondary,
               )
