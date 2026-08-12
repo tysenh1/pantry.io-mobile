@@ -10,9 +10,9 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_card.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
-import 'package:pantry_io_mobile/ui/widgets/tutorial/tutorial_spotlight.dart';
+import 'package:pantry_io_mobile/ui/widgets/tutorial/tutorial_spotlight_card.dart';
 import 'package:provider/provider.dart';
-import 'package:showcaseview/showcaseview.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class AddRecipeScreen extends StatefulWidget {
   final bool isTutorial;
@@ -27,6 +27,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final GlobalKey _recipeKey = GlobalKey();
   final GlobalKey _genericNameKey = GlobalKey();
   final GlobalKey _unitKey = GlobalKey();
+
+  TutorialCoachMark? tutorialCoachMark;
 
   final RecipeFormModel _formModel = RecipeFormModel();
 
@@ -67,30 +69,29 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       });
       if (widget.isTutorial) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          final route = ModalRoute.of(context);
-          if (route != null && route.animation != null && route.animation!.isAnimating) {
-            void listener(AnimationStatus status) {
-              if (status == AnimationStatus.completed) {
-                route.animation!.removeStatusListener(listener);
-                _triggerShowcase();
-              }
-            }
-            route.animation!.addStatusListener(listener);
-          } else {
-            _triggerShowcase();
-          }
+          _showTutorial();
         });
       }
     }
   }
 
-  void _triggerShowcase() {
-    if (!mounted) return;
-    ShowCaseWidget.of(context).startShowCase([
-      _recipeKey,
-      _genericNameKey,
-      _unitKey
-    ]);
+  void _showTutorial() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: _createTargets(),
+      colorShadow: Colors.black,
+      opacityShadow: 0.75,
+      hideSkip: false,
+      alignSkip: Alignment.topRight,
+      onFinish: () {
+        print("Tutorial finished");
+        widget.onTutorialNext?.call();
+      },
+      onSkip: () {
+        print("Tutorial skipped");
+        widget.onTutorialNext?.call();
+        return true;
+      },
+    )..show(context: context);
   }
 
   void _onGenericNameChanged(IngredientInput ing, int? newId) async {
@@ -153,6 +154,76 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     });
   }
 
+  List<TargetFocus> _createTargets() {
+    return [
+      TargetFocus(
+        identify: "recipe_info",
+        keyTarget: _recipeKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 16,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                title: 'Recipe Information',
+                description: 'do something here idk bro',
+                currentStep: 1,
+                totalSteps: 3,
+                onNext: () => controller.next(),
+              );
+            },
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "generic_name",
+        keyTarget: _genericNameKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 12,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                title: 'Generic name dropdown',
+                description: 'when the name is generic broooo',
+                currentStep: 2,
+                totalSteps: 3,
+                onNext: () => controller.next(),
+              );
+            },
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "unit",
+        keyTarget: _unitKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 12,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top, // Flips above since it's lower on screen
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                title: 'unit',
+                description: 'when you uhhhhh un in the uhh it uhhh I think',
+                currentStep: 3,
+                totalSteps: 3,
+                onNext: () {
+                  controller.next();
+                  if (widget.onTutorialNext != null) {
+                    widget.onTutorialNext!();
+                  }
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -161,15 +232,9 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         padding: EdgeInsets.all(20),
         child: Column(
           children: [
-            TutorialSpotlight(
-              isTutorial: widget.isTutorial,
-              showcaseKey: _recipeKey,
-              title: 'Recipe Information',
-              description: 'do something here idk bro',
-              currentStep: 1,
-              totalSteps: 3,
-              child: AppCard(
+            AppCard(
                   title: "Recipe Information",
+                  key: _recipeKey,
                   child: Column(
                       spacing: 16,
                       children: [
@@ -202,7 +267,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                       ]
                   )
               ),
-            ),
 
             SizedBox(height: 20),
             AppCard(
@@ -218,14 +282,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                       child: Column(
                         spacing: 16,
                         children: [
-                          TutorialSpotlight(
-                            isTutorial: widget.isTutorial,
-                            showcaseKey: _genericNameKey,
-                            title: 'Generic name dropdown',
-                            currentStep: 2,
-                            totalSteps: 3,
-                            description: 'when the name is generic broooo',
-                            child: AppDropdown<int>(
+                          AppDropdown<int>(
                               value: ing.selectedNameId,
                               items: _genericNames.asMap().entries.map((entry) {
                                 int id = entry.value.id;
@@ -237,8 +294,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                               }).toList(),
                               onChanged: (int? newId) => _onGenericNameChanged(ing, newId),
                               placeholder: 'Generic Name',
+                            key: _genericNameKey,
                             ),
-                          ),
 
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -254,20 +311,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                               const SizedBox(width: 16),
 
                               Expanded(
-                                child: TutorialSpotlight(
-                                  isTutorial: widget.isTutorial,
-                                  showcaseKey: _unitKey,
-                                  title: 'unit',
-                                  currentStep: 3,
-                                  totalSteps: 3,
-                                  description: 'when you uhhhhh un in the uhh it uhhh I think',
-                                  onTargetClick: () {
-                                    if (widget.onTutorialNext != null) {
-                                      widget.onTutorialNext!();
-                                    }
-                                  },
-
-                                  child: AppDropdown<String>(
+                                child: AppDropdown<String>(
+                                  key: _unitKey,
                                     value: ing.selectedUnit,
                                     items: ing.availableUnits.map((unit) {
                                       return DropdownMenuItem<String>(
@@ -284,7 +329,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                                     },
                                     placeholder: 'Unit',
                                   ),
-                                ),
                               ),
 
                             ],

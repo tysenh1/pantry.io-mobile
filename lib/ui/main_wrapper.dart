@@ -7,7 +7,6 @@ import 'package:pantry_io_mobile/ui/screens/get_recipe_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/scanner_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/settings_screen.dart';
 import 'package:pantry_io_mobile/ui/screens/widget_showcase_screen.dart';
-import 'package:pantry_io_mobile/ui/tutorial_runner.dart';
 import 'package:pantry_io_mobile/ui/widgets/bottom_nav.dart';
 import 'package:pantry_io_mobile/domain/models/nav_item.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
@@ -22,19 +21,7 @@ class MainWrapper extends StatefulWidget {
 
 class _MainWrapperState extends State<MainWrapper> {
   NavTab _currentTab = NavTab.addRecipe;
-
-  void _startTutorial(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => TutorialRunner(
-          onComplete: () {
-            Navigator.of(context).pop();
-            context.read<AppState>().completeOnboarding();
-          },
-        ),
-      ),
-    );
-  }
+  bool _walkthroughStarted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,27 +36,35 @@ class _MainWrapperState extends State<MainWrapper> {
         );
 
       case AppPhase.onboarding:
-        return Scaffold(
+        if (!_walkthroughStarted) {
+          return Scaffold(
             body: Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 20,
-                    children: [
-                      const Text('Welcome to Pantry IO!'),
-                      AppButton(
-                        label: 'Start Walkthrough',
-                        type: AppButtonType.primary,
-                        onPressed: () => _startTutorial(context),
-                      ),
-                      AppButton(
-                        label: 'Skip Onboarding',
-                        type: AppButtonType.secondary,
-                        onPressed: () => appState.completeOnboarding(),
-                      )
-                    ]
-                )
-            )
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 20,
+                children: [
+                  const Text('Welcome to Pantry.io!'),
+                  AppButton(
+                    label: 'Start Walkthrough',
+                    type: AppButtonType.primary,
+                    onPressed: () => setState(() => _walkthroughStarted = true),
+                  ),
+                  AppButton(
+                    label: 'Skip Onboarding',
+                    type: AppButtonType.secondary,
+                    onPressed: () => appState.completeOnboarding(),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        // Fall through to render tutorial navigation once walkthrough starts
+        return MainNavigation(
+          currentTab: _currentTab,
+          isLLMConnected: appState.isLLMConnected,
+          isTutorial: true,
+          onTabChanged: (tab) => setState(() => _currentTab = tab),
         );
 
       case AppPhase.app:
@@ -88,7 +83,7 @@ class _MainWrapperState extends State<MainWrapper> {
 }
 
 class MainNavigation extends StatelessWidget {
-  const MainNavigation({
+  const MainNavigation({super.key,
     required this.currentTab,
     required this.isLLMConnected,
     required this.onTabChanged,
@@ -119,7 +114,9 @@ class MainNavigation extends StatelessWidget {
     }
 
     return Scaffold(
-      body: IndexedStack(
+      body: isTutorial
+          ? _buildCurrentScreen()
+          : IndexedStack(
         index: calculatedIndex,
         children: visibleItems
             .map((nav) => nav.screen)
@@ -135,6 +132,34 @@ class MainNavigation extends StatelessWidget {
             .toList(),
       ),
     );
+  }
+
+  Widget _buildCurrentScreen() {
+    switch (currentTab) {
+      case NavTab.debug:
+        return const DatabaseDebugScreen();
+      case NavTab.widgetShowcase:
+        return const WidgetShowcaseScreen();
+      case NavTab.addRecipe:
+        return AddRecipeScreen(
+          isTutorial: isTutorial,
+          onTutorialNext: isTutorial ? () => onTabChanged(NavTab.receipGetter) : null,
+        );
+      case NavTab.chatbot:
+        return const ChatbotScreen();
+      case NavTab.receipGetter:
+        return GetRecipeScreen(
+          isTutorial: isTutorial,
+          onTutorialNext: isTutorial ? () => onTabChanged(NavTab.scanner) : null,
+        );
+      case NavTab.scanner:
+        return ScannerScreen(
+          // isTutorial: isTutorial,
+          // onTutorialNext: null,
+        );
+      case NavTab.settings:
+        return const SettingsScreen();
+    }
   }
 
   List<NavItem> _buildNavItems() {
@@ -157,7 +182,10 @@ class MainNavigation extends StatelessWidget {
       ),
       NavItem(
         id: NavTab.addRecipe,
-        screen: AddRecipeScreen(isTutorial: isTutorial),
+        screen: AddRecipeScreen(
+          isTutorial: isTutorial,
+          onTutorialNext: () => onTabChanged(NavTab.receipGetter)
+        ),
         item: const BottomNavigationBarItem(
           icon: Icon(Icons.add),
           label: 'Add Recipe',
@@ -174,7 +202,10 @@ class MainNavigation extends StatelessWidget {
       ),
       NavItem(
         id: NavTab.receipGetter,
-        screen: const GetRecipeScreen(),
+        screen: GetRecipeScreen(
+          isTutorial: isTutorial,
+          onTutorialNext: () => onTabChanged(NavTab.scanner),
+        ),
         item: const BottomNavigationBarItem(
           icon: Icon(Icons.get_app),
           label: 'Recipes',
