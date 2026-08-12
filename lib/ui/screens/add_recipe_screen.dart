@@ -40,15 +40,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   void initState() {
     super.initState();
     _loadGenericNames();
-    if (widget.isTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ShowCaseWidget.of(context).startShowCase([
-          _recipeKey,
-          _genericNameKey,
-          _unitKey
-        ]);
-      });
-    }
+
   }
 
   @override
@@ -73,7 +65,32 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       setState(() {
         _genericNames = allGenericNames;
       });
+      if (widget.isTutorial) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final route = ModalRoute.of(context);
+          if (route != null && route.animation != null && route.animation!.isAnimating) {
+            void listener(AnimationStatus status) {
+              if (status == AnimationStatus.completed) {
+                route.animation!.removeStatusListener(listener);
+                _triggerShowcase();
+              }
+            }
+            route.animation!.addStatusListener(listener);
+          } else {
+            _triggerShowcase();
+          }
+        });
+      }
     }
+  }
+
+  void _triggerShowcase() {
+    if (!mounted) return;
+    ShowCaseWidget.of(context).startShowCase([
+      _recipeKey,
+      _genericNameKey,
+      _unitKey
+    ]);
   }
 
   void _onGenericNameChanged(IngredientInput ing, int? newId) async {

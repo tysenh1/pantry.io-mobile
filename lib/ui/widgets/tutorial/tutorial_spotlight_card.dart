@@ -47,11 +47,10 @@ class TutorialSpotlightCard extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(8),
-            // color: Theme.of(context).colorScheme.p
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 8,
               children: [
-                // Header
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,72 +71,16 @@ class TutorialSpotlightCard extends StatelessWidget {
                     )
                   ]
                 ),
+                    Text(
+                      description,
+                      style: theme.textTheme.bodyMedium
+                    )
               ]
             )
           ),
 
-          Flexible(
-            // child: Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    description,
-                    style: theme.textTheme.bodyMedium
-                  )
-                ]
-              )
-            // )
-          )
-          // header goes here
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Text(
-          //       title,
-          //       style: theme.textTheme.titleMedium?.copyWith(
-          //         fontWeight: FontWeight.bold,
-          //       )
-          //     ),
-          //     Text(
-          //       '$currentStep of $totalSteps',
-          //       style: theme.textTheme.labelSmall?.copyWith(
-          //         color: theme.colorScheme.onSurfaceVariant,
-          //       )
-          //     ),
-          //     const SizedBox(height: 8),
-          //
-          //     Text(
-          //       description,
-          //       style: theme.textTheme.bodyMedium?.copyWith(
-          //         color: theme.colorScheme.onSurfaceVariant
-          //       )
-          //     ),
-          //
-          //     Row(
-          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //       children: [
-          //         TextButton(
-          //           onPressed: onSkip,
-          //           style: TextButton.styleFrom(
-          //             foregroundColor: theme.colorScheme.onSurfaceVariant,
-          //             padding: EdgeInsets.zero,
-          //             minimumSize: Size.zero,
-          //             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          //           ),
-          //           child: const Text('Skip tutorial'),
-          //         ),
-          //         FilledButton.tonal(
-          //           onPressed: onNext,
-          //           style: FilledButton.styleFrom(
-          //             visualDensity: VisualDensity.compact,
-          //           ),
-          //           child: Text(currentStep == totalSteps ? 'Done' : 'Next'),
-          //         ),
-          //       ],
-          //     ),
-          //   ]
-          // )
+
+
         ]
       )
     );

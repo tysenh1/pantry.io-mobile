@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/ui/widgets/tutorial/tutorial_spotlight_card.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class TutorialSpotlight extends StatelessWidget {
@@ -40,31 +39,21 @@ class TutorialSpotlight extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!isTutorial) return child;
 
-    return Showcase.withWidget(
+    final theme = Theme.of(context);
+
+    return Showcase(
+      title: title,
+      description: description,
       key: showcaseKey,
-      height: 180,
-      width: 280,
       onTargetClick: onTargetClick,
       disposeOnTap: onTargetClick != null ? true : null,
       disableMovingAnimation: disableMovingAnimation,
       overlayOpacity: overlayOpacity,
+      showArrow: showArrow,
       targetBorderRadius: targetBorderRadius,
       targetPadding: targetPadding,
-      container: TutorialSpotlightCard(
-        title: title,
-        description: description,
-        currentStep: currentStep,
-        totalSteps: totalSteps,
-        onNext: () {
-          ShowCaseWidget.of(context).next();
-
-          if (onTargetClick != null) {
-            onTargetClick!();
-          }
-        },
-
-      ),
       child: child,
     );
+
   }
 }
