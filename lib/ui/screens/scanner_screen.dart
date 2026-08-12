@@ -12,23 +12,34 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:pantry_io_mobile/domain/models/local_unit.dart';
+import 'package:pantry_io_mobile/ui/widgets/tutorial/tutorial_spotlight_card.dart';
 import 'package:provider/provider.dart';
 import 'package:pantry_io_mobile/core/utils/string_utils.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ScannerScreen extends StatefulWidget {
-  const ScannerScreen({super.key});
+  final bool isTutorial;
+  final VoidCallback? onTutorialNext;
+  const ScannerScreen({super.key, required this.isTutorial, this.onTutorialNext});
 
   @override
   State<ScannerScreen> createState() => _ScannerScreenState();
 }
 
 class _ScannerScreenState extends State<ScannerScreen> {
+  final GlobalKey _formKey = GlobalKey();
+  final GlobalKey _genericNameKey = GlobalKey();
+  final GlobalKey _unitKey = GlobalKey();
+  final GlobalKey _scannerButtonKey = GlobalKey();
+
+  TutorialCoachMark? tutorialCoachMark;
+
   final ScannerScreenFormModel _formModel = ScannerScreenFormModel();
 
   bool _isProductLoading = false;
   List<GenericNameInfo> _dropdownItems = [];
   List<GenericNameInfo> _genericNames = [];
-  // bool _showGenericNamesReset = false;
+  bool _showGenericNamesReset = false;
   Map<int, LocalUnit> _availableUnits = {};
 
   @override
@@ -52,7 +63,114 @@ class _ScannerScreenState extends State<ScannerScreen> {
         _genericNames = allGenericNames;
         _dropdownItems = allGenericNames;
       });
+      if (widget.isTutorial) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showTutorial();
+        });
+      }
     }
+  }
+
+  void _showTutorial() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: _createTargets(),
+      colorShadow: Colors.black,
+      opacityShadow: 0.75,
+      hideSkip: false,
+      alignSkip: Alignment.topRight,
+      onFinish: () {
+        widget.onTutorialNext?.call();
+      },
+      onSkip: () {
+        widget.onTutorialNext?.call();
+        return true;
+      },
+    )..show(context: context);
+  }
+
+  List<TargetFocus> _createTargets() {
+    return [
+      TargetFocus(
+        identify: 'item_form',
+        keyTarget: _formKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 16,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                title: 'Product Information',
+                description: 'this is where the scan stuff goes after you scan an item',
+                currentStep: 1,
+                totalSteps: 4,
+                onNext: () => controller.next()
+              );
+            }
+          )
+        ]
+      ),
+      TargetFocus(
+        identify: 'generic_name',
+        keyTarget: _genericNameKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 16,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                title: 'Generic Name Input',
+                description: 'this is where the generic names stuff goes. If you"re unique, sorry bud',
+                currentStep: 2,
+                totalSteps: 4,
+                onNext: () => controller.next()
+              );
+            }
+          )
+        ]
+      ),
+      TargetFocus(
+          identify: 'unit',
+          keyTarget: _unitKey,
+          shape: ShapeLightFocus.RRect,
+          radius: 16,
+          contents: [
+            TargetContent(
+                align: ContentAlign.bottom,
+                builder: (context, controller) {
+                  return TutorialSpotlightCard(
+                      title: 'Unit Input',
+                      description: 'this is where the unit goes. like the unuit from the unit',
+                      currentStep: 3,
+                      totalSteps: 4,
+                      onNext: () => controller.next()
+                  );
+                }
+            )
+          ]
+      ),
+      TargetFocus(
+        identify: 'scanner_button',
+        keyTarget: _scannerButtonKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 16,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                title: 'Barcode Scanner',
+                description: 'this just makes it easeri bro use it trust its so much better',
+                currentStep: 4,
+                totalSteps: 4,
+                onNext: () => tutorialCoachMark?.finish()
+              );
+            }
+          )
+        ]
+      )
+    ];
   }
 
   Future<void> _fetchProductData(String barcode) async {
@@ -133,10 +251,10 @@ class _ScannerScreenState extends State<ScannerScreen> {
             _availableUnits = filteredGenericNames.first.units;
             _formModel.selectedUnitId = _availableUnits.keys.first;
             _dropdownItems = filteredGenericNames;
-            // _showGenericNamesReset = true;
+            _showGenericNamesReset = true;
           } else {
             _formModel.selectedGenericId = null;
-            // _showGenericNamesReset = false;
+            _showGenericNamesReset = false;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Product not found. Please enter manually.'),
@@ -225,7 +343,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
       return;
     }
 
-    // final genericName = _dropdownItems[_formModel.selectedGenericId!];
     final genericName = _dropdownItems.firstWhere((item) => item.id == _formModel.selectedGenericId);
     final unit = genericName.units[_formModel.selectedUnitId!];
     final productCompanion = _formModel.getProductCompanion(unit!);
@@ -274,9 +391,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
               onPressed: _openScannerModal,
               size: AppButtonSize.large,
               type: AppButtonType.secondary,
+              key: _scannerButtonKey,
             ),
             AppCard(
               title: 'Item Information',
+              key: _formKey,
               child: Column(
                 spacing: 16,
                 children: [
@@ -300,6 +419,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                     value: _formModel.selectedGenericId,
                     placeholder: 'Generic Name',
                     onChanged: (int? newId) => _onGenericNameChanged(newId),
+                    key: _genericNameKey
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -332,10 +452,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
                             });
                           },
                           placeholder: 'Unit',
+                          key: _unitKey
                         ),
                       ),
                     ]
                   ),
+                  if (_showGenericNamesReset)
                       AppButton(
                         type: AppButtonType.secondary,
                         label: 'Reset Generic Names',
@@ -343,6 +465,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           _dropdownItems = _genericNames;
                           _formModel.selectedUnitId = null;
                           _formModel.selectedGenericId = null;
+                          _showGenericNamesReset = false;
                         }),
                       ),
                   AppButton(

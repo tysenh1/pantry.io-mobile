@@ -36,6 +36,7 @@ class _MainWrapperState extends State<MainWrapper> {
         );
 
       case AppPhase.onboarding:
+        debugPrint("THIS IS PART OF THE ONMBARDING BIG ");
         if (!_walkthroughStarted) {
           return Scaffold(
             body: Center(
@@ -68,6 +69,7 @@ class _MainWrapperState extends State<MainWrapper> {
         );
 
       case AppPhase.app:
+        debugPrint("THIS IS PART OF THE ACTUAL APP BIT AND SHOULDNT HAVE THE TUTOIRLA STUFF");
         return MainNavigation(
           currentTab: _currentTab,
           isLLMConnected: appState.isLLMConnected,
@@ -115,7 +117,7 @@ class MainNavigation extends StatelessWidget {
 
     return Scaffold(
       body: isTutorial
-          ? _buildCurrentScreen()
+          ? _buildCurrentScreen(context)
           : IndexedStack(
         index: calculatedIndex,
         children: visibleItems
@@ -134,7 +136,7 @@ class MainNavigation extends StatelessWidget {
     );
   }
 
-  Widget _buildCurrentScreen() {
+  Widget _buildCurrentScreen(BuildContext context) {
     switch (currentTab) {
       case NavTab.debug:
         return const DatabaseDebugScreen();
@@ -154,8 +156,12 @@ class MainNavigation extends StatelessWidget {
         );
       case NavTab.scanner:
         return ScannerScreen(
-          // isTutorial: isTutorial,
-          // onTutorialNext: null,
+          isTutorial: isTutorial,
+          onTutorialNext: isTutorial ? () {
+            // onTabChanged(NavTab.addRecipe);
+            context.read<AppState>().completeOnboarding();
+          }
+          : null
         );
       case NavTab.settings:
         return const SettingsScreen();
@@ -213,7 +219,7 @@ class MainNavigation extends StatelessWidget {
       ),
       NavItem(
         id: NavTab.scanner,
-        screen: const ScannerScreen(),
+        screen: const ScannerScreen(isTutorial: false, onTutorialNext: null),
         item: const BottomNavigationBarItem(
           icon: Icon(Icons.scanner),
           label: 'Barcode',

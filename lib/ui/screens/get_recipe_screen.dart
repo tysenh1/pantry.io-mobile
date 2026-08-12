@@ -60,7 +60,11 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
 
     final db = context.read<AppDatabase>();
     _recipeStream = db.recipeDao.watchAllRecipes();
-    _showTutorial();
+    if (widget.isTutorial) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showTutorial();
+      });
+    }
   }
 
   @override
@@ -76,10 +80,8 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
       hideSkip: false,
       alignSkip: Alignment.topRight,
       onFinish: () {
-        // widget.onTutorialNext?.call();
         Navigator.push(
           context,
-          // MaterialPageRoute(builder: (context) => RecipeHistoryScreen(isTutorial: true, onTutorialNext: widget.onTutorialNext)),
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 RecipeHistoryScreen(isTutorial: true, onTutorialNext: widget.onTutorialNext,),
