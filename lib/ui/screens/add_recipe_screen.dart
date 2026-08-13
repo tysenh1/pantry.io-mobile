@@ -70,6 +70,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         _genericNames = allGenericNames;
       });
       if (widget.isTutorial) {
+        _formModel.ingredients[0].availableUnits = {'unit'};
+        _formModel.ingredients[0].selectedUnit = null;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _showTutorial();
         });
@@ -186,8 +188,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
             ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                  title: 'Recipe Basics',
-                  description: 'Start by entering the name of your dish, step-by-step instructions, and any tags to help you filter it later.',
+                  title: 'Create a Custom Recipe',
+                  description: 'Got a family favorite? Start by adding the recipe’s name, step-by-step instructions, and descriptive tags so you can easily filter for it later.',
                 currentStep: 1,
                 totalSteps: 3,
                 onNext: () {
@@ -218,8 +220,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
             ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'Link Ingredients',
-                description: 'Select a generic category to link this ingredient to your pantry inventory. This helps track what you actually have in stock when cooking.',
+                title: 'Link to Your Pantry',
+                description: 'This is the secret sauce: link your recipe’s ingredients to the same generic categories you used when scanning items. This makes sure the app knows you have the ingredients in stock!',
                 currentStep: 2,
                 totalSteps: 3,
                 onNext: () => controller.next(),
@@ -242,8 +244,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
             ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'unit',
-                description: 'when you uhhhhh un in the uhh it uhhh I think',
+                title: 'Exact Measurements',
+                description: 'Set exactly how much of this ingredient the recipe requires. When you finish cooking this meal, the app will automatically deduct this exact amount from your pantry.',
                 currentStep: 3,
                 totalSteps: 3,
                 onNext: () {
@@ -334,6 +336,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
+                            key: _unitKey,
                             children: [
                               Expanded(
                                 child: AppTextField(
@@ -346,23 +349,22 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
                               Expanded(
                                 child: AppDropdown<String>(
-                                  key: _unitKey,
-                                    value: ing.selectedUnit,
-                                    items: ing.availableUnits.map((unit) {
-                                      return DropdownMenuItem<String>(
-                                        value: unit,
-                                        child: Text(unit),
-                                      );
-                                    }).toList(),
-                                    onChanged: ing.availableUnits.isEmpty
-                                        ? null
-                                        : (String? newUnit) {
-                                      setState(() {
-                                        ing.selectedUnit = newUnit;
-                                      });
+                                  value: ing.selectedUnit,
+                                  items: ing.availableUnits.map((unit) {
+                                    return DropdownMenuItem<String>(
+                                      value: unit,
+                                      child: Text(unit),
+                                    );
+                                  }).toList(),
+                                  onChanged: ing.availableUnits.isEmpty
+                                      ? null
+                                      : (String? newUnit) {
+                                        setState(() {
+                                          ing.selectedUnit = newUnit;
+                                        });
                                     },
-                                    placeholder: 'Unit',
-                                  ),
+                                  placeholder: 'Unit',
+                                ),
                               ),
 
                             ],

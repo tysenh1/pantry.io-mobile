@@ -64,6 +64,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
         _dropdownItems = allGenericNames;
       });
       if (widget.isTutorial) {
+        _availableUnits = <int, LocalUnit>{1: LocalUnit(id: 1, name: 'name', value: 1)};
+        _formModel.selectedUnitId = null;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _showTutorial();
         });
@@ -109,8 +111,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
             padding: EdgeInsets.all(8),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'Product Information',
-                description: 'this is where the scan stuff goes after you scan an item',
+                  title: 'Build Your Pantry',
+                  description: 'Welcome! This is where you add items to your digital inventory. When you scan a product, its basic details will automatically populate here.',
                 currentStep: 1,
                 totalSteps: 4,
                 onNext: () => controller.next()
@@ -134,8 +136,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
             padding: EdgeInsets.all(8),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'Generic Name Input',
-                description: 'this is where the generic names stuff goes. If you"re unique, sorry bud',
+                  title: 'Categorize Your Items',
+                  description: 'Map your specific product (like "Heinz Ketchup") to a generic category ("Ketchup"). This is how the app knows what ingredients you actually have when looking up recipes later.',
                 currentStep: 2,
                 totalSteps: 4,
                 onNext: () => controller.next()
@@ -159,8 +161,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
               padding: EdgeInsets.all(8),
               builder: (context, controller) {
                 return TutorialSpotlightCard(
-                  title: 'Unit Input',
-                  description: 'this is where the unit goes. like the unuit from the unit',
+                    title: 'Track Your Stock',
+                    description: 'Set the size and unit of measurement. This allows the app to do the math for you and deduct the right amount when you cook a meal.',
                   currentStep: 3,
                   totalSteps: 4,
                   onNext: () => controller.next()
@@ -184,8 +186,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
             padding: EdgeInsets.all(8),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'Barcode Scanner',
-                description: 'this just makes it easeri bro use it trust its so much better',
+                  title: 'Scan & Go',
+                  description: 'The fastest way to stock your kitchen! Use your camera to scan a barcode, and we’ll look up the product and fill this form out for you.',
                 currentStep: 4,
                 totalSteps: 4,
                 onNext: () => tutorialCoachMark?.finish()
@@ -403,6 +405,21 @@ class _ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
+  List<DropdownMenuItem<int>> _populateUnitDropdown() {
+    if (_formModel.selectedGenericId != null) {
+      return _availableUnits.values.map((unit) =>
+        DropdownMenuItem<int>(
+          value: unit.id,
+          child: Text(unit.name.toTitleCase())
+        )
+      ).toList();
+    } else if (widget.isTutorial) {
+      return [DropdownMenuItem<int>(value: 1, child: Text('thing'))];
+    } else {
+      return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -450,6 +467,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
+                    key: _unitKey,
                     children: [
                       Expanded(
                         child: AppTextField(
@@ -462,14 +480,15 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       Expanded(
                         child: AppDropdown<int>(
                           value: _formModel.selectedUnitId,
-                          items: _formModel.selectedGenericId != null
-                            ? _availableUnits.values.map((unit) =>
-                              DropdownMenuItem<int>(
-                                value: unit.id,
-                                child: Text(unit.name.toTitleCase())
-                              )
-                            ).toList()
-                          : [],
+                          // items: _formModel.selectedGenericId != null
+                          //   ? _availableUnits.values.map((unit) =>
+                          //     DropdownMenuItem<int>(
+                          //       value: unit.id,
+                          //       child: Text(unit.name.toTitleCase())
+                          //     )
+                          //   ).toList()
+                          // : [],
+                          items: _populateUnitDropdown(),
                           onChanged: _availableUnits.isEmpty
                               ? null
                               : (int? newUnitId) {
@@ -478,7 +497,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
                             });
                           },
                           placeholder: 'Unit',
-                          key: _unitKey
                         ),
                       ),
                     ]

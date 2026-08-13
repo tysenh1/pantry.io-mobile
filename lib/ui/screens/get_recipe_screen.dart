@@ -111,8 +111,8 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
             ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'Filter Information',
-                description: 'filter the recipes yoooo',
+                  title: 'Find Your Next Meal',
+                  description: 'Now that your pantry has some items, use these filters to easily sift through recipes based on tags, prep time, or meal type.',
                 currentStep: 1,
                 totalSteps: 4,
                 onNext: () => controller.next()
@@ -135,8 +135,8 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
             ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'Incomplete Recipes Toggle',
-                description: 'when the recipes are not completeeeee',
+                  title: 'Cook With What You Have',
+                  description: 'Toggle this on to see recipes even if you are missing a few ingredients. It’s the perfect way to figure out what you need to add to your grocery list.',
                 currentStep: 2,
                 totalSteps: 4,
                 onNext: () => controller.next()
@@ -159,8 +159,8 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
             ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'Recipe Popup',
-                description: 'when the pop upsssssss uhhh',
+                title: 'Start Cooking',
+                description: 'Tap on any recipe to see the full instructions, check exactly which pantry items you’ll use, or start the cooking process.',
                 currentStep: 3,
                 totalSteps: 4,
                 onNext: () => controller.next(),
@@ -184,7 +184,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
               builder: (context, controller) {
                 return TutorialSpotlightCard(
                     title: 'Cooking History',
-                    description: ' for when you need to remember n stuff',
+                    description: 'View a complete log of all the meals you’ve prepared in the past to keep track of what you’ve cooked over time.',
                     currentStep: 4,
                     totalSteps: 4,
                     onNext: () {
