@@ -78,10 +78,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
       opacityShadow: 0.75,
       hideSkip: false,
       alignSkip: Alignment.topRight,
+      pulseEnable: false,
+      focusAnimationDuration: const Duration(milliseconds: 500),
+      unFocusAnimationDuration: const Duration(milliseconds: 500),
       onFinish: () {
         widget.onTutorialNext?.call();
       },
       onSkip: () {
+        tutorialCoachMark?.finish();
         widget.onTutorialNext?.call();
         return true;
       },
@@ -94,10 +98,15 @@ class _ScannerScreenState extends State<ScannerScreen> {
         identify: 'item_form',
         keyTarget: _formKey,
         shape: ShapeLightFocus.RRect,
+        paddingFocus: 24,
         radius: 16,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 16
+            ),
+            padding: EdgeInsets.all(8),
             builder: (context, controller) {
               return TutorialSpotlightCard(
                 title: 'Product Information',
@@ -115,9 +124,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
         keyTarget: _genericNameKey,
         shape: ShapeLightFocus.RRect,
         radius: 16,
+        paddingFocus: 24,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 16
+            ),
+            padding: EdgeInsets.all(8),
             builder: (context, controller) {
               return TutorialSpotlightCard(
                 title: 'Generic Name Input',
@@ -135,18 +149,23 @@ class _ScannerScreenState extends State<ScannerScreen> {
           keyTarget: _unitKey,
           shape: ShapeLightFocus.RRect,
           radius: 16,
+          paddingFocus: 24,
           contents: [
             TargetContent(
-                align: ContentAlign.bottom,
-                builder: (context, controller) {
-                  return TutorialSpotlightCard(
-                      title: 'Unit Input',
-                      description: 'this is where the unit goes. like the unuit from the unit',
-                      currentStep: 3,
-                      totalSteps: 4,
-                      onNext: () => controller.next()
-                  );
-                }
+              align: ContentAlign.custom,
+              customPosition: CustomTargetContentPosition(
+                bottom: 16
+              ),
+              padding: EdgeInsets.all(8),
+              builder: (context, controller) {
+                return TutorialSpotlightCard(
+                  title: 'Unit Input',
+                  description: 'this is where the unit goes. like the unuit from the unit',
+                  currentStep: 3,
+                  totalSteps: 4,
+                  onNext: () => controller.next()
+                );
+              }
             )
           ]
       ),
@@ -155,9 +174,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
         keyTarget: _scannerButtonKey,
         shape: ShapeLightFocus.RRect,
         radius: 16,
+        paddingFocus: 24,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
+            align: ContentAlign.custom,
+              customPosition: CustomTargetContentPosition(
+                bottom: 16
+              ),
+            padding: EdgeInsets.all(8),
             builder: (context, controller) {
               return TutorialSpotlightCard(
                 title: 'Barcode Scanner',
@@ -330,8 +354,10 @@ class _ScannerScreenState extends State<ScannerScreen> {
     final conversions = await db.ingredientConversionsDao.getAvailableUnitConversions(selectedName.id);
 
     setState(() {
-      _availableUnits = conversions;
-      _formModel.selectedUnitId = _availableUnits.keys.first;
+      if (mounted) {
+        _availableUnits = conversions;
+        _formModel.selectedUnitId = _availableUnits.keys.first;
+      }
     });
   }
 

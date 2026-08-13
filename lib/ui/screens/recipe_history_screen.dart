@@ -13,7 +13,6 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe_history/recipe_history_card.dart';
-import 'package:pantry_io_mobile/ui/widgets/tutorial/tutorial_spotlight_card.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -52,81 +51,11 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
 
     final db = context.read<AppDatabase>();
     _recipeHistoryStream = db.recipeHistoryDao.watchAllRecipes();
-    if (widget.isTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showTutorial();
-      });
-    }
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  void _showTutorial() {
-    tutorialCoachMark = TutorialCoachMark(
-      targets: _createTargets(),
-      colorShadow: Colors.black,
-      opacityShadow: 0.75,
-      hideSkip: false,
-      alignSkip: Alignment.topRight,
-      onFinish: () {
-        widget.onTutorialNext?.call();
-        Navigator.pop(context);
-      },
-      onSkip: () {
-        widget.onTutorialNext?.call();
-        return true;
-      },
-    )..show(context: context);
-  }
-
-  List<TargetFocus> _createTargets() {
-    return [
-      TargetFocus(
-        identify: 'history_filter_info',
-        keyTarget: _filterKey,
-        shape: ShapeLightFocus.RRect,
-        radius: 16,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            builder: (context, controller) {
-              return TutorialSpotlightCard(
-                title: 'Filter Information',
-                description: 'this is literally the same as the other one',
-                currentStep: 1,
-                totalSteps: 2,
-                onNext: () => controller.next()
-              );
-            }
-          )
-        ]
-      ),
-      TargetFocus(
-        identify: 'history_recipe_card',
-        keyTarget: _recipeCardKey,
-        shape: ShapeLightFocus.RRect,
-        radius: 16,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            builder: (context, controller) {
-              return TutorialSpotlightCard(
-                title: 'Recipe Card',
-                description: 'this is also literally just the exact same as the one from before',
-                currentStep: 2,
-                totalSteps: 2,
-                onNext: () {
-                  tutorialCoachMark?.finish();
-                }
-              );
-            }
-          )
-        ]
-      )
-    ];
   }
 
   @override

@@ -38,6 +38,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   final _tagFocusNode = FocusNode();
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -81,13 +83,26 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       colorShadow: Colors.black,
       opacityShadow: 0.75,
       hideSkip: false,
+      pulseEnable: false,
+      focusAnimationDuration: const Duration(milliseconds: 500),
+      unFocusAnimationDuration: const Duration(milliseconds: 500),
       alignSkip: Alignment.topRight,
       onFinish: () {
         widget.onTutorialNext?.call();
       },
       onSkip: () {
+        tutorialCoachMark?.finish();
         widget.onTutorialNext?.call();
         return true;
+      },
+      beforeFocus: (target) async {
+        if (target.identify == "generic_name" || target.identify == "unit") {
+          await _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
+        }
       },
     )..show(context: context);
   }
@@ -105,8 +120,11 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     final conversions = await db.ingredientConversionsDao.getAvailableUnitConversions(selectedName.id);
 
     setState(() {
-      ing.availableUnits = conversions.values.map((unit) => unit.name).toSet();
-      ing.selectedUnit = ing.availableUnits.first;
+      if (mounted) {
+        ing.availableUnits =
+            conversions.values.map((unit) => unit.name).toSet();
+        ing.selectedUnit = ing.availableUnits.first;
+      }
     });
   }
 
@@ -159,16 +177,28 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         keyTarget: _recipeKey,
         shape: ShapeLightFocus.RRect,
         radius: 16,
+        paddingFocus: 24,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 16
+            ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'Recipe Information',
-                description: 'do something here idk bro',
+                  title: 'Recipe Basics',
+                  description: 'Start by entering the name of your dish, step-by-step instructions, and any tags to help you filter it later.',
                 currentStep: 1,
                 totalSteps: 3,
-                onNext: () => controller.next(),
+                onNext: () {
+                  // await _scrollController.animateTo(
+                  //   _scrollController.position.maxScrollExtent,
+                  //   duration: const Duration(milliseconds: 400),
+                  //   curve: Curves.easeOut
+                  // );
+                  // _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                  controller.next();
+                }
               );
             },
           ),
@@ -178,26 +208,18 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         identify: "generic_name",
         keyTarget: _genericNameKey,
         shape: ShapeLightFocus.RRect,
-        radius: 12,
+        radius: 16,
+        paddingFocus: 24,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 16
+            ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
-                title: 'Generic name dropdown',
-                description: 'when the name is generic broooo',
-                currentStep: 2,
-                totalSteps: 3,
-                onNext: () => controller.next(),
-              );
-            },
-          ),
-          TargetContent(
-            align: ContentAlign.top,
-            builder: (context, controller) {
-              return TutorialSpotlightCard(
-                title: 'Generic name dropdown',
-                description: 'when the name is generic broooo',
+                title: 'Link Ingredients',
+                description: 'Select a generic category to link this ingredient to your pantry inventory. This helps track what you actually have in stock when cooking.',
                 currentStep: 2,
                 totalSteps: 3,
                 onNext: () => controller.next(),
@@ -210,10 +232,14 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         identify: "unit",
         keyTarget: _unitKey,
         shape: ShapeLightFocus.RRect,
-        radius: 12,
+        radius: 16,
+        paddingFocus: 24,
         contents: [
           TargetContent(
-            align: ContentAlign.top, // Flips above since it's lower on screen
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 16
+            ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
                 title: 'unit',
@@ -222,9 +248,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 totalSteps: 3,
                 onNext: () {
                   tutorialCoachMark?.finish();
-                  // if (widget.onTutorialNext != null) {
-                  //   widget.onTutorialNext!();
-                  // }
                 },
               );
             },
@@ -240,6 +263,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       appBar: AppHeader(title: 'Add Recipe'),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
+        controller: _scrollController,
         child: Column(
           children: [
             AppCard(

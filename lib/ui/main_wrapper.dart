@@ -20,7 +20,7 @@ class MainWrapper extends StatefulWidget {
 }
 
 class _MainWrapperState extends State<MainWrapper> {
-  NavTab _currentTab = NavTab.addRecipe;
+  NavTab _currentTab = NavTab.scanner;
   bool _walkthroughStarted = false;
 
   @override
@@ -36,7 +36,6 @@ class _MainWrapperState extends State<MainWrapper> {
         );
 
       case AppPhase.onboarding:
-        debugPrint("THIS IS PART OF THE ONMBARDING BIG ");
         if (!_walkthroughStarted) {
           return Scaffold(
             body: Center(
@@ -69,7 +68,6 @@ class _MainWrapperState extends State<MainWrapper> {
         );
 
       case AppPhase.app:
-        debugPrint("THIS IS PART OF THE ACTUAL APP BIT AND SHOULDNT HAVE THE TUTOIRLA STUFF");
         return MainNavigation(
           currentTab: _currentTab,
           isLLMConnected: appState.isLLMConnected,
@@ -145,23 +143,19 @@ class MainNavigation extends StatelessWidget {
       case NavTab.addRecipe:
         return AddRecipeScreen(
           isTutorial: isTutorial,
-          onTutorialNext: isTutorial ? () => onTabChanged(NavTab.receipGetter) : null,
+          onTutorialNext: isTutorial ? () => context.read<AppState>().completeOnboarding() : null
         );
       case NavTab.chatbot:
         return const ChatbotScreen();
       case NavTab.receipGetter:
         return GetRecipeScreen(
           isTutorial: isTutorial,
-          onTutorialNext: isTutorial ? () => onTabChanged(NavTab.scanner) : null,
+          onTutorialNext: isTutorial ? () => onTabChanged(NavTab.addRecipe) : null,
         );
       case NavTab.scanner:
         return ScannerScreen(
           isTutorial: isTutorial,
-          onTutorialNext: isTutorial ? () {
-            // onTabChanged(NavTab.addRecipe);
-            context.read<AppState>().completeOnboarding();
-          }
-          : null
+          onTutorialNext: isTutorial ? () => onTabChanged(NavTab.receipGetter) : null,
         );
       case NavTab.settings:
         return const SettingsScreen();

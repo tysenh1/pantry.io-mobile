@@ -14,6 +14,7 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_switch_tile_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_card.dart';
+import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_dialog.dart';
 import 'package:pantry_io_mobile/ui/widgets/tutorial/tutorial_spotlight_card.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -31,6 +32,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
   final GlobalKey _filterKey = GlobalKey();
   final GlobalKey _recipeCardKey = GlobalKey();
   final GlobalKey _historyKey = GlobalKey();
+  final GlobalKey _incompleteRecipesKey = GlobalKey();
 
   TutorialCoachMark? tutorialCoachMark;
 
@@ -78,19 +80,15 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
       colorShadow: Colors.black,
       opacityShadow: 0.75,
       hideSkip: false,
+      pulseEnable: false,
+      focusAnimationDuration: const Duration(milliseconds: 500),
+      unFocusAnimationDuration: const Duration(milliseconds: 500),
       alignSkip: Alignment.topRight,
       onFinish: () {
-        Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                RecipeHistoryScreen(isTutorial: true, onTutorialNext: widget.onTutorialNext,),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero
-          )
-        );
+        widget.onTutorialNext!.call();
       },
       onSkip: () {
+        tutorialCoachMark?.finish();
         widget.onTutorialNext?.call();
         return true;
       },
@@ -104,21 +102,47 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
         keyTarget: _filterKey,
         shape: ShapeLightFocus.RRect,
         radius: 16,
+        paddingFocus: 24,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 20
+            ),
             builder: (context, controller) {
               return TutorialSpotlightCard(
                 title: 'Filter Information',
                 description: 'filter the recipes yoooo',
                 currentStep: 1,
-                totalSteps: 3,
+                totalSteps: 4,
                 onNext: () => controller.next()
               );
             }
           ),
-
-
+        ]
+      ),
+      TargetFocus(
+        identify: 'incomplete_switch',
+        keyTarget: _incompleteRecipesKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 16,
+        paddingFocus: 24,
+        contents: [
+          TargetContent(
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 16
+            ),
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                title: 'Incomplete Recipes Toggle',
+                description: 'when the recipes are not completeeeee',
+                currentStep: 2,
+                totalSteps: 4,
+                onNext: () => controller.next()
+              );
+            }
+          )
         ]
       ),
       TargetFocus(
@@ -126,48 +150,51 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
         keyTarget: _recipeCardKey,
         shape: ShapeLightFocus.RRect,
         radius: 16,
+        paddingFocus: 24,
         contents: [
           TargetContent(
-              align: ContentAlign.top,
-              builder: (context, controller) {
-                return TutorialSpotlightCard(
-                    title: 'Recipes',
-                    description: 'recipe is a funny word lolololl',
-                    currentStep: 2,
-                    totalSteps: 3,
-                    onNext: () => controller.next()
-                );
-              }
-          ),
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 16
+            ),
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                title: 'Recipe Popup',
+                description: 'when the pop upsssssss uhhh',
+                currentStep: 3,
+                totalSteps: 4,
+                onNext: () => controller.next(),
+              );
+            }
+          )
         ]
       ),
       TargetFocus(
         identify: 'recipe_history',
         keyTarget: _historyKey,
         shape: ShapeLightFocus.RRect,
-        radius: 32,
+        radius: 16,
+        paddingFocus: 24,
         contents: [
           TargetContent(
-              align: ContentAlign.bottom,
+              align: ContentAlign.custom,
+              customPosition: CustomTargetContentPosition(
+                bottom: 16
+              ),
               builder: (context, controller) {
                 return TutorialSpotlightCard(
                     title: 'Cooking History',
                     description: ' for when you need to remember n stuff',
-                    currentStep: 3,
-                    totalSteps: 3,
+                    currentStep: 4,
+                    totalSteps: 4,
                     onNext: () {
                       tutorialCoachMark?.finish();
-                      // tutorialCoachMark!.finish();
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(builder: (context) => RecipeHistoryScreen(isTutorial: true, onTutorialNext: widget.onTutorialNext))
-                      // );
                     }
                 );
               }
           )
         ]
-      )
+      ),
     ];
   }
 
@@ -216,6 +243,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
                     AppSwitchTileButton(
                       value: _areIncompleteRecipesShown,
                       label: 'Show incomplete recipes?',
+                      key: _incompleteRecipesKey,
                       onChanged: (bool newValue) {
                         setState(() {
                           _areIncompleteRecipesShown = newValue;
@@ -280,7 +308,7 @@ class _GetRecipeScreenState extends State<GetRecipeScreen> {
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
                     (context, i) {
-                      if (i == 0) return RecipeCard(recipe: displayedRecipes[i], key: _recipeCardKey);
+                      if (i == 0) return RecipeCard(recipe: displayedRecipes[i], cardKey: _recipeCardKey);
                       return RecipeCard(recipe: displayedRecipes[i]);
                       // if (_areIncompleteRecipesShown) {
                       //   return RecipeCard(recipe: displayedRecipes[i]);
