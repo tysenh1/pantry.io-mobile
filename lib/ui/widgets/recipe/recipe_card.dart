@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
-import 'package:pantry_io_mobile/ui/widgets/recipe/confirm_cook_sheet.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_dialog.dart';
 
 class RecipeCard extends StatelessWidget {
   final RecipeWithIngredients recipe;
   final Color? color;
+  final GlobalKey? cardKey;
 
   const RecipeCard({
     super.key,
     required this.recipe,
     this.color,
+    this.cardKey
   });
 
   @override
@@ -19,6 +20,7 @@ class RecipeCard extends StatelessWidget {
       color: color ?? (recipe.isRecipeComplete ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.errorContainer),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
+        key: cardKey,
         title: Text(
           recipe.name,
           style: const TextStyle(fontWeight: FontWeight.bold),

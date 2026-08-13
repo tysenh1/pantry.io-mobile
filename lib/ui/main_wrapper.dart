@@ -20,7 +20,8 @@ class MainWrapper extends StatefulWidget {
 }
 
 class _MainWrapperState extends State<MainWrapper> {
-  NavTab _currentTab = NavTab.addRecipe;
+  NavTab _currentTab = NavTab.scanner;
+  bool _walkthroughStarted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -35,28 +36,42 @@ class _MainWrapperState extends State<MainWrapper> {
         );
 
       case AppPhase.onboarding:
-        return Scaffold(
-          body: Center(
-            // child: Text('me wen I on the board lololol')
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 40,
-              children: [
-                const Text('me wen I on the board lololol'),
-                AppButton(
-                  label: 'End Onboarding',
-                  onPressed: () => appState.completeOnboarding()
-                )
-              ]
-            )
-          )
+        if (!_walkthroughStarted) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 20,
+                children: [
+                  const Text('Welcome to Pantry.io!'),
+                  AppButton(
+                    label: 'Start Walkthrough',
+                    type: AppButtonType.primary,
+                    onPressed: () => setState(() => _walkthroughStarted = true),
+                  ),
+                  AppButton(
+                    label: 'Skip Onboarding',
+                    type: AppButtonType.secondary,
+                    onPressed: () => appState.completeOnboarding(),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        // Fall through to render tutorial navigation once walkthrough starts
+        return MainNavigation(
+          currentTab: _currentTab,
+          isLLMConnected: appState.isLLMConnected,
+          isTutorial: true,
+          onTabChanged: (tab) => setState(() => _currentTab = tab),
         );
 
       case AppPhase.app:
-        return _MainNavigation(
+        return MainNavigation(
           currentTab: _currentTab,
           isLLMConnected: appState.isLLMConnected,
+          isTutorial: false,
           onTabChanged: (tab) {
             setState(() {
               _currentTab = tab;
@@ -64,33 +79,23 @@ class _MainWrapperState extends State<MainWrapper> {
           }
         );
     }
-
-    return Consumer<AppState>(
-      builder: (context, appState, _) {
-        return _MainNavigation(
-          currentTab: _currentTab,
-          isLLMConnected: appState.isLLMConnected,
-          onTabChanged: (tab) {
-            setState(() {
-              _currentTab = tab;
-            });
-          },
-        );
-      },
-    );
   }
 }
 
-class _MainNavigation extends StatelessWidget {
-  const _MainNavigation({
+class MainNavigation extends StatelessWidget {
+  const MainNavigation({super.key,
     required this.currentTab,
     required this.isLLMConnected,
     required this.onTabChanged,
+    required this.isTutorial,
+    this.onTutorialNextTab,
   });
 
   final NavTab currentTab;
   final bool isLLMConnected;
   final ValueChanged<NavTab> onTabChanged;
+  final bool isTutorial;
+  final VoidCallback? onTutorialNextTab;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +114,9 @@ class _MainNavigation extends StatelessWidget {
     }
 
     return Scaffold(
-      body: IndexedStack(
+      body: isTutorial
+          ? _buildCurrentScreen(context)
+          : IndexedStack(
         index: calculatedIndex,
         children: visibleItems
             .map((nav) => nav.screen)
@@ -125,6 +132,34 @@ class _MainNavigation extends StatelessWidget {
             .toList(),
       ),
     );
+  }
+
+  Widget _buildCurrentScreen(BuildContext context) {
+    switch (currentTab) {
+      case NavTab.debug:
+        return const DatabaseDebugScreen();
+      case NavTab.widgetShowcase:
+        return const WidgetShowcaseScreen();
+      case NavTab.addRecipe:
+        return AddRecipeScreen(
+          isTutorial: isTutorial,
+          onTutorialNext: isTutorial ? () => context.read<AppState>().completeOnboarding() : null
+        );
+      case NavTab.chatbot:
+        return const ChatbotScreen();
+      case NavTab.receipGetter:
+        return GetRecipeScreen(
+          isTutorial: isTutorial,
+          onTutorialNext: isTutorial ? () => onTabChanged(NavTab.addRecipe) : null,
+        );
+      case NavTab.scanner:
+        return ScannerScreen(
+          isTutorial: isTutorial,
+          onTutorialNext: isTutorial ? () => onTabChanged(NavTab.receipGetter) : null,
+        );
+      case NavTab.settings:
+        return const SettingsScreen();
+    }
   }
 
   List<NavItem> _buildNavItems() {
@@ -147,7 +182,10 @@ class _MainNavigation extends StatelessWidget {
       ),
       NavItem(
         id: NavTab.addRecipe,
-        screen: const AddRecipeScreen(),
+        screen: AddRecipeScreen(
+          isTutorial: isTutorial,
+          onTutorialNext: () => onTabChanged(NavTab.receipGetter)
+        ),
         item: const BottomNavigationBarItem(
           icon: Icon(Icons.add),
           label: 'Add Recipe',
@@ -164,7 +202,10 @@ class _MainNavigation extends StatelessWidget {
       ),
       NavItem(
         id: NavTab.receipGetter,
-        screen: const GetRecipeScreen(),
+        screen: GetRecipeScreen(
+          isTutorial: isTutorial,
+          onTutorialNext: () => onTabChanged(NavTab.scanner),
+        ),
         item: const BottomNavigationBarItem(
           icon: Icon(Icons.get_app),
           label: 'Recipes',
@@ -172,7 +213,7 @@ class _MainNavigation extends StatelessWidget {
       ),
       NavItem(
         id: NavTab.scanner,
-        screen: const ScannerScreen(),
+        screen: const ScannerScreen(isTutorial: false, onTutorialNext: null),
         item: const BottomNavigationBarItem(
           icon: Icon(Icons.scanner),
           label: 'Barcode',

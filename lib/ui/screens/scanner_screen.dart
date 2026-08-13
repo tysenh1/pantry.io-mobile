@@ -12,23 +12,34 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_dropdown.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_header.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:pantry_io_mobile/domain/models/local_unit.dart';
+import 'package:pantry_io_mobile/ui/widgets/tutorial/tutorial_spotlight_card.dart';
 import 'package:provider/provider.dart';
 import 'package:pantry_io_mobile/core/utils/string_utils.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ScannerScreen extends StatefulWidget {
-  const ScannerScreen({super.key});
+  final bool isTutorial;
+  final VoidCallback? onTutorialNext;
+  const ScannerScreen({super.key, required this.isTutorial, this.onTutorialNext});
 
   @override
   State<ScannerScreen> createState() => _ScannerScreenState();
 }
 
 class _ScannerScreenState extends State<ScannerScreen> {
+  final GlobalKey _formKey = GlobalKey();
+  final GlobalKey _genericNameKey = GlobalKey();
+  final GlobalKey _unitKey = GlobalKey();
+  final GlobalKey _scannerButtonKey = GlobalKey();
+
+  TutorialCoachMark? tutorialCoachMark;
+
   final ScannerScreenFormModel _formModel = ScannerScreenFormModel();
 
   bool _isProductLoading = false;
   List<GenericNameInfo> _dropdownItems = [];
   List<GenericNameInfo> _genericNames = [];
-  // bool _showGenericNamesReset = false;
+  bool _showGenericNamesReset = false;
   Map<int, LocalUnit> _availableUnits = {};
 
   @override
@@ -52,7 +63,140 @@ class _ScannerScreenState extends State<ScannerScreen> {
         _genericNames = allGenericNames;
         _dropdownItems = allGenericNames;
       });
+      if (widget.isTutorial) {
+        _availableUnits = <int, LocalUnit>{1: LocalUnit(id: 1, name: 'name', value: 1)};
+        _formModel.selectedUnitId = null;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showTutorial();
+        });
+      }
     }
+  }
+
+  void _showTutorial() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: _createTargets(),
+      colorShadow: Colors.black,
+      opacityShadow: 0.75,
+      hideSkip: false,
+      alignSkip: Alignment.topRight,
+      pulseEnable: false,
+      focusAnimationDuration: const Duration(milliseconds: 500),
+      unFocusAnimationDuration: const Duration(milliseconds: 500),
+      onFinish: () {
+        widget.onTutorialNext?.call();
+      },
+      onSkip: () {
+        tutorialCoachMark?.finish();
+        widget.onTutorialNext?.call();
+        return true;
+      },
+    )..show(context: context);
+  }
+
+  List<TargetFocus> _createTargets() {
+    return [
+      TargetFocus(
+        identify: 'item_form',
+        keyTarget: _formKey,
+        shape: ShapeLightFocus.RRect,
+        paddingFocus: 24,
+        radius: 16,
+        contents: [
+          TargetContent(
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 16
+            ),
+            padding: EdgeInsets.all(8),
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                  title: 'Build Your Pantry',
+                  description: 'Welcome! This is where you add items to your digital inventory. When you scan a product, its basic details will automatically populate here.',
+                currentStep: 1,
+                totalSteps: 4,
+                onNext: () => controller.next()
+              );
+            }
+          )
+        ]
+      ),
+      TargetFocus(
+        identify: 'generic_name',
+        keyTarget: _genericNameKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 16,
+        paddingFocus: 24,
+        contents: [
+          TargetContent(
+            align: ContentAlign.custom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 16
+            ),
+            padding: EdgeInsets.all(8),
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                  title: 'Categorize Your Items',
+                  description: 'Map your specific product (like "Heinz Ketchup") to a generic category ("Ketchup"). This is how the app knows what ingredients you actually have when looking up recipes later.',
+                currentStep: 2,
+                totalSteps: 4,
+                onNext: () => controller.next()
+              );
+            }
+          )
+        ]
+      ),
+      TargetFocus(
+          identify: 'unit',
+          keyTarget: _unitKey,
+          shape: ShapeLightFocus.RRect,
+          radius: 16,
+          paddingFocus: 24,
+          contents: [
+            TargetContent(
+              align: ContentAlign.custom,
+              customPosition: CustomTargetContentPosition(
+                bottom: 16
+              ),
+              padding: EdgeInsets.all(8),
+              builder: (context, controller) {
+                return TutorialSpotlightCard(
+                    title: 'Track Your Stock',
+                    description: 'Set the size and unit of measurement. This allows the app to do the math for you and deduct the right amount when you cook a meal.',
+                  currentStep: 3,
+                  totalSteps: 4,
+                  onNext: () => controller.next()
+                );
+              }
+            )
+          ]
+      ),
+      TargetFocus(
+        identify: 'scanner_button',
+        keyTarget: _scannerButtonKey,
+        shape: ShapeLightFocus.RRect,
+        radius: 16,
+        paddingFocus: 24,
+        contents: [
+          TargetContent(
+            align: ContentAlign.custom,
+              customPosition: CustomTargetContentPosition(
+                bottom: 16
+              ),
+            padding: EdgeInsets.all(8),
+            builder: (context, controller) {
+              return TutorialSpotlightCard(
+                  title: 'Scan & Go',
+                  description: 'The fastest way to stock your kitchen! Use your camera to scan a barcode, and we’ll look up the product and fill this form out for you.',
+                currentStep: 4,
+                totalSteps: 4,
+                onNext: () => tutorialCoachMark?.finish()
+              );
+            }
+          )
+        ]
+      )
+    ];
   }
 
   Future<void> _fetchProductData(String barcode) async {
@@ -133,10 +277,10 @@ class _ScannerScreenState extends State<ScannerScreen> {
             _availableUnits = filteredGenericNames.first.units;
             _formModel.selectedUnitId = _availableUnits.keys.first;
             _dropdownItems = filteredGenericNames;
-            // _showGenericNamesReset = true;
+            _showGenericNamesReset = true;
           } else {
             _formModel.selectedGenericId = null;
-            // _showGenericNamesReset = false;
+            _showGenericNamesReset = false;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Product not found. Please enter manually.'),
@@ -212,8 +356,10 @@ class _ScannerScreenState extends State<ScannerScreen> {
     final conversions = await db.ingredientConversionsDao.getAvailableUnitConversions(selectedName.id);
 
     setState(() {
-      _availableUnits = conversions;
-      _formModel.selectedUnitId = _availableUnits.keys.first;
+      if (mounted) {
+        _availableUnits = conversions;
+        _formModel.selectedUnitId = _availableUnits.keys.first;
+      }
     });
   }
 
@@ -225,7 +371,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
       return;
     }
 
-    // final genericName = _dropdownItems[_formModel.selectedGenericId!];
     final genericName = _dropdownItems.firstWhere((item) => item.id == _formModel.selectedGenericId);
     final unit = genericName.units[_formModel.selectedUnitId!];
     final productCompanion = _formModel.getProductCompanion(unit!);
@@ -260,6 +405,21 @@ class _ScannerScreenState extends State<ScannerScreen> {
     );
   }
 
+  List<DropdownMenuItem<int>> _populateUnitDropdown() {
+    if (_formModel.selectedGenericId != null) {
+      return _availableUnits.values.map((unit) =>
+        DropdownMenuItem<int>(
+          value: unit.id,
+          child: Text(unit.name.toTitleCase())
+        )
+      ).toList();
+    } else if (widget.isTutorial) {
+      return [DropdownMenuItem<int>(value: 1, child: Text('thing'))];
+    } else {
+      return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -274,9 +434,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
               onPressed: _openScannerModal,
               size: AppButtonSize.large,
               type: AppButtonType.secondary,
+              key: _scannerButtonKey,
             ),
             AppCard(
               title: 'Item Information',
+              key: _formKey,
               child: Column(
                 spacing: 16,
                 children: [
@@ -300,10 +462,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
                     value: _formModel.selectedGenericId,
                     placeholder: 'Generic Name',
                     onChanged: (int? newId) => _onGenericNameChanged(newId),
+                    key: _genericNameKey
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
+                    key: _unitKey,
                     children: [
                       Expanded(
                         child: AppTextField(
@@ -316,14 +480,15 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       Expanded(
                         child: AppDropdown<int>(
                           value: _formModel.selectedUnitId,
-                          items: _formModel.selectedGenericId != null
-                            ? _availableUnits.values.map((unit) =>
-                              DropdownMenuItem<int>(
-                                value: unit.id,
-                                child: Text(unit.name.toTitleCase())
-                              )
-                            ).toList()
-                          : [],
+                          // items: _formModel.selectedGenericId != null
+                          //   ? _availableUnits.values.map((unit) =>
+                          //     DropdownMenuItem<int>(
+                          //       value: unit.id,
+                          //       child: Text(unit.name.toTitleCase())
+                          //     )
+                          //   ).toList()
+                          // : [],
+                          items: _populateUnitDropdown(),
                           onChanged: _availableUnits.isEmpty
                               ? null
                               : (int? newUnitId) {
@@ -336,6 +501,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       ),
                     ]
                   ),
+                  if (_showGenericNamesReset)
                       AppButton(
                         type: AppButtonType.secondary,
                         label: 'Reset Generic Names',
@@ -343,6 +509,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           _dropdownItems = _genericNames;
                           _formModel.selectedUnitId = null;
                           _formModel.selectedGenericId = null;
+                          _showGenericNamesReset = false;
                         }),
                       ),
                   AppButton(

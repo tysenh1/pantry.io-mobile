@@ -14,9 +14,12 @@ import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_text_field.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe_history/recipe_history_card.dart';
 import 'package:provider/provider.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class RecipeHistoryScreen extends StatefulWidget {
-  const RecipeHistoryScreen({super.key});
+  final bool isTutorial;
+  final VoidCallback? onTutorialNext;
+  const RecipeHistoryScreen({super.key, required this.isTutorial, this.onTutorialNext});
 
   @override
   State<RecipeHistoryScreen> createState() => _RecipeHistoryScreenState();
@@ -27,6 +30,10 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
   String _searchQuery = "";
   late Stream<List<RecipeHistoryWithIngredients>> _recipeHistoryStream;
   RecipeHistorySortOrder sortOrder = RecipeHistorySortOrder.dateDesc;
+  TutorialCoachMark? tutorialCoachMark;
+
+  final GlobalKey _filterKey = GlobalKey();
+  final GlobalKey _recipeCardKey = GlobalKey();
 
   void handleTap(String tag) {
     setState(() {
@@ -62,6 +69,7 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
               padding: EdgeInsets.all(16),
                 child: AppCard(
                   title: 'Filter',
+                  key: _filterKey,
                   child: Column(
                   spacing: 16,
                   children: [
@@ -140,6 +148,7 @@ class _RecipeHistoryScreenState extends State<RecipeHistoryScreen> {
                         !isSameDay(currentRecipe.cookedAt, displayedRecipes[i - 1].cookedAt);
 
                       return Column(
+                        key: i == 0 ? _recipeCardKey : null,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           if (showHeader)

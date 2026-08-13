@@ -43,6 +43,8 @@ class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._internal();
   AppDatabase._internal() : super(_openConnection());
 
+  AppDatabase.memory() : super(NativeDatabase.memory(logStatements: true));
+
   @override
   int get schemaVersion => 1;
 
