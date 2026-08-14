@@ -25,7 +25,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
         RecipesCompanion.insert(
           name: name,
           instructions: instructions,
-          tags: jsonEncode(tags?.toList() ?? []),
+          tags: jsonEncode(tags?.map((tag) => tag.toLowerCase()).toList() ?? []),
         ),
       );
 

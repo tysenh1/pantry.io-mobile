@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/core/utils/string_utils.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_chip.dart';
 
 class AppTagCarousel extends StatelessWidget {
@@ -35,16 +36,16 @@ class AppTagCarousel extends StatelessWidget {
             spacing: 8,
 
             children: tags.map((tag) {
-              final isSelected = selectedTags?.contains(tag) ?? false;
+              final isSelected = selectedTags?.contains(tag.toLowerCase()) ?? false;
 
               return switch (mode) {
                 AppChipMode.display => AppChip(
-                  label: tag,
+                  label: tag.toTitleCase(),
                   mode: mode,
                 ),
 
                 AppChipMode.selectable => AppChip(
-                  label: tag,
+                  label: tag.toTitleCase(),
                   mode: mode,
                   onSelect: () {
                     if (onSelect != null) onSelect!(tag);
@@ -53,7 +54,7 @@ class AppTagCarousel extends StatelessWidget {
                 ),
 
                 AppChipMode.removable => AppChip(
-                  label: tag,
+                  label: tag.toTitleCase(),
                   mode: mode,
                   onRemoved: () {
                     if (onRemoved != null) onRemoved!(tag);

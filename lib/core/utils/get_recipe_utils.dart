@@ -26,7 +26,7 @@ List<RecipeWithIngredients> filterRecipesByTags(
     Set<String> tags
     ) {
   return recipes.where((recipe) {
-    return tags.every((tag) => recipe.tags?.contains(tag) ?? false);
+    return tags.every((tag) => recipe.tags?.contains(tag.toLowerCase()) ?? false);
   }).toList();
 }
 
