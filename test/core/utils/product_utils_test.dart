@@ -214,7 +214,7 @@ void main() {
       expect(results.first.item.name, 'Potato Chips');
     });
 
-    test('Deduplication: Only returns unique items even if multiple fields match', () {
+    test('only returns unique items even if multiple fields match', () {
       final results = findGenericMatch(
           'Tomato Sauce',
           'Tomato Sauce 24oz',
@@ -227,7 +227,7 @@ void main() {
       expect(results.first.item.id, 2);
     });
 
-    test('Deduplication: Keeps the BEST (lowest) score when duplicates happen', () {
+    test('keeps the best score when duplicates happen', () {
       final results = findGenericMatch(
           'Milkk',
           'Milk 500ml',
