@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:fuzzy/data/fuzzy_options.dart';
 import 'package:fuzzy/data/result.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
@@ -33,7 +31,7 @@ String parseUnit(ProductResultV3 result) {
   return '';
 }
 
-List<Result<LocalUnit>> fuzzyFindLocalUnit(ProductResultV3 result, List<LocalUnit> units, String parsedUnit) {
+List<Result<LocalUnit>> fuzzyFindLocalUnit(List<LocalUnit> units, String parsedUnit) {
   final fuse = Fuzzy<LocalUnit>(
     units,
     options: FuzzyOptions(
