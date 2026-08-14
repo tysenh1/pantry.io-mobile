@@ -151,5 +151,12 @@ void main() {
       expect(result, isNotEmpty);
       expect(result.first.item.name, 'g');
     });
+
+    test('fuzzy find handles minor typos part 2', () {
+      final result = fuzzyFindLocalUnit(mockUnits, 'tsps');
+
+      expect(result.length, 1);
+      expect(result.first.item.name, 'tsp');
+    });
   });
 }
