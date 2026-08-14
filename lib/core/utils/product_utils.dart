@@ -32,6 +32,8 @@ String parseUnit(ProductResultV3 result) {
 }
 
 List<Result<LocalUnit>> fuzzyFindLocalUnit(List<LocalUnit> units, String parsedUnit) {
+  final unit = units.firstWhereOrNull((u) => u.name == parsedUnit);
+  if (unit != null)
   final fuse = Fuzzy<LocalUnit>(
     units,
     options: FuzzyOptions(

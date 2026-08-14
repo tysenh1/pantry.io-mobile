@@ -265,7 +265,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
         setState(() {
 
           if (filteredGenericNames.isNotEmpty) {
-            final parsedUnits = fuzzyFindLocalUnit(result, filteredGenericNames.first.units.values.toList(), parseUnit(result));
+            final parsedUnits = fuzzyFindLocalUnit(filteredGenericNames.first.units.values.toList(), parseUnit(result));
             if (parsedUnits.isNotEmpty) {
               _formModel.selectedUnitId = parsedUnits.first.item.id;
             } else {

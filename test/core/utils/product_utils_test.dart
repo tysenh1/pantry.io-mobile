@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:pantry_io_mobile/core/utils/product_utils.dart';
+import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 
 void main() {
   ProductResultV3 productResult = ProductResultV3();
@@ -112,6 +113,43 @@ void main() {
       final result = parseUnit(productResult);
 
       expect(result, '');
+    });
+  });
+
+  group('fuzzyFindLocalUnit tests', () {
+    List<LocalUnit> mockUnits = [
+      LocalUnit(id: 1, name: 'g', value: 1),
+      LocalUnit(id: 2, name: 'cups', value: 1000),
+      LocalUnit(id: 3, name: 'pcs', value: 1000),
+      LocalUnit(id: 4, name: 'bulbs', value: 1),
+      LocalUnit(id: 5, name: 'tbsp', value: 13),
+      LocalUnit(id: 6, name: 'tsp', value: 10)
+    ];
+    test('returns empty list when parsedUnit is an empty string', () {
+      final result = fuzzyFindLocalUnit(mockUnits, '');
+
+      expect(result, isEmpty);
+    });
+
+    test('returns exact match correctly', () {
+      final result = fuzzyFindLocalUnit(mockUnits, 'g');
+
+      expect(result, isNotEmpty);
+      expect(result.first.item.name, 'g');
+    });
+
+    test('handles minor typos in abbreviations', () {
+      final result = fuzzyFindLocalUnit(mockUnits, 'tbs');
+
+      expect(result.isNotEmpty, isTrue);
+      expect(result.first.item.name, 'tbsp');
+    });
+
+    test('matches full grams to g', () {
+      final result = fuzzyFindLocalUnit(mockUnits, 'grams');
+
+      expect(result, isNotEmpty);
+      expect(result.first.item.name, 'g');
     });
   });
 }
