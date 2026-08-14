@@ -102,6 +102,7 @@ List<Result<GenericNameInfo>> findGenericMatch(String? genericName, String? prod
 
   if (categories != null && categories.isNotEmpty) {
     for (var i = 0; i < categories.length; i++) {
+      if (categories[i].isEmpty) continue;
 
       final results = fuse.search(stripLanguagePrefix(categories[i].trim()));
       addSearchResults(results);

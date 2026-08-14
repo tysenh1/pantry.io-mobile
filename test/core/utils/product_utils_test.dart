@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:pantry_io_mobile/core/utils/product_utils.dart';
+import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
 import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 
 void main() {
@@ -157,6 +158,104 @@ void main() {
 
       expect(result.length, 1);
       expect(result.first.item.name, 'tsp');
+    });
+  });
+
+  group('findGenericMatch Tests', () {
+    late List<GenericNameInfo> mockGenerics;
+
+    setUp(() {
+      mockGenerics = [
+        GenericNameInfo(id: 1, name: 'Milk', units: {1: LocalUnit(id: 1, name: 'g', value: 1)}, pantryId: 1),
+        GenericNameInfo(id: 2, name: 'Tomato Sauce', units: {1: LocalUnit(id: 1, name: 'g', value: 1)}, pantryId: 2),
+        GenericNameInfo(id: 3, name: 'Potato Chips', units: {1: LocalUnit(id: 1, name: 'g', value: 1)}, pantryId: 3),
+        GenericNameInfo(id: 4, name: 'Dark Chocolate', units: {1: LocalUnit(id: 1, name: 'g', value: 1)}, pantryId: 4),
+      ];
+    });
+
+    test('returns empty list when all inputs are null or empty', () {
+      final results = findGenericMatch(null, null, null, null, mockGenerics);
+      expect(results, isEmpty);
+
+      final resultsEmpty = findGenericMatch('', '', [], '', mockGenerics);
+      expect(resultsEmpty, isEmpty);
+    });
+
+    test('matches on genericName alone', () {
+      final results = findGenericMatch('Milk', null, null, null, mockGenerics);
+
+      expect(results.length, 1);
+      expect(results.first.item.name, 'Milk');
+    });
+
+    test('Regex strips weight/volume from productName before searching', () {
+      final results = findGenericMatch(null, 'Tomato Sauce 500g', null, null, mockGenerics);
+
+      expect(results.isNotEmpty, isTrue);
+      expect(results.first.item.name, 'Tomato Sauce');
+
+      final results2 = findGenericMatch(null, 'Milk 1.5 kg', null, null, mockGenerics);
+      expect(results2.isNotEmpty, isTrue);
+      expect(results2.first.item.name, 'Milk');
+    });
+
+    test('splits and matches from categoriesString', () {
+      final results = findGenericMatch(null, null, null, 'Dairy, Milk', mockGenerics);
+
+      expect(results.isNotEmpty, isTrue);
+      expect(results.first.item.name, 'Milk');
+    });
+
+    test('iterates and matches from categoriesTags list', () {
+      final tags = ['Snacks', 'Potato Chips'];
+      final results = findGenericMatch(null, null, tags, null, mockGenerics);
+
+      expect(results.isNotEmpty, isTrue);
+      expect(results.first.item.name, 'Potato Chips');
+    });
+
+    test('Deduplication: Only returns unique items even if multiple fields match', () {
+      final results = findGenericMatch(
+          'Tomato Sauce',
+          'Tomato Sauce 24oz',
+          ['Tomato Sauce'],
+          null,
+          mockGenerics
+      );
+
+      expect(results.length, 1);
+      expect(results.first.item.id, 2);
+    });
+
+    test('Deduplication: Keeps the BEST (lowest) score when duplicates happen', () {
+      final results = findGenericMatch(
+          'Milkk',
+          'Milk 500ml',
+          null,
+          null,
+          mockGenerics
+      );
+
+      expect(results.length, 1);
+      expect(results.first.item.name, 'Milk');
+      expect(results.first.score, 0.0);
+    });
+
+    test('combines and sorts multiple different matches correctly', () {
+      final results = findGenericMatch(
+          'Milk',
+          null,
+          ['Dark Chocolate'],
+          null,
+          mockGenerics
+      );
+
+      expect(results.length, 2);
+      expect(results[0].score <= results[1].score, isTrue);
+
+      final matchedNames = results.map((r) => r.item.name).toList();
+      expect(matchedNames.contains('Milk'), isTrue);
+      expect(matchedNames.contains('Dark Chocolate'), isTrue);
     });
   });
 }
