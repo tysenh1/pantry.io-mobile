@@ -1,6 +1,7 @@
 import 'package:fuzzy/data/result.dart';
 import 'package:fuzzy/fuzzy.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
+import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
 import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 
@@ -32,8 +33,10 @@ String parseUnit(ProductResultV3 result) {
 }
 
 List<Result<LocalUnit>> fuzzyFindLocalUnit(List<LocalUnit> units, String parsedUnit) {
-  final unit = units.firstWhereOrNull((u) => u.name == parsedUnit);
-  if (unit != null)
+  parsedUnit = standardizeUnit(parsedUnit);
+
+  final exactMatch = units.where((u) => u.name == parsedUnit).firstOrNull;
+  if (exactMatch != null) return [Result(item: exactMatch)];
   final fuse = Fuzzy<LocalUnit>(
     units,
     options: FuzzyOptions(
