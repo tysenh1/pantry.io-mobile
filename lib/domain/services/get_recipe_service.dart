@@ -1,6 +1,5 @@
 import 'package:pantry_io_mobile/core/constants/get_recipe_sort_order.dart';
 import 'package:pantry_io_mobile/core/utils/get_recipe_utils.dart';
-import 'package:pantry_io_mobile/core/utils/unit_converter.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
@@ -14,8 +13,9 @@ class GetRecipeService {
       ) async {
     await db.transaction(() async {
       for (final ingredient in recipe.ingredients) {
-        final normalizedQuantity = ingredient.quantityNeeded * ingredient.gramWeight;
-        final roundedQuantity = (normalizedQuantity * 10).floor() / 10;
+        final normalizedQuantity = (ingredient.quantityNeeded * ingredient.gramWeight) * multiplier;
+        // final roundedQuantity = (normalizedQuantity * 10).floor() / 10;
+        final roundedQuantity = normalizedQuantity.ceil().toDouble();
         await db.pantryDao.subtractQuantity(roundedQuantity, ingredient.pantryId);
 
       }

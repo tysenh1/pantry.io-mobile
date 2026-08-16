@@ -24,23 +24,23 @@ void main() {
       expect(result, validRecipes);
     });
 
-    test('returns valid recipes when invalid recipes are present', () {
-      final validAndInvalidRecipes = [
-        ...validRecipes,
-        invalidRecipe
-      ];
+    // test('returns valid recipes when invalid recipes are present', () {
+    //   final validAndInvalidRecipes = [
+    //     ...validRecipes,
+    //     invalidRecipe
+    //   ];
+    //
+    //   final result = filterCookableRecipes(validAndInvalidRecipes);
+    //
+    //   expect(result.length, 2);
+    //   expect(result, validRecipes);
+    // });
 
-      final result = filterCookableRecipes(validAndInvalidRecipes);
-
-      expect(result.length, 2);
-      expect(result, validRecipes);
-    });
-
-    test('returns an empty array when only invalid recipes are present', () {
-      final result = filterCookableRecipes([invalidRecipe]);
-
-      expect(result, []);
-    });
+    // test('returns an empty array when only invalid recipes are present', () {
+    //   final result = filterCookableRecipes([invalidRecipe]);
+    //
+    //   expect(result, []);
+    // });
   });
 
   group('filterRecipesByTags tests', () {

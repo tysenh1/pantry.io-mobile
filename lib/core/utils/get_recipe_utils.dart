@@ -2,23 +2,24 @@ import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 
 bool isIngredientQuantitySufficient(IngredientItem ing) {
-  return ing.pantryQuantity >= (ing.quantityNeeded * ing.gramWeight);
+  return ing.pantryQuantity >= (ing.quantityNeeded * ing.gramWeight).ceil();
 }
 
 List<RecipeWithIngredients> filterCookableRecipes(
     List<RecipeWithIngredients> recipes
     ) {
-  return recipes.where((recipe) {
-    final requiredIngredients = recipe.ingredients
-        .where((i) => !i.isOptional)
-        .toList();
-
-    return requiredIngredients.every(
-          (ingredient) =>
-      // ingredient.isStaple ||
-      isIngredientQuantitySufficient(ingredient),
-    );
-  }).toList();
+  // return recipes.where((recipe) {
+  //   final requiredIngredients = recipe.ingredients
+  //       .where((i) => !i.isOptional)
+  //       .toList();
+  //
+  //   return requiredIngredients.every(
+  //         (ingredient) =>
+  //     // ingredient.isStaple ||
+  //     isIngredientQuantitySufficient(ingredient),
+  //   );
+  // }).toList();
+  return recipes.where((recipe) => recipe.isRecipeComplete).toList();
 }
 
 List<RecipeWithIngredients> filterRecipesByTags(
