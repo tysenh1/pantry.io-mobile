@@ -1,7 +1,7 @@
 
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pantry_io_mobile/core/utils/get_recipe_utils.dart';
+import 'package:pantry_io_mobile/core/utils/recipe_utils.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 
 void main() {

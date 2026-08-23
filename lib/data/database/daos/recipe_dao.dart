@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:pantry_io_mobile/core/utils/get_recipe_utils.dart';
+import 'package:pantry_io_mobile/core/utils/recipe_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipes_table.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_ingredients_table.dart';
@@ -75,6 +75,7 @@ class RecipeDao extends DatabaseAccessor<AppDatabase> with _$RecipeDaoMixin {
 
         if (recipeMap.containsKey(recipe.id)) {
           recipeMap[recipe.id]!.ingredients.add(recipeIngredient);
+          // TODO: this will need tweaking if the user wants to change the multiplier threshold for showing recipes (and when I add it lol)
           if (!isIngredientQuantitySufficient(recipeIngredient)) {
             recipeMap[recipe.id]!.isRecipeComplete = false;
           }
