@@ -11,11 +11,11 @@ double parseQuantity(ProductResultV3 result) {
   double finalQuantity = 0.0;
   if (result.product?.quantity != null && result.product?.quantity != '') {
     final regexArray = UNIT_REGEX.firstMatch(result.product?.quantity as String);
-    if (regexArray == null) {
-      return finalQuantity;
+    if (regexArray != null) {
+      finalQuantity = double.tryParse(regexArray.group(1).toString()) ?? 0.0;
     }
-    finalQuantity = double.tryParse(regexArray.group(1).toString()) ?? 0.0;
-  } else if (result.product?.packagingQuantity != null && result.product?.packagingQuantity != 0.0) {
+  }
+  if (result.product?.packagingQuantity != null && result.product?.packagingQuantity != 0.0 && finalQuantity == 0.0) {
     finalQuantity = result.product?.packagingQuantity as double;
   }
 
