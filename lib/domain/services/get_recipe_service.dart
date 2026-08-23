@@ -14,8 +14,8 @@ class GetRecipeService {
     await db.transaction(() async {
       for (final ingredient in recipe.ingredients) {
         final normalizedQuantity = (ingredient.quantityNeeded * ingredient.gramWeight) * multiplier;
-        // final roundedQuantity = (normalizedQuantity * 10).floor() / 10;
-        final roundedQuantity = normalizedQuantity.ceil().toDouble();
+        final roundedQuantity = (normalizedQuantity * 10).ceil() / 10;
+        // final roundedQuantity = normalizedQuantity.ceil().toDouble();
         await db.pantryDao.subtractQuantity(roundedQuantity, ingredient.pantryId);
 
       }

@@ -2,7 +2,7 @@ import 'package:fuzzy/fuzzy.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 
 bool isIngredientQuantitySufficient(IngredientItem ing, [double multiplier = 1]) {
-  return ing.pantryQuantity >= ((ing.quantityNeeded * multiplier) * ing.gramWeight).ceil();
+  return ing.pantryQuantity >= ((ing.quantityNeeded * ing.gramWeight) * multiplier).ceil();
 }
 
 List<RecipeWithIngredients> filterCookableRecipes(
