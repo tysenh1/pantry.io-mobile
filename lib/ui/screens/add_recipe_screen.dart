@@ -30,11 +30,9 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   TutorialCoachMark? tutorialCoachMark;
 
-  final RecipeFormModel _formModel = RecipeFormModel();
+  RecipeFormModel _formModel = RecipeFormModel();
 
   List<GenericNameInfo> _genericNames = [];
-
-  Set<String> tags = {};
 
   final _tagFocusNode = FocusNode();
 
@@ -143,7 +141,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       await db.recipeDao.createRecipe(
         name: _formModel.nameController.text.trim(),
         instructions: _formModel.instructionsController.text.trim(),
-        tags: tags,
+        tags: _formModel.tags,
         ingredientCompanions: _formModel.getIngredientCompanions(),
       );
     } catch (e) {
@@ -153,15 +151,22 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       return;
     }
 
-    _showSuccessModal();
+    await _showSuccessModal(_formModel.nameController.text.trim());
+
+    setState(() {
+      _formModel = RecipeFormModel();
+    });
+
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
-  void _showSuccessModal() {
-    showDialog(
+  Future<void> _showSuccessModal(String recipeName) async {
+
+    return showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Success!'),
-        content: Text("${_formModel.nameController.text} has been added!"),
+        content: Text("$recipeName has been added!"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -175,7 +180,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   void handleRemove(String tagToDelete) {
     setState(() {
-      tags.removeWhere((tag) => tag == tagToDelete);
+      _formModel.tags.removeWhere((tag) => tag == tagToDelete);
     });
   }
 
@@ -283,13 +288,13 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                       children: [
                         AppTextField(placeholder: 'Recipe Name', controller: _formModel.nameController),
                         AppTextField(placeholder: 'Instructions', controller: _formModel.instructionsController, isMultiLine: true),
-                        if (tags.isNotEmpty)
+                        if (_formModel.tags.isNotEmpty)
                           AppCard(
                             color: Theme.of(context).colorScheme.secondaryContainer,
                             padding: const EdgeInsets.all(8),
                             borderRadius: BorderRadius.circular(999),
                             child: AppTagCarousel(
-                                tags: tags,
+                                tags: _formModel.tags,
                                 mode: AppChipMode.removable,
                                 onRemoved: handleRemove,
                                 alignment: Alignment.centerLeft
@@ -300,7 +305,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                           final trimmed = val.trim();
                           if (trimmed.isNotEmpty) {
                             setState(() {
-                              tags.add(trimmed);
+                              _formModel.tags.add(trimmed);
                               _formModel.tagsController.clear();
                             });
                             _tagFocusNode.requestFocus();
