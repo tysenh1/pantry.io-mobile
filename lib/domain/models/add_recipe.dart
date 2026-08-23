@@ -6,6 +6,7 @@ class RecipeFormModel {
   final nameController = TextEditingController();
   final instructionsController = TextEditingController();
   final tagsController = TextEditingController();
+  Set<String> tags = {};
 
   List<IngredientInput> ingredients = [IngredientInput()];
 
