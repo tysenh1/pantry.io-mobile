@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pantry_io_mobile/core/utils/recipe_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/services/get_recipe_service.dart';
@@ -50,20 +49,6 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
       }
     }
     _updateCanBeDoubled();
-  }
-
-  void _isIngredientQuantitySufficient(IngredientItem ing, double multiplier) {
-    if (isIngredientQuantitySufficient(ing, multiplier)) {
-      setState(() {
-        canRecipeBeDoubled = false;
-      });
-    }
-    // final isQuantitySufficient = ing.pantryQuantity >= ((ing.quantityNeeded * ing.gramWeight) * multiplier);
-    // if (!isQuantitySufficient) {
-    //   setState(() {
-    //     canRecipeBeDoubled = false;
-    //   });
-    // }
   }
 
   Future<void> _confirmCook(BuildContext context) async {
@@ -224,7 +209,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
 
                         final formattedQuantity = (newQuantity * 10).floor() / 10;
 
-                        _isIngredientQuantitySufficient(ing, 2.0);
+                        // _isIngredientQuantitySufficient(ing, 2.0);
 
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
