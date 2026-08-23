@@ -130,7 +130,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     });
   }
 
-  void _handleSubmit() {
+  void _handleSubmit() async {
     if (!_formModel.isValid()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Some fields are missing values.")),
@@ -139,12 +139,19 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     }
 
     final db = context.read<AppDatabase>();
-    db.recipeDao.createRecipe(
-      name: _formModel.nameController.text.trim(),
-      instructions: _formModel.instructionsController.text.trim(),
-      tags: tags,
-      ingredientCompanions: _formModel.getIngredientCompanions(),
-    );
+    try {
+      await db.recipeDao.createRecipe(
+        name: _formModel.nameController.text.trim(),
+        instructions: _formModel.instructionsController.text.trim(),
+        tags: tags,
+        ingredientCompanions: _formModel.getIngredientCompanions(),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Error creating recipe."))
+      );
+      return;
+    }
 
     _showSuccessModal();
   }
@@ -330,13 +337,13 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                               }).toList(),
                               onChanged: (int? newId) => _onGenericNameChanged(ing, newId),
                               placeholder: 'Generic Name',
-                            key: _genericNameKey,
+                            key: widget.isTutorial ? _genericNameKey : null,
                             ),
 
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            key: _unitKey,
+                            key: widget.isTutorial ? _unitKey : null,
                             children: [
                               Expanded(
                                 child: AppTextField(

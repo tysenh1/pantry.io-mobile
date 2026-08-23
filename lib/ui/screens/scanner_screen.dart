@@ -213,7 +213,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
       final db = Provider.of<AppDatabase>(context, listen: false);
 
       try {
-        ScannerScreenService().processLocalItem(localItem.$1, localItem.$2, db);
+        await ScannerScreenService().processLocalItem(localItem.$1, localItem.$2, db);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Error inserting new pantry item."))
@@ -377,7 +377,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
     final db = context.read<AppDatabase>();
     try {
-      ScannerScreenService().processNewItem(productCompanion!, unit, genericName.id, db);
+      await ScannerScreenService().processNewItem(productCompanion!, unit, genericName.id, db);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Error inserting new pantry item."))
