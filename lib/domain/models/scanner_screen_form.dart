@@ -25,9 +25,10 @@ class ScannerScreenFormModel {
   }
 
   bool isValid() {
+    final qty = double.tryParse(unitSizeController.text.trim());
     if (barcodeController.text.trim().isEmpty) return false;
     if (nameController.text.trim().isEmpty) return false;
-    if (unitSizeController.text.trim().isEmpty) return false;
+    if (qty == null || qty <= 0) return false;
     if (selectedGenericId == null) return false;
     if (selectedUnitId == null) return false;
 

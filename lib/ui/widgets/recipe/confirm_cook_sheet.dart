@@ -269,8 +269,8 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                         final ing = ingredients.firstWhere((ing) => ing.pantryId == pantryId);
                         final newQuantity = (ing.pantryQuantity - ((ing.quantityNeeded * ing.gramWeight) * _multiplier)) / ing.gramWeight;
 
-                        // final formattedQuantity = (newQuantity * 10).floor() / 10;
-                        final formattedQuantity = newQuantity.ceil();
+                        final formattedQuantity = (newQuantity * 10).ceil() / 10;
+                        // final formattedQuantity = newQuantity.ceil();
                         final isOn = usedIngredients.contains(pantryId);
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

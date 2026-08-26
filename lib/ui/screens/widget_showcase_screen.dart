@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/tables/recipe_history_table.dart';
-import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_form.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
 import 'package:pantry_io_mobile/domain/models/local_unit.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_history_with_ingredients.dart';

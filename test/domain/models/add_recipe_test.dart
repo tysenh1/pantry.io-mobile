@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_form.dart';
 import 'package:pantry_io_mobile/domain/models/ingredient_input.dart';
 
 void main() {

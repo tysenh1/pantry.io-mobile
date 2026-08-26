@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
-import 'package:pantry_io_mobile/domain/models/add_recipe.dart';
+import 'package:pantry_io_mobile/domain/models/recipe_form.dart';
 import 'package:pantry_io_mobile/domain/models/generic_name_info.dart';
 import 'package:pantry_io_mobile/domain/models/ingredient_input.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
