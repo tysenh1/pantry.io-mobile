@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/core/utils/string_utils.dart';
 import 'package:pantry_io_mobile/data/database/app_database.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/domain/services/get_recipe_service.dart';
@@ -207,7 +208,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                         final ing = ingredients.firstWhere((ing) => ing.pantryId == pantryId);
                         final newQuantity = (ing.pantryQuantity - ((ing.quantityNeeded * ing.gramWeight) * _multiplier)) / ing.gramWeight;
 
-                        final formattedQuantity = (newQuantity * 10).floor() / 10;
+                        final formattedQuantity = (newQuantity * 10).ceil() / 10;
 
                         // _isIngredientQuantitySufficient(ing, 2.0);
 
@@ -220,7 +221,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${ing.quantityNeeded * _multiplier} ${ing.ingredientUnit} - ${ing.name}',
+                                  '${formatQuantity(ing.quantityNeeded * _multiplier)} ${ing.ingredientUnit} - ${ing.name}',
                                   style: Theme.of(context).textTheme.bodyMedium
                                 ),
                                 Padding(
@@ -235,7 +236,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                             ),
 
                             Text(
-                              '$formattedQuantity ${ing.ingredientUnit}',
+                              '${formatQuantity(formattedQuantity)} ${ing.ingredientUnit}',
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 color: formattedQuantity > 0 ? Colors.green : Colors.red
                               )
@@ -277,7 +278,7 @@ class _CookConfirmDialogState extends State<ConfirmCookSheet> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Text(
-                              '${ing.quantityNeeded * _multiplier} ${ing.ingredientUnit} - ${ing.name}',
+                              '${formatQuantity(ing.quantityNeeded * _multiplier)} ${ing.ingredientUnit} - ${ing.name}',
                               style: Theme.of(context).textTheme.bodyMedium
                             ),
 
