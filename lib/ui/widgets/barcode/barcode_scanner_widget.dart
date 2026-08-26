@@ -23,6 +23,10 @@ class _BarcodeScannerWidgetState extends State<BarcodeScannerWidget> {
   PermissionStatus _permissionStatus = PermissionStatus.denied;
   bool _isChecking = true;
 
+  final Map<String, int> _tally = {};
+  static const int _sampleTarget = 4;
+  static const int _maxSamples = 20;
+
   @override
   void initState() {
     super.initState();
@@ -73,12 +77,26 @@ class _BarcodeScannerWidgetState extends State<BarcodeScannerWidget> {
       return MobileScanner(
         controller: _controller,
         onDetect: (capture) async {
-          final barcode = capture.barcodes.firstOrNull;
-          if (barcode?.rawValue != null) {
+          final value = capture.barcodes.firstOrNull?.rawValue;
+          if (value == null) return;
+
+          _tally[value] = (_tally[value] ?? 0) + 1;
+          final totalSamples = _tally.values.fold(0, (a, b) => a + b);
+          final leader = _tally.entries.reduce((a, b) => a.value >= b.value ? a : b);
+
+          if (leader.value >= _sampleTarget || totalSamples >= _maxSamples) {
             await _controller.stop();
-            widget.onBarcodeScanned(barcode!.rawValue as String);
+            widget.onBarcodeScanned(leader.key);
+            _tally.clear();
           }
-        },
+        }
+        // onDetect: (capture) async {
+        //   final barcode = capture.barcodes.firstOrNull;
+        //   if (barcode?.rawValue != null) {
+        //     await _controller.stop();
+        //     widget.onBarcodeScanned(barcode!.rawValue as String);
+        //   }
+        // },
       );
     }
 

@@ -283,7 +283,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
             _showGenericNamesReset = false;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Product not found. Please enter manually.'),
+                content: Text('Parts of the product could not be retrieved. Please enter manually.'),
               ),
             );
           }
