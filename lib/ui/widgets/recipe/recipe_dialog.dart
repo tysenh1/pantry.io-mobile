@@ -98,12 +98,13 @@ class RecipeDialog extends StatelessWidget {
                 AppButton(
                     label: 'Cook',
                     fontWeight: FontWeight.bold,
-                    onPressed: () => showModalBottomSheet(
+                    onPressed: recipe.isRecipeComplete ? () => showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.white,
                         builder: (context) => ConfirmCookSheet(recipe: recipe)
-                    ),
+                    ) : null,
+
                     size: AppButtonSize.medium
                 ),
               ]

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/core/utils/recipe_utils.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/recipe/recipe_dialog.dart';
 
@@ -14,8 +15,27 @@ class RecipeCard extends StatelessWidget {
     this.cardKey
   });
 
+  String _formatMissingIngredients(List<IngredientItem> missing) {
+    if (missing.isEmpty) return '';
+
+    final names = missing.map((e) => e.name).toList();
+
+    if (names.length == 1) {
+      return 'Missing ${names.first}';
+    }
+
+    if (names.length == 2) {
+      return 'Missing ${names[0]} and ${names[1]}';
+    }
+
+    final allButLast = names.sublist(0, names.length - 1).join(', ');
+    return 'Missing $allButLast, and ${names.last}';
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    final List<IngredientItem> missingIngredients = recipe.ingredients.where((ing) => !isIngredientQuantitySufficient(ing)).toList();
     return Card(
       color: color ?? (recipe.isRecipeComplete ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.errorContainer),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -25,10 +45,11 @@ class RecipeCard extends StatelessWidget {
           recipe.name,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(recipe.formattedTagString, maxLines: 1, overflow: TextOverflow.ellipsis),
-        trailing: recipe.isRecipeComplete ? const Icon(Icons.chevron_right) : null,
+        subtitle: recipe.isRecipeComplete
+            ? Text(recipe.formattedTagString, maxLines: 1, overflow: TextOverflow.ellipsis)
+            : Text(_formatMissingIngredients(missingIngredients), maxLines: 1, overflow: TextOverflow.ellipsis),
+        trailing: const Icon(Icons.chevron_right),
         onTap: () {
-          if (recipe.isRecipeComplete) {
             showDialog(
                 context: context,
                 builder: (context) => Dialog(
@@ -42,7 +63,6 @@ class RecipeCard extends StatelessWidget {
                     )
                 )
             );
-          }
         },
       ),
     );
