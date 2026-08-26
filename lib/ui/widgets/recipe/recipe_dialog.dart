@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pantry_io_mobile/core/utils/string_utils.dart';
 import 'package:pantry_io_mobile/domain/models/recipe_with_ingredients.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_button.dart';
 import 'package:pantry_io_mobile/ui/widgets/common/app_tag_carousel.dart';
@@ -69,7 +70,7 @@ class RecipeDialog extends StatelessWidget {
                         ...recipe.ingredients.map((ingredient) => Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Text(
-                                '${ingredient.quantityNeeded} ${ingredient.ingredientUnit} - ${ingredient.name}',
+                                '${formatQuantity(ingredient.quantityNeeded)} ${ingredient.ingredientUnit} - ${ingredient.name}',
                                 style: Theme.of(context).textTheme.bodyMedium
                             )
                         )),

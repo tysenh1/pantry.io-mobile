@@ -289,7 +289,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
           }
           _formModel.barcodeController.text = barcode;
           _formModel.nameController.text = productName.toLowerCase().toTitleCase();
-          _formModel.unitSizeController.text = quantity.toString();
+          _formModel.unitSizeController.text = formatQuantity(quantity.toDouble());
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
